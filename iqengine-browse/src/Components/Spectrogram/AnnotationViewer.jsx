@@ -1,12 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { useSelector } from 'react-redux';
-import { select_fft } from '../../selector';
+import { select_fft } from '../../Utils/selector';
 import React, { useRef } from 'react';
 
 const AnnotationViewer = (props) => {
-  let select_fft_return = useSelector((state) => select_fft(state));
+  let select_fft_return = select_fft(props);
 
   const canvasAnnotationRef = useRef(null);
   const canvas = canvasAnnotationRef.current;

@@ -42,11 +42,10 @@ function readFileAsync(file) {
   });
 }
 
-const FetchMoreData = createAsyncThunk('blob/FetchMoreData', async (arg, { getState }) => {
+const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   console.log('running FetchMoreData');
-  let state = getState();
-
-  let offset = state.blob.size;
+  const { connection, blob } = args;
+  let offset = blob.size;
 
   let bytes_per_sample = 2;
   if (window.data_type === 'ci16_le') {
@@ -60,16 +59,14 @@ const FetchMoreData = createAsyncThunk('blob/FetchMoreData', async (arg, { getSt
   let count = 1024 * 2000 * bytes_per_sample; // must be a power of 2, FFT currently doesnt support anything else.
   var startTime = performance.now();
   let buffer;
-  if (state.connection.datafilehandle === '') {
+  if (connection.datafilehandle === undefined) {
     // using Azure blob storage
-    let accountName = state.connection.accountName;
-    let containerName = state.connection.containerName;
-    let sasToken = state.connection.sasToken;
+    var { accountName, containerName, sasToken, recording } = connection;
 
-    while (state.connection.recording === '') {
+    while (recording === '') {
       console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
     }
-    let blobName = state.connection.recording + '.sigmf-data';
+    let blobName = recording + '.sigmf-data';
 
     // Get the blob client TODO: REFACTOR SO WE DONT HAVE TO REMAKE THE CLIENT EVERY TIME!
     const { BlobServiceClient } = require('@azure/storage-blob');
@@ -81,7 +78,7 @@ const FetchMoreData = createAsyncThunk('blob/FetchMoreData', async (arg, { getSt
     buffer = await blob.arrayBuffer();
   } else {
     // Use a local file
-    let handle = state.connection.datafilehandle;
+    let handle = connection.datafilehandle;
     const fileData = await handle.getFile();
     buffer = await readFileAsync(fileData.slice(offset, offset + count));
   }
@@ -90,11 +87,11 @@ const FetchMoreData = createAsyncThunk('blob/FetchMoreData', async (arg, { getSt
   let samples;
   if (window.data_type === 'ci16_le') {
     samples = new Int16Array(buffer);
-    samples = convolve(samples, state.blob.taps);
+    samples = convolve(samples, blob.taps);
     samples = Int16Array.from(samples); // convert back to int TODO: clean this up
   } else if (window.data_type === 'cf32_le') {
     samples = new Float32Array(buffer);
-    samples = convolve(samples, state.blob.taps);
+    samples = convolve(samples, blob.taps);
   } else {
     console.error('unsupported data_type');
     samples = new Int16Array(buffer);

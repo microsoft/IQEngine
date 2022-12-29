@@ -1,17 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { SpectrogramViewer } from './spectrogram-viewer';
-import { AnnotationViewer } from './annotation-viewer';
-import { RulerTop } from './ruler-top';
+import { SpectrogramViewer } from './SpectrogramViewer';
+import { AnnotationViewer } from './AnnotationViewer';
+import { RulerTop } from './RulerTop';
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import FetchMoreData from '../../reducers/fetchMoreData';
 
-const SpectrogramPanel = () => {
+const SpectrogramPanel = (props) => {
   const [isBottom, setIsBottom] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 100, height: 100 });
-  const dispatch = useDispatch();
 
   const timescale_width = 20;
   const text_width = 30;
@@ -27,7 +24,8 @@ const SpectrogramPanel = () => {
     });
   };
 
-  const { size, status } = useSelector((state) => state.blob);
+  let { initFetchMoreBlob, connection, blob } = props;
+  let { size, status } = props.blob;
 
   useEffect(() => {
     // function has to be defined inside of the useEffect or else it throws a warning
@@ -53,9 +51,10 @@ const SpectrogramPanel = () => {
   useEffect(() => {
     if (isBottom) {
       console.log('Fetching more Data! Current Blobsize: ' + size);
-      dispatch(FetchMoreData());
+      blob.size = size;
+      initFetchMoreBlob({connection:connection, blob:blob});
     }
-  }, [isBottom, size, dispatch]);
+  }, [isBottom, size, initFetchMoreBlob, blob, connection]);
 
   useEffect(() => {
     if (isBottom && status === 'idle') {
@@ -66,9 +65,33 @@ const SpectrogramPanel = () => {
   return (
     <div>
       <div id="spectrogram-panel" style={{ display: 'grid', position: 'relative' }}>
-        <SpectrogramViewer timescale_width={timescale_width} text_width={text_width} upper_tick_height={upper_tick_height} spectrogram_width={spectrogram_width} />
-        <AnnotationViewer timescale_width={timescale_width} text_width={text_width} upper_tick_height={upper_tick_height} spectrogram_width={spectrogram_width} />
-        <RulerTop timescale_width={timescale_width} text_width={text_width} upper_tick_height={upper_tick_height} spectrogram_width={spectrogram_width} />
+        <SpectrogramViewer
+          timescale_width={timescale_width}
+          text_width={text_width}
+          upper_tick_height={upper_tick_height}
+          spectrogram_width={spectrogram_width}
+          fft={props.fft}
+          meta={props.meta}
+          blob={props.blob}
+        />
+        <AnnotationViewer
+          timescale_width={timescale_width}
+          text_width={text_width}
+          upper_tick_height={upper_tick_height}
+          spectrogram_width={spectrogram_width}
+          fft={props.fft}
+          meta={props.meta}
+          blob={props.blob}
+        />
+        <RulerTop
+          timescale_width={timescale_width}
+          text_width={text_width}
+          upper_tick_height={upper_tick_height}
+          spectrogram_width={spectrogram_width}
+          fft={props.fft}
+          meta={props.meta}
+          blob={props.blob}
+        />
       </div>
     </div>
   );

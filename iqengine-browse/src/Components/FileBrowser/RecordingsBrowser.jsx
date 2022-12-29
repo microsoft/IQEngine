@@ -18,7 +18,7 @@ function GroupByFolder(files, root) {
     file.relativeKey = file.name.substr(root.length);
     let currentFolder = fileTree;
     const folders = file.relativeKey.split('/');
-    folders.map((folder, folderIndex) => {
+    folders.forEach((folder, folderIndex) => {
       if (folderIndex === folders.length - 1 && isFolder(file)) {
         for (const key in file) {
           currentFolder[key] = file[key];
@@ -46,6 +46,7 @@ function GroupByFolder(files, root) {
         currentFolder = currentFolder.children[folder];
       }
     });
+    return file;
   });
 
   function addAllChildren(level, prefix) {
@@ -73,7 +74,7 @@ function GroupByFolder(files, root) {
   return files;
 }
 
-export default function RecordingsBrowser({ data }) {
+export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
   const gfiles = data.map((data) => data.name);
   let dataTree = [];
 
@@ -83,7 +84,13 @@ export default function RecordingsBrowser({ data }) {
 
   //console.log(dataTree);
   const DisplayData = dataTree.map((info, i) => {
-    return <Directory key={Math.random()} files={info} />;
+    return <Directory
+      key={Math.random()}
+      files={info}
+      updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+      updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+      updateConnectionRecording={updateConnectionRecording}
+    />;
   });
 
   // Hide menu if the data hasnt loaded yet

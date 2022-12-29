@@ -21,7 +21,7 @@ const StyledFolderIcon = styled(FolderIcon)`
   margin-right: 4px;
 `;
 
-const Directory = ({ files }) => {
+const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) => {
   const [isExpanded, toggleExpanded] = useState(false);
   if (files.type === 'folder') {
     return (
@@ -40,13 +40,26 @@ const Directory = ({ files }) => {
           <td></td>
           <td></td>
         </tr>
-        {isExpanded && files.children.map((item) => <Directory key={Math.random()} files={item} />)}
+        {isExpanded && files.children.map((item) =>
+          <Directory
+            key={Math.random()}
+            files={item}
+            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+            updateConnectionRecording={updateConnectionRecording}
+          />)}
       </>
     );
   }
   return (
     <>
-      <FileRow key={Math.random()} info={files} />
+      <FileRow
+        key={Math.random()}
+        info={files}
+        updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+        updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+        updateConnectionRecording={updateConnectionRecording}
+      />
     </>
   );
 };

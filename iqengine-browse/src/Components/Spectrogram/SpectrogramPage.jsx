@@ -1,50 +1,104 @@
-import { SpectrogramPanel } from './spectrogram-panel';
+import { SpectrogramPanel } from './SpectrogramPanel';
 import { Container, Row, Col } from 'react-bootstrap';
-import FetchMoreData from '../../reducers/fetchMoreData';
-import { FetchMeta } from '../../reducers/metaSlice';
-import { useDispatch } from 'react-redux';
-import Sidebar from './sidebar';
-import { updateRecording } from '../../reducers/connectionSlice';
-import { useParams, useLocation } from 'react-router-dom';
-import { updateSize } from '../../reducers/blobSlice';
-import { clear_fft_data } from '../../selector';
-import { updateMetaFileHandle, updateDataFileHandle } from '../../reducers/connectionSlice';
+import Sidebar from './Sidebar';
+import { clear_fft_data } from '../../Utils/selector';
+import { Component } from 'react';
 
-function SpectrogramPage() {
-  const dispatch = useDispatch();
+class SpectrogramPage extends Component {
 
-  const { state } = useLocation();
-  // if we entered here from clicking a local file on the list, set the filehandlers
-  if (state) {
-    if (state.metaFileHandle) {
-      console.log('setting meta and data file handlers');
-      dispatch(updateMetaFileHandle(state.metaFileHandle)); // store it in redux
-      dispatch(updateDataFileHandle(state.dataFileHandle)); // assume other file is data
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      connection: props.connection,
+      blob: {
+        size: 0,
+        status: 'idle',
+        taps: new Float32Array(1).fill(1),
+      },
+      fftSize: 1024,
+      magnitudeMax: 255,
+      magnitudeMin: 30,
+      meta: props.meta,
+    };
   }
 
-  dispatch(updateRecording(useParams().recording.replaceAll('(slash)', '/'))); // the route is /spectrogram/:recording.  we had to use a hack to allow for slashes in the name
+  componentDidMount() {
+    let { initFetchMoreBlob, fetchMetaDataBlob, connection } = this.props;
+    // the route is /spectrogram/:recording.  we had to use a hack to allow for slashes in the name
+    const blob = {
+      size: 0,
+      status: 'idle',
+      taps: new Float32Array(1).fill(1),
+    }
+    clear_fft_data();
 
-  dispatch(updateSize(0)); // reset the number of samples downloaded when this page loads
-  clear_fft_data();
+    initFetchMoreBlob({ connection: connection, blob: blob }); // fetch IQ for the first time
+    fetchMetaDataBlob(connection) // fetch the metadata
+  }
 
-  dispatch(FetchMoreData()); // fetch IQ for the first time
-  dispatch(FetchMeta); // fetch the metadata
+  static getDerivedStateFromProps(props, state) {
+    var newState = state;
+    if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
+      newState.meta = props.meta;
+    }
+    if (props.blob.size !== state.blob.size) {
+      newState.blob.size = props.blob.size;
+    }
+    return { ...newState };
+  }
 
-  return (
-    <div>
-      <Container fluid>
-        <Row className="flex-nowrap">
-          <Col className="col-3">
-            <Sidebar />
-          </Col>
-          <Col>
-            <SpectrogramPanel />
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
+  handleFftSize = (size) => {
+    this.setState({
+      fftSize: size,
+    });
+  }
+
+  handleMagnitudeMin = (min) => {
+    this.setState({
+      magnitudeMin: min,
+    });
+  }
+
+  handleMagnitudeMax = (max) => {
+    this.setState({
+      magnitudeMax: max,
+    });
+  }
+
+  render() {
+    const { magnitudeMax, magnitudeMin, fftSize, blob, meta } = this.state;
+    const fftState = {
+      magnitudeMax: magnitudeMax,
+      magnitudeMin: magnitudeMin,
+      size: fftSize
+    };
+    return (
+      <div>
+        <Container fluid>
+          <Row className="flex-nowrap">
+            <Col className="col-3">
+              <Sidebar
+                handleFftSize={this.handleFftSize}
+                handleMagnitudeMax={this.handleMagnitudeMax}
+                handleMagnitudeMin={this.handleMagnitudeMin}
+                updateBlobTaps={this.props.updateBlobTaps}
+                meta={meta}
+              />
+            </Col>
+            <Col>
+              <SpectrogramPanel
+                initFetchMoreBlob={this.props.initFetchMoreBlob}
+                connection={this.state.connection}
+                fft={fftState}
+                blob={blob}
+                meta={meta}
+              />
+            </Col>
+          </Row>
+        </Container>
+      </div >
+    );
+  }
 }
 
 export default SpectrogramPage;

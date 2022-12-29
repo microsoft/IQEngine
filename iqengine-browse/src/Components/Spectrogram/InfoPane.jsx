@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-//import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { useSelector } from 'react-redux';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React from 'react';
 
-export default function InfoPane() {
-  const metaGlobal = useSelector((state) => state.meta.global);
+// LOOK AT THIS PLS
+export default function InfoPane(props) {
+  const metaGlobal = props.meta.global;
 
   return (
     <ListGroup variant="flush">

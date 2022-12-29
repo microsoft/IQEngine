@@ -6,11 +6,18 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-export default function FileRow({ info }) {
+export default function FileRow({ info, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
   const [modal, setModal] = useState(false);
   const toggle = () => {
     setModal(!modal);
   };
+
+  const updateConnection = (metaFileHandle, dataFileHandle, name) => {
+    updateConnectionMetaFileHandle(metaFileHandle);
+    updateConnectionDataFileHandle(dataFileHandle)
+    updateConnectionRecording(name);
+  }
+
   return (
     <tr>
       <td>
@@ -19,7 +26,7 @@ export default function FileRow({ info }) {
         </div>
       </td>
       <td className="align-middle">
-        <Link to={'spectrogram/' + info.name.replace('.sigmf-meta', '')} state={{ metaFileHandle: info.metaFileHandle, dataFileHandle: info.dataFileHandle }}>
+        <Link to={'spectrogram/' + info.name.replace('.sigmf-meta', '')} onClick={() => updateConnection(info.metaFileHandle, info.dataFileHandle, info.name.replace('.sigmf-meta', ''))}>
           {info.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}
         </Link>
       </td>
