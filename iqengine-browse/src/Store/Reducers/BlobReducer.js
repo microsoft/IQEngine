@@ -33,9 +33,6 @@ const fetchMoreDataSuccessUpdates = (action) => {
   // Copy existing IQ samples to new_iq_data, then append the new IQ samples, then save it back to window.iq_data
   new_iq_data.set(window.iq_data, 0); // 2nd arg of set() is the offset into the target array at which to begin writing values from the source array
   new_iq_data.set(action.payload, window.iq_data.length); // see above comment.  units are elements, not bytes!
-  console.log('********** Appended to iq_data!');
-  console.log(new_iq_data.length);
-  console.log(action.payload.slice(0, 10)); // the new IQ samples. THEY ALL APPEAR TO BE THE SAME (but different from the very first set)
   window.iq_data = new_iq_data;
 };
 

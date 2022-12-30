@@ -46,7 +46,6 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   console.log('running FetchMoreData');
   const { connection, blob } = args;
   let offset = blob.size;
-  console.log('********* Offset:', offset);
 
   let bytes_per_sample = 2;
   if (window.data_type === 'ci16_le') {
@@ -58,11 +57,11 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   }
 
   let count = 1024 * 2000 * bytes_per_sample; // must be a power of 2, FFT currently doesnt support anything else.
-  var startTime = performance.now();
+  let startTime = performance.now();
   let buffer;
   if (connection.datafilehandle === undefined) {
     // using Azure blob storage
-    var { accountName, containerName, sasToken, recording } = connection;
+    let { accountName, containerName, sasToken, recording } = connection;
 
     while (recording === '') {
       console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
@@ -83,7 +82,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
     const fileData = await handle.getFile();
     buffer = await readFileAsync(fileData.slice(offset, offset + count));
   }
-  var endTime = performance.now();
+  let endTime = performance.now();
   console.log('Fetching more data took', endTime - startTime, 'milliseconds');
   let samples;
   if (window.data_type === 'ci16_le') {

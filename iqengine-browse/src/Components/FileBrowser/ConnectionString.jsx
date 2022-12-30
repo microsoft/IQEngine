@@ -130,7 +130,7 @@ async function GetFilesFromBlob(accountName, containerName, sasToken) {
       entries.push(parseMeta(json_string, baseUrl, fName));
     }
   }
-  console.log(entries);
+  //console.log(entries);
   return entries;
 }
 

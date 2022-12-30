@@ -40,7 +40,6 @@ export const select_fft = (state) => {
   window.fft_size = fft_size;
   let magnitude_max = state.fft.magnitudeMax;
   let magnitude_min = state.fft.magnitudeMin;
-  console.log('zzzzz magnitudeMax:', state.fft.magnitudeMax, 'magnitudeMin:', state.fft.magnitudeMin, 'fft_size:', fft_size);
   const num_ffts = Math.floor(blob_size / fft_size / 2); // divide by 2 because this is number of ints/floats not IQ samples
   let startTime = performance.now();
   const pxPerLine = fft_size;
@@ -94,10 +93,8 @@ export const select_fft = (state) => {
   }
 
   // loop through each row
-  console.log('starting_row:', starting_row, 'num_ffts:', num_ffts);
   for (let i = starting_row; i < num_ffts; i++) {
     const samples_slice = window.iq_data.slice(i * fft_size * 2, (i + 1) * fft_size * 2); // mult by 2 because this is int/floats not IQ samples
-    //console.log('YYYYYYYYYY samples_slice:', samples_slice.slice(0, 10));
     const f = new FFT(fft_size);
     const out = f.createComplexArray(); // creates an empty array the length of fft.size*2
     f.transform(out, samples_slice); // assumes input (2nd arg) is in form IQIQIQIQ and twice the length of fft.size
@@ -139,7 +136,6 @@ export const select_fft = (state) => {
       new_fft_data[line_offset + opIdx + 3] = rgba[3]; // alpha
     }
   }
-  console.log('zzzzzz', new_fft_data.slice(new_fft_data.length - 20, new_fft_data.length));
   let endTime = performance.now();
   console.log('Rendering spectrogram took', endTime - startTime, 'milliseconds'); // first cut of our code processed+rendered 0.5M samples in 760ms on marcs computer
 
