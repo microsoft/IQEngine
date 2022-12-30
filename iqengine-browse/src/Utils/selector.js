@@ -21,7 +21,7 @@ window.data_type = 'not defined yet';
 
 // This will get called when we go to a new spectrogram page
 export const clear_fft_data = () => {
-  previous_blob_size = 0;
+  previous_blob_size = -1;
   previous_fft_size = 0;
   previous_magnitude_max = 0;
   previous_magnitude_min = 0;
@@ -36,11 +36,16 @@ export const clear_fft_data = () => {
 export const select_fft = (state) => {
   window.data_type = state.meta.global['core:datatype']; // there might be a race condition here, but this line sets it, and it gets read in blobslice.js
   let blob_size = state.blob.size; // this is actually the number of int16's that have been downloaded so far
+  console.log('blob size:', blob_size);
+  if (blob_size > 0) {
+    blob_size = blob_size - 1024 * 2000 * 2;
+  }
   let fft_size = state.fft.size;
   window.fft_size = fft_size;
   let magnitude_max = state.fft.magnitudeMax;
   let magnitude_min = state.fft.magnitudeMin;
-  const num_ffts = Math.floor(blob_size / fft_size / 2); // divide by 2 because this is number of ints/floats not IQ samples
+  let num_ffts = Math.floor(blob_size / fft_size / 2); // divide by 2 because this is number of ints/floats not IQ samples
+
   let startTime = performance.now();
   const pxPerLine = fft_size;
   const lines = num_ffts;
@@ -86,10 +91,6 @@ export const select_fft = (state) => {
   if (fft_size === previous_fft_size && magnitude_min === previous_magnitude_min && magnitude_max === previous_magnitude_max) {
     starting_row = Math.floor(previous_blob_size / fft_size / 2);
     new_fft_data.set(window.fft_data, 0);
-  }
-
-  if (starting_row !== 0) {
-    starting_row = starting_row - 1000;
   }
 
   // loop through each row
