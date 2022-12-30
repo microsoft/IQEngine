@@ -9,11 +9,7 @@ class SpectrogramPage extends Component {
     super(props);
     this.state = {
       connection: props.connection,
-      blob: {
-        size: 0,
-        status: 'idle',
-        taps: new Float32Array(1).fill(1),
-      },
+      blob: props.blob,
       fftSize: 1024,
       magnitudeMax: 255,
       magnitudeMin: 30,
@@ -22,17 +18,20 @@ class SpectrogramPage extends Component {
   }
 
   componentDidMount() {
-    let { initFetchMoreBlob, fetchMetaDataBlob, connection } = this.props;
+    let { initFetchMoreBlob, fetchMetaDataBlob, connection, blob } = this.props;
     // the route is /spectrogram/:recording.  we had to use a hack to allow for slashes in the name
-    const blob = {
-      size: 0,
-      status: 'idle',
-      taps: new Float32Array(1).fill(1),
-    };
+    window.iq_data = [];
     clear_fft_data();
 
     initFetchMoreBlob({ connection: connection, blob: blob }); // fetch IQ for the first time
     fetchMetaDataBlob(connection); // fetch the metadata
+  }
+
+  componentWillUnmount() {
+    this.props.resetConnection();
+    this.props.resetMeta();
+    window.iq_data = [];
+    this.props.resetBlob();
   }
 
   static getDerivedStateFromProps(props, state) {

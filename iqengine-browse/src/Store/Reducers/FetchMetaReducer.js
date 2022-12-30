@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { RETURN_META_DATA_BLOB } from '../../Constants/MetaTypes';
+import { RESET_META_OBJ, RETURN_META_DATA_BLOB } from '../../Constants/FetchMetaTypes';
 
 const initialState = { annotations: [], captures: [], global: {} };
 
@@ -11,6 +11,13 @@ export default function fetchMetaReducer(state = initialState, action) {
       return {
         ...action.payload,
       };
+    }
+    case RESET_META_OBJ: {
+      return {
+        annotations: [],
+        captures: [],
+        global: {},
+      }
     }
     default:
       return state;

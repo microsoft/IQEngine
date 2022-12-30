@@ -5,6 +5,7 @@ import {
   FETCH_MORE_DATA_FAILURE,
   FETCH_MORE_DATA_LOADING,
   FETCH_MORE_DATA_SUCCESS,
+  RESET_BLOB_OBJ,
   UPDATE_BLOB_SIZE,
   UPDATE_BLOB_TAPS,
 } from '../../Constants/BlobTypes';
@@ -54,16 +55,23 @@ export default function blobReducer(state = initialState, action) {
         status: 'loading',
       };
     case FETCH_MORE_DATA_SUCCESS:
+      const size = window.iq_data.length + action.payload.length;
       fetchMoreDataSuccessUpdates(action);
       return {
         ...state,
         status: 'idle',
-        size: window.iq_data.length + action.payload.length,
+        size: size,
       };
     case FETCH_MORE_DATA_FAILURE:
       return {
         ...state,
         status: 'error',
+      };
+    case RESET_BLOB_OBJ:
+      return {
+        size: 0,
+        status: 'idle',
+        taps: new Float32Array(1).fill(1),
       };
     default:
       return {

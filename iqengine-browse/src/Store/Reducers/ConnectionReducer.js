@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import {
+  RESET_CONNECTION_OBJ,
   UPDATE_CONNECTION_ACCOUNT_NAME,
   UPDATE_CONNECTION_CONTAINER_NAME,
   UPDATE_CONNECTION_DATA_FILE_HANDLE,
@@ -50,6 +51,15 @@ export default function connectionReducer(state = initialState, action) {
         ...state,
         datafilehandle: action.payload,
       };
+    case RESET_CONNECTION_OBJ:
+      return {
+        accountName: '',
+        containerName: '',
+        sasToken: '',
+        recording: '',
+        metafilehandle: '',
+        datafilehandle: '',
+      }
     default:
       return {
         ...state,

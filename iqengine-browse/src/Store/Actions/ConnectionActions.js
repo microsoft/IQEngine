@@ -1,5 +1,5 @@
-import { UPDATE_BLOB_SIZE, UPDATE_BLOB_TAPS } from '../../Constants/BlobTypes';
 import {
+  RESET_CONNECTION_OBJ,
   UPDATE_CONNECTION_ACCOUNT_NAME,
   UPDATE_CONNECTION_CONTAINER_NAME,
   UPDATE_CONNECTION_DATA_FILE_HANDLE,
@@ -37,3 +37,7 @@ export const updateConnectionDataFileHandle = (payload) => ({
   type: UPDATE_CONNECTION_DATA_FILE_HANDLE,
   payload,
 });
+
+export const resetConnection = () => ({
+  type: RESET_CONNECTION_OBJ,
+})

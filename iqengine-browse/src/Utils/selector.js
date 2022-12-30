@@ -36,10 +36,9 @@ export const clear_fft_data = () => {
 export const select_fft = (state) => {
   window.data_type = state.meta.global['core:datatype']; // there might be a race condition here, but this line sets it, and it gets read in blobslice.js
   let blob_size = state.blob.size; // this is actually the number of int16's that have been downloaded so far
-  console.log('blob size:', blob_size);
-  if (blob_size > 0) {
-    blob_size = blob_size - 1024 * 2000 * 2;
-  }
+  // if (blob_size > 0) {
+  //   blob_size = blob_size - 1024 * 2000 * 2;
+  // }
   let fft_size = state.fft.size;
   window.fft_size = fft_size;
   let magnitude_max = state.fft.magnitudeMax;

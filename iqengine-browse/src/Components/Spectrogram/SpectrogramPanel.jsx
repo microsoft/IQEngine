@@ -43,6 +43,7 @@ const SpectrogramPanel = (props) => {
   }, [isBottom, size]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     checkSize();
     window.addEventListener('resize', checkSize);
     return () => window.removeEventListener('resize', checkSize);

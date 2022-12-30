@@ -7,9 +7,10 @@ import {
   updateConnectionMetaFileHandle,
   updateConnectionDataFileHandle,
   updateConnectionRecording,
+  resetConnection,
 } from '../Store/Actions/ConnectionActions';
-import { initFetchMoreBlob, updateBlobTaps } from '../Store/Actions/BlobActions';
-import { fetchMetaDataBlob } from '../Store/Actions/FetchMetaActions';
+import { initFetchMoreBlob, resetBlob, updateBlobTaps } from '../Store/Actions/BlobActions';
+import { fetchMetaDataBlob, resetMeta } from '../Store/Actions/FetchMetaActions';
 
 function mapStateToProps(state) {
   const { connectionReducer, blobReducer, fetchMetaReducer } = state;
@@ -31,6 +32,9 @@ function mapDispatchToProps(dispatch) {
     updateBlobTaps: (taps) => dispatch(updateBlobTaps(taps)),
     initFetchMoreBlob: (args) => dispatch(initFetchMoreBlob(args)),
     fetchMetaDataBlob: (connection) => dispatch(fetchMetaDataBlob(connection)),
+    resetConnection: () => dispatch(resetConnection()),
+    resetMeta: () => dispatch(resetMeta()),
+    resetBlob: () => dispatch(resetBlob()),
   };
 }
 
