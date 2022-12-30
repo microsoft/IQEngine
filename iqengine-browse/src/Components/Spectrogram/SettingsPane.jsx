@@ -11,42 +11,39 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 class SettingsPane extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       size: 1024,
       magnitudeMax: 255,
       magnitudeMin: 30,
-      taps: "[" + new Float32Array(1).fill(1).toString() + "]",
+      taps: '[' + new Float32Array(1).fill(1).toString() + ']',
     };
   }
 
   onChangeMagnitudeMax = (event) => {
     this.setState({
-      magnitudeMax: event.target.value
+      magnitudeMax: event.target.value,
     });
   };
 
   onChangeMagnitudeMin = (event) => {
     this.setState({
-      magnitudeMin: event.target.value
+      magnitudeMin: event.target.value,
     });
   };
 
-
   onChangeFftsize = (event) => {
     this.setState({
-      size: event.target.value
+      size: event.target.value,
     });
   };
 
   onChangeTaps = (event) => {
     this.setState({
-      taps: event.target.value
+      taps: event.target.value,
     });
   };
-
 
   onSubmitTaps = () => {
     let taps = new Array(1).fill(1);
@@ -65,7 +62,6 @@ class SettingsPane extends Component {
   };
 
   render() {
-
     const { handleFftSize, handleMagnitudeMax, handleMagnitudeMin } = this.props;
     const { size, taps, magnitudeMax, magnitudeMin } = this.state;
 
@@ -121,4 +117,4 @@ class SettingsPane extends Component {
   }
 }
 
-export default SettingsPane
+export default SettingsPane;

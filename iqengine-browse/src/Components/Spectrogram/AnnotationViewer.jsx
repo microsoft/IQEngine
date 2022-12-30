@@ -30,10 +30,19 @@ const AnnotationViewer = (props) => {
       context.lineWidth = '4';
       context.strokeStyle = 'black';
       //context.rect(select_fft_return.annotations[i].x , select_fft_return.annotations[i].y, select_fft_return.annotations[i].width, select_fft_return.annotations[i].height);
-      context.rect(select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size, (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height, select_fft_return.annotations[i].width * spectrogram_width_scale * select_fft_return.fft_size, (select_fft_return.annotations[i].height * 2) / select_fft_return.fft_size);
+      context.rect(
+        select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size,
+        (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height,
+        select_fft_return.annotations[i].width * spectrogram_width_scale * select_fft_return.fft_size,
+        (select_fft_return.annotations[i].height * 2) / select_fft_return.fft_size
+      );
       // add the label
       context.font = 'bold 28px serif';
-      context.fillText(select_fft_return.annotations[i].description, select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size, (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height - 5);
+      context.fillText(
+        select_fft_return.annotations[i].description,
+        select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size,
+        (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height - 5
+      );
       context.stroke();
     }
 

@@ -9,7 +9,7 @@ export const FetchMeta = (connection) => async (dispatch) => {
   let blobName = connection.recording + '.sigmf-meta'; // has to go outside of condition or else react gets mad
   if (connection.metafilehandle === undefined) {
     let { accountName, containerName, sasToken } = connection;
-    if (containerName === "") {
+    if (containerName === '') {
       console.error('container name was not filled out for some reason');
     }
 
@@ -29,4 +29,4 @@ export const FetchMeta = (connection) => async (dispatch) => {
 
   const meta_json = JSON.parse(meta_string);
   dispatch(returnMetaDataBlob(meta_json));
-}
+};

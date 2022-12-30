@@ -4,7 +4,6 @@ import fftReducer from './FFTReducer';
 import connectionReducer from './ConnectionReducer';
 import fetchMetaReducer from './FetchMetaReducer';
 
-
 const rootReducer = combineReducers({
   blobReducer,
   connectionReducer,

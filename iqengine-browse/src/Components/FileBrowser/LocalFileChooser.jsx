@@ -55,7 +55,6 @@ async function handleDirectoryEntry(handle, out, dir) {
 }
 
 const LocalFileChooser = (props) => {
-  
   const navigate = useNavigate();
 
   const openFile = async () => {
@@ -71,8 +70,8 @@ const LocalFileChooser = (props) => {
       props.updateConnectionDataFileHandle(handle1);
       navigate('/spectrogram/' + file1.name); // data file
     }
-  }
-  
+  };
+
   const openDir = async () => {
     const dirHandle = await window.showDirectoryPicker();
     const entries = await handleDirectoryEntry(dirHandle, [], '');
@@ -81,14 +80,14 @@ const LocalFileChooser = (props) => {
   };
 
   return (
-      <div className="container-fluid">
-        <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
-        <Button onClick={openDir}>Open Local Directory</Button>
-        &nbsp; &nbsp; or &nbsp; &nbsp;
-        <Button onClick={openFile}>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
-        <br />
-      </div>
-    );
-}
+    <div className="container-fluid">
+      <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
+      <Button onClick={openDir}>Open Local Directory</Button>
+      &nbsp; &nbsp; or &nbsp; &nbsp;
+      <Button onClick={openFile}>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
+      <br />
+    </div>
+  );
+};
 
 export default LocalFileChooser;

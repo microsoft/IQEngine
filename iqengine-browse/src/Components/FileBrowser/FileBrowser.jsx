@@ -27,15 +27,15 @@ class FileBrowser extends Component {
   }
 
   componentDidMount() {
-    this.props.updateConnectionMetaFileHandle("");
-    this.props.updateConnectionDataFileHandle("");
+    this.props.updateConnectionMetaFileHandle('');
+    this.props.updateConnectionDataFileHandle('');
   }
 
   static getDerivedStateFromProps(props, state) {
     if (JSON.stringify(props) !== JSON.stringify(state)) {
       return {
         ...props,
-      }
+      };
     }
   }
 
@@ -45,13 +45,7 @@ class FileBrowser extends Component {
   };
 
   render() {
-    const {
-      accountName,
-      containerName,
-      sasToken,
-      metafilehandle,
-      datafilehandle,
-    } = this.state;
+    const { accountName, containerName, sasToken, metafilehandle, datafilehandle } = this.state;
     return (
       <div>
         <Container>
@@ -90,7 +84,6 @@ class FileBrowser extends Component {
           data={this.state.recordingList}
         />
       </div>
-
     );
   }
 }

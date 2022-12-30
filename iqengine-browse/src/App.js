@@ -9,7 +9,6 @@ import FileBrowserContainer from './Containers/FileBrowserContainer';
 import SpectrogramContainer from './Containers/SpectrogramContainer';
 
 class App extends Component {
-
   render() {
     return (
       <div>
@@ -20,11 +19,7 @@ class App extends Component {
         </h1>
 
         <Routes>
-          <Route
-            exact
-            path="/"
-            element={<FileBrowserContainer />}
-          />
+          <Route exact path="/" element={<FileBrowserContainer />} />
 
           <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
         </Routes>

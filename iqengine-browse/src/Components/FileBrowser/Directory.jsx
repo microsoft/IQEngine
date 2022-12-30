@@ -40,14 +40,16 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
           <td></td>
           <td></td>
         </tr>
-        {isExpanded && files.children.map((item) =>
-          <Directory
-            key={Math.random()}
-            files={item}
-            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-            updateConnectionRecording={updateConnectionRecording}
-          />)}
+        {isExpanded &&
+          files.children.map((item) => (
+            <Directory
+              key={Math.random()}
+              files={item}
+              updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+              updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+              updateConnectionRecording={updateConnectionRecording}
+            />
+          ))}
       </>
     );
   }

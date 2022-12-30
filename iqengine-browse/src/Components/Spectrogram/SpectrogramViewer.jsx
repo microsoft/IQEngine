@@ -20,7 +20,7 @@ const SpectrogramViewer = (props) => {
     canvas.setAttribute('height', props.upper_tick_height + select_fft_return.image_data.height); // don't use style for this
 
     // Draw the spectrogram
-    console.log("drawing")
+    console.log('drawing');
     createImageBitmap(select_fft_return.image_data).then((renderer) => {
       context.drawImage(renderer, 0, props.upper_tick_height, spectrogram_width, select_fft_return.image_data.height);
     });

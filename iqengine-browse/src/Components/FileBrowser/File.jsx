@@ -14,9 +14,9 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
 
   const updateConnection = (metaFileHandle, dataFileHandle, name) => {
     updateConnectionMetaFileHandle(metaFileHandle);
-    updateConnectionDataFileHandle(dataFileHandle)
+    updateConnectionDataFileHandle(dataFileHandle);
     updateConnectionRecording(name);
-  }
+  };
 
   return (
     <tr>
@@ -26,7 +26,10 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
         </div>
       </td>
       <td className="align-middle">
-        <Link to={'spectrogram/' + info.name.replace('.sigmf-meta', '')} onClick={() => updateConnection(info.metaFileHandle, info.dataFileHandle, info.name.replace('.sigmf-meta', ''))}>
+        <Link
+          to={'spectrogram/' + info.name.replace('.sigmf-meta', '')}
+          onClick={() => updateConnection(info.metaFileHandle, info.dataFileHandle, info.name.replace('.sigmf-meta', ''))}
+        >
           {info.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}
         </Link>
       </td>

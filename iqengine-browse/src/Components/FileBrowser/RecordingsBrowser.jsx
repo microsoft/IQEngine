@@ -84,13 +84,15 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
 
   //console.log(dataTree);
   const DisplayData = dataTree.map((info, i) => {
-    return <Directory
-      key={Math.random()}
-      files={info}
-      updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-      updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-      updateConnectionRecording={updateConnectionRecording}
-    />;
+    return (
+      <Directory
+        key={Math.random()}
+        files={info}
+        updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+        updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+        updateConnectionRecording={updateConnectionRecording}
+      />
+    );
   });
 
   // Hide menu if the data hasnt loaded yet

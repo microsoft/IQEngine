@@ -49,8 +49,20 @@ export const select_fft = (state) => {
   const h = lines;
 
   // has there been any changes since we last rendered the FFT?  if not just return the existing fft_data
-  if (!(blob_size !== previous_blob_size || fft_size !== previous_fft_size || magnitude_min !== previous_magnitude_min || magnitude_max !== previous_magnitude_max)) {
-    let select_fft_return = { image_data: new ImageData(window.fft_data, w, h), annotations: window.annotations, sample_rate: window.sample_rate, fft_size: window.fft_size }; // scales will break without this
+  if (
+    !(
+      blob_size !== previous_blob_size ||
+      fft_size !== previous_fft_size ||
+      magnitude_min !== previous_magnitude_min ||
+      magnitude_max !== previous_magnitude_max
+    )
+  ) {
+    let select_fft_return = {
+      image_data: new ImageData(window.fft_data, w, h),
+      annotations: window.annotations,
+      sample_rate: window.sample_rate,
+      fft_size: window.fft_size,
+    }; // scales will break without this
     return select_fft_return;
   }
 

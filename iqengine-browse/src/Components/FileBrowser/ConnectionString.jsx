@@ -6,41 +6,40 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 class ConnectionStringInput extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      accountName: "",
-      containerName: "",
-      sasToken: ""
-    }
+      accountName: '',
+      containerName: '',
+      sasToken: '',
+    };
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props != state) {
+    if (props !== state) {
       return {
         accountName: props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME,
         containerName: props.containerName || process.env.REACT_APP_AZURE_BLOB_CONTAINER_NAME,
         sasToken: props.sasToken || process.env.REACT_APP_AZURE_BLOB_SAS_TOKEN,
-      }
+      };
     }
   }
 
   onAccountNameChange = (event) => {
     this.setState({
-      accountName: event.target.value
+      accountName: event.target.value,
     });
   };
 
   onContainerNameChange = (event) => {
     this.setState({
-      containerName: event.target.value
+      containerName: event.target.value,
     });
   };
 
   onSasTokenChange = (event) => {
     this.setState({
-      sasToken: event.target.value
+      sasToken: event.target.value,
     });
   };
 
@@ -56,12 +55,8 @@ class ConnectionStringInput extends Component {
   };
 
   render() {
-    const {
-      accountName,
-      containerName,
-      sasToken
-    } = this.state;
-    
+    const { accountName, containerName, sasToken } = this.state;
+
     return (
       <div id="ConnectionStringContainer" className="container-fluid">
         <h4 style={{ textAlign: 'center' }}>Browse Azure Blob Storage</h4>

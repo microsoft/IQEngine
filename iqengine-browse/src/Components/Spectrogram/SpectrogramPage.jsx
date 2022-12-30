@@ -5,7 +5,6 @@ import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 
 class SpectrogramPage extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -29,11 +28,11 @@ class SpectrogramPage extends Component {
       size: 0,
       status: 'idle',
       taps: new Float32Array(1).fill(1),
-    }
+    };
     clear_fft_data();
 
     initFetchMoreBlob({ connection: connection, blob: blob }); // fetch IQ for the first time
-    fetchMetaDataBlob(connection) // fetch the metadata
+    fetchMetaDataBlob(connection); // fetch the metadata
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -51,26 +50,26 @@ class SpectrogramPage extends Component {
     this.setState({
       fftSize: size,
     });
-  }
+  };
 
   handleMagnitudeMin = (min) => {
     this.setState({
       magnitudeMin: min,
     });
-  }
+  };
 
   handleMagnitudeMax = (max) => {
     this.setState({
       magnitudeMax: max,
     });
-  }
+  };
 
   render() {
     const { magnitudeMax, magnitudeMin, fftSize, blob, meta } = this.state;
     const fftState = {
       magnitudeMax: magnitudeMax,
       magnitudeMin: magnitudeMin,
-      size: fftSize
+      size: fftSize,
     };
     return (
       <div>
@@ -96,7 +95,7 @@ class SpectrogramPage extends Component {
             </Col>
           </Row>
         </Container>
-      </div >
+      </div>
     );
   }
 }

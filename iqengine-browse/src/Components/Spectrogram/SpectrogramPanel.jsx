@@ -52,7 +52,7 @@ const SpectrogramPanel = (props) => {
     if (isBottom) {
       console.log('Fetching more Data! Current Blobsize: ' + size);
       blob.size = size;
-      initFetchMoreBlob({connection:connection, blob:blob});
+      initFetchMoreBlob({ connection: connection, blob: blob });
     }
   }, [isBottom, size, initFetchMoreBlob, blob, connection]);
 
