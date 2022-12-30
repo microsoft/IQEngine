@@ -48,7 +48,7 @@ class SettingsPane extends Component {
   onSubmitTaps = () => {
     let taps = new Array(1).fill(1);
     // make sure the string is a valid array
-    var taps_string = this.state.taps;
+    let taps_string = this.state.taps;
     if (taps_string[0] === '[' && taps_string.slice(-1) === ']') {
       taps = taps_string.slice(1, -1).split(',');
       taps = taps.map((x) => parseFloat(x));

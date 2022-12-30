@@ -61,7 +61,7 @@ class FileBrowser extends Component {
             </Col>
             <Col md="auto">
               <br />
-              <div class="vr" style={{ opacity: 0.6, minHeight: 250 }}></div>
+              <div className="vr" style={{ opacity: 0.6, minHeight: 250 }}></div>
             </Col>
             <Col>
               <ConnectionStringInput

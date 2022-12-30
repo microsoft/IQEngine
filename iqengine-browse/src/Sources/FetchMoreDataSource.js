@@ -16,14 +16,14 @@ function convolve(array, taps) {
     return index % 2 === 1;
   });
 
-  var offset = ~~(taps.length / 2);
-  var output = new Float32Array(array.length);
-  for (var i = 0; i < array.length / 2; i++) {
-    var kmin = i >= offset ? 0 : offset - i;
-    var kmax = i + offset < array.length / 2 ? taps.length - 1 : array.length / 2 - 1 - i + offset;
+  let offset = ~~(taps.length / 2);
+  let output = new Float32Array(array.length);
+  for (let i = 0; i < array.length / 2; i++) {
+    let kmin = i >= offset ? 0 : offset - i;
+    let kmax = i + offset < array.length / 2 ? taps.length - 1 : array.length / 2 - 1 - i + offset;
     output[i * 2] = 0; // I
     output[i * 2 + 1] = 0; // Q
-    for (var k = kmin; k <= kmax; k++) {
+    for (let k = kmin; k <= kmax; k++) {
       output[i * 2] += I[i - offset + k] * taps[k]; // I
       output[i * 2 + 1] += Q[i - offset + k] * taps[k]; // Q
     }
@@ -46,6 +46,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   console.log('running FetchMoreData');
   const { connection, blob } = args;
   let offset = blob.size;
+  console.log('********* Offset:', offset);
 
   let bytes_per_sample = 2;
   if (window.data_type === 'ci16_le') {
@@ -96,7 +97,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
     console.error('unsupported data_type');
     samples = new Int16Array(buffer);
   }
-  return samples;
+  return samples; // these represent the new samples
 });
 
 export default FetchMoreData;

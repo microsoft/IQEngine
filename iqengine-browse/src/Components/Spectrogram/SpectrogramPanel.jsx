@@ -14,7 +14,7 @@ const SpectrogramPanel = (props) => {
   const text_width = 30;
   const upper_tick_height = 30;
 
-  var spectrogram_width = dimensions.width - text_width - timescale_width;
+  let spectrogram_width = dimensions.width - text_width - timescale_width;
 
   const checkSize = () => {
     const panel = document.getElementById('spectrogram-panel');

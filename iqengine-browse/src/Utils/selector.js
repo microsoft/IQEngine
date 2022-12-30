@@ -9,10 +9,10 @@ const FFT = require('fft.js');
 /* hmmm.... one problem with only incrementally generating the FFT is that if the FFT Size or Magnitude Divider chagne, you need to re-create the whole thing
 if the blob size changes, you only need to add on the new stuff. I think the solution is to build my own fancy selector with built in memoization stuff. */
 
-var previous_blob_size = 0;
-var previous_fft_size = 0;
-var previous_magnitude_max = 0;
-var previous_magnitude_min = 0;
+let previous_blob_size = 0;
+let previous_fft_size = 0;
+let previous_magnitude_max = 0;
+let previous_magnitude_min = 0;
 window.fft_data = new Uint8ClampedArray(); // this is where our FFT outputs are stored
 window.annotations = []; // gets filled in before return
 window.sample_rate = 1; // will get filled in
@@ -31,18 +31,18 @@ export const clear_fft_data = () => {
   window.fft_size = 1; // will get filled in
   window.data_type = 'not defined yet';
   window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
-  console.log('GOT HERE');
 };
 
 export const select_fft = (state) => {
   window.data_type = state.meta.global['core:datatype']; // there might be a race condition here, but this line sets it, and it gets read in blobslice.js
-  var blob_size = state.blob.size; // this is actually the number of int16's that have been downloaded so far
-  var fft_size = state.fft.size;
+  let blob_size = state.blob.size; // this is actually the number of int16's that have been downloaded so far
+  let fft_size = state.fft.size;
   window.fft_size = fft_size;
-  var magnitude_max = state.fft.magnitudeMax;
-  var magnitude_min = state.fft.magnitudeMin;
-  const num_ffts = Math.floor(window.iq_data.length / fft_size / 2); // divide by 2 because this is number of ints/floats not IQ samples
-  var startTime = performance.now();
+  let magnitude_max = state.fft.magnitudeMax;
+  let magnitude_min = state.fft.magnitudeMin;
+  console.log('zzzzz magnitudeMax:', state.fft.magnitudeMax, 'magnitudeMin:', state.fft.magnitudeMin, 'fft_size:', fft_size);
+  const num_ffts = Math.floor(blob_size / fft_size / 2); // divide by 2 because this is number of ints/floats not IQ samples
+  let startTime = performance.now();
   const pxPerLine = fft_size;
   const lines = num_ffts;
   const w = pxPerLine;
@@ -61,21 +61,21 @@ export const select_fft = (state) => {
       image_data: new ImageData(window.fft_data, w, h),
       annotations: window.annotations,
       sample_rate: window.sample_rate,
-      fft_size: window.fft_size,
-    }; // scales will break without this
+      fft_size: window.fft_size, // scales will break without this
+    };
     return select_fft_return;
   }
 
   // ...otherwise render the new portion
-  var starting_row = 0;
+  let starting_row = 0;
   if (num_ffts === 0) {
     return null;
   }
   const clearBuf = new ArrayBuffer(pxPerLine * lines * 4); // fills with 0s ie. rgba 0,0,0,0 = transparent
-  var new_fft_data = new Uint8ClampedArray(clearBuf);
+  let new_fft_data = new Uint8ClampedArray(clearBuf);
   let startOfs = 0;
 
-  // make a full canvas of the color map 0 values
+  // Fill with zeros
   for (let i = 0; i < pxPerLine * lines * 4; i += 4) {
     // byte reverse so number aa bb gg rr
     new_fft_data[i] = colMap[0][0]; // red
@@ -89,13 +89,20 @@ export const select_fft = (state) => {
     new_fft_data.set(window.fft_data, 0);
   }
 
-  for (var i = starting_row; i < num_ffts; i++) {
-    const x = window.iq_data.slice(i * fft_size * 2, (i + 1) * fft_size * 2); // mult by 2 because this is int/floats not IQ samples
+  if (starting_row !== 0) {
+    starting_row = starting_row - 1000;
+  }
+
+  // loop through each row
+  console.log('starting_row:', starting_row, 'num_ffts:', num_ffts);
+  for (let i = starting_row; i < num_ffts; i++) {
+    const samples_slice = window.iq_data.slice(i * fft_size * 2, (i + 1) * fft_size * 2); // mult by 2 because this is int/floats not IQ samples
+    //console.log('YYYYYYYYYY samples_slice:', samples_slice.slice(0, 10));
     const f = new FFT(fft_size);
     const out = f.createComplexArray(); // creates an empty array the length of fft.size*2
-    f.transform(out, x); // assumes input (2nc arg) is in form IQIQIQIQ and twice the length of fft.size
-    var magnitudes = new Array(out.length / 2);
-    for (var j = 0; j < out.length / 2; j++) {
+    f.transform(out, samples_slice); // assumes input (2nd arg) is in form IQIQIQIQ and twice the length of fft.size
+    let magnitudes = new Array(out.length / 2);
+    for (let j = 0; j < out.length / 2; j++) {
       magnitudes[j] = Math.sqrt(Math.pow(out[j * 2], 2) + Math.pow(out[j * 2 + 1], 2)); // take magnitude
     }
     fftshift(magnitudes); // in-place
@@ -132,7 +139,8 @@ export const select_fft = (state) => {
       new_fft_data[line_offset + opIdx + 3] = rgba[3]; // alpha
     }
   }
-  var endTime = performance.now();
+  console.log('zzzzzz', new_fft_data.slice(new_fft_data.length - 20, new_fft_data.length));
+  let endTime = performance.now();
   console.log('Rendering spectrogram took', endTime - startTime, 'milliseconds'); // first cut of our code processed+rendered 0.5M samples in 760ms on marcs computer
 
   // Annotation portion

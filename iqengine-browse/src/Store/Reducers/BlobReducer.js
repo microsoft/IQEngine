@@ -9,7 +9,7 @@ import {
   UPDATE_BLOB_TAPS,
 } from '../../Constants/BlobTypes';
 
-window.iq_data = []; // This is GROSS!!! but it works?! I need a global way to store large binary variables.
+window.iq_data = []; // This is GROSS!!! but it works?! We need a cleaner way to store large binary data.
 
 const initialState = {
   size: 0,
@@ -30,8 +30,12 @@ const fetchMoreDataSuccessUpdates = (action) => {
     new_iq_data = new Int16Array(size);
   }
 
-  new_iq_data.set(window.iq_data, 0);
-  new_iq_data.set(action.payload, window.iq_data.length); // again this is elements, not bytes
+  // Copy existing IQ samples to new_iq_data, then append the new IQ samples, then save it back to window.iq_data
+  new_iq_data.set(window.iq_data, 0); // 2nd arg of set() is the offset into the target array at which to begin writing values from the source array
+  new_iq_data.set(action.payload, window.iq_data.length); // see above comment.  units are elements, not bytes!
+  console.log('********** Appended to iq_data!');
+  console.log(new_iq_data.length);
+  console.log(action.payload.slice(0, 10)); // the new IQ samples. THEY ALL APPEAR TO BE THE SAME (but different from the very first set)
   window.iq_data = new_iq_data;
 };
 

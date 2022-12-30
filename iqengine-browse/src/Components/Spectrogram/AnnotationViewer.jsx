@@ -47,7 +47,7 @@ const AnnotationViewer = (props) => {
     }
 
     // Draw the vertical scales
-    var ticks = select_fft_return.image_data.height / 10;
+    let ticks = select_fft_return.image_data.height / 10;
     context.font = '16px serif';
     const font_height = context.measureText('100').actualBoundingBoxAscent;
     //const max_txt_width = context.measureText("100").width;

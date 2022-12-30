@@ -36,7 +36,7 @@ class SpectrogramPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    var newState = state;
+    let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
     }
