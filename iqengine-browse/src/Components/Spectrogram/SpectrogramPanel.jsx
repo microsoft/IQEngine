@@ -6,6 +6,7 @@ import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import React, { useEffect, useState } from 'react';
 import { FETCHES_PER_USEEFFECT, COUNT_PER_FETCH } from '../../Utils/constants';
+import { Stage, Layer, Rect, Circle } from 'react-konva';
 
 const SpectrogramPanel = (props) => {
   const [isBottom, setIsBottom] = useState(false);
@@ -74,24 +75,26 @@ const SpectrogramPanel = (props) => {
   return (
     <div>
       <div id="spectrogram-panel" style={{ display: 'grid', position: 'relative' }}>
-        <SpectrogramViewer
-          timescale_width={timescale_width}
-          text_width={text_width}
-          upper_tick_height={upper_tick_height}
-          spectrogram_width={spectrogram_width}
-          fft={props.fft}
-          meta={props.meta}
-          blob={props.blob}
-        />
-        <AnnotationViewer
-          timescale_width={timescale_width}
-          text_width={text_width}
-          upper_tick_height={upper_tick_height}
-          spectrogram_width={spectrogram_width}
-          fft={props.fft}
-          meta={props.meta}
-          blob={props.blob}
-        />
+        <Stage width="800" height="1000">
+          <SpectrogramViewer
+            timescale_width={timescale_width}
+            text_width={text_width}
+            upper_tick_height={upper_tick_height}
+            spectrogram_width={spectrogram_width}
+            fft={props.fft}
+            meta={props.meta}
+            blob={props.blob}
+          />
+          <AnnotationViewer
+            timescale_width={timescale_width}
+            text_width={text_width}
+            upper_tick_height={upper_tick_height}
+            spectrogram_width={spectrogram_width}
+            fft={props.fft}
+            meta={props.meta}
+            blob={props.blob}
+          />
+        </Stage>
         <RulerTop
           timescale_width={timescale_width}
           text_width={text_width}
