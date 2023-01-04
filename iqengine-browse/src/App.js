@@ -8,6 +8,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import FileBrowserContainer from './Containers/FileBrowserContainer';
 import SpectrogramContainer from './Containers/SpectrogramContainer';
 
+//This is a comment!
+
 class App extends Component {
   render() {
     return (
