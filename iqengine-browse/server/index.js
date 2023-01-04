@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
+//new change
 import 'bootstrap/dist/css/bootstrap.css';
 const {
     StorageSharedKeyCredential,
