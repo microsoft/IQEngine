@@ -33,11 +33,25 @@ export default function blobReducer(state = initialState, action) {
     case FETCH_MORE_DATA_LOADING: // FetchMoreData/pending, where FetchMoreData is the async thunk function
       return {
         ...state,
-        status: 'loading',
+        status: "loading",
       };
     case FETCH_MORE_DATA_SUCCESS: // FetchMoreData/fulfilled, where FetchMoreData is the async thunk function
-      const size = window.iq_data.length + action.payload.length; // payload is the new samples downloaded
-      window.iq_data.push(...action.payload); // adds new samples to iq_data.  works as long as we only grab <=100k samples at a time (call stack limit)
+      let size = window.iq_data.length + action.payload.samples.length; // Don't use byte length because the new array has to be specified by the num of elements not bytes
+      // Copy existing IQ samples to new_iq_data, then append the new IQ samples, then save it back to window.iq_data
+      let new_iq_data;
+      // TODO: would be nice to get rid of window.data_type and just have it only stored in meta
+      if (action.payload.data_type === 'ci16_le') {
+        new_iq_data = new Int16Array(size);
+      } else if (action.payload.data_type === 'cf32_le') {
+        new_iq_data = new Float32Array(size);
+      } else {
+        console.error('unsupported data_type');
+        new_iq_data = new Int16Array(size);
+      }
+      new_iq_data.set(window.iq_data, 0); // 2nd arg of set() is the offset into the target array at which to begin writing values from the source array
+      new_iq_data.set(action.payload.samples, window.iq_data.length); // see above comment.  units are elements, not bytes!
+      window.iq_data = new_iq_data;
+      // window.iq_data = [].concat(window.iq_data, action.payload); // adds new samples to iq_data.  works as long as we only grab <=100k samples at a time (call stack limit)
       console.log('window.iq_data length is now', window.iq_data.length);
       return {
         ...state,

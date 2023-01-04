@@ -11,7 +11,9 @@ class SpectrogramPage extends Component {
       connection: props.connection,
       blob: props.blob,
       meta: props.meta,
-      fft: props.fft,
+      fftSize: 1024,
+      magnitudeMax: 255,
+      magnitudeMin: 30,
     };
   }
 
@@ -19,7 +21,6 @@ class SpectrogramPage extends Component {
     let { fetchMetaDataBlob, connection } = this.props;
     window.iq_data = [];
     clear_fft_data();
-
     fetchMetaDataBlob(connection); // fetch the metadata
   }
 
@@ -28,7 +29,6 @@ class SpectrogramPage extends Component {
     this.props.resetMeta();
     window.iq_data = [];
     this.props.resetBlob();
-    this.props.resetFFT();
   }
 
   // Not sure why we can do fft but not blob (we have to do blob.size)?
@@ -36,19 +36,42 @@ class SpectrogramPage extends Component {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
+      props.fetchMoreData({ 'blob': props.blob, 'meta': props.meta, 'connection': props.connection });
     }
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
     }
-    if (props.fft !== state.fft) {
-      newState.fft = props.fft;
-    }
+    // if (JSON.stringify(props.blob) !== JSON.stringify(state.blob)) {
+    //   newState.blob = props.blob;
+    // }
     return { ...newState };
   }
 
-  render() {
-    const { blob, meta, fft } = this.state;
+  handleFftSize = (size) => {
+    this.setState({
+      fftSize: size,
+    });
+  };
 
+  handleMagnitudeMin = (min) => {
+    this.setState({
+      magnitudeMin: min,
+    });
+  };
+
+  handleMagnitudeMax = (max) => {
+    this.setState({
+      magnitudeMax: max,
+    });
+  };
+
+  render() {
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin } = this.state;
+    const fft = {
+      size: fftSize,
+      magnitudeMax: magnitudeMax,
+      magnitudeMin: magnitudeMin
+    }
     return (
       <div>
         <Container fluid>
@@ -56,9 +79,9 @@ class SpectrogramPage extends Component {
             <Col className="col-3">
               <Sidebar
                 updateBlobTaps={this.props.updateBlobTaps}
-                updateMagnitudeMax={this.props.updateMagnitudeMax}
-                updateMagnitudeMin={this.props.updateMagnitudeMin}
-                updateFftsize={this.props.updateFftsize}
+                updateMagnitudeMax={this.handleMagnitudeMax}
+                updateMagnitudeMin={this.handleMagnitudeMin}
+                updateFftsize={this.handleFftSize}
                 fft={fft}
                 blob={blob}
                 meta={meta}
