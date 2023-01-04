@@ -36,14 +36,14 @@ class SpectrogramPage extends Component {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
-      props.fetchMoreData({ 'blob': props.blob, 'meta': props.meta, 'connection': props.connection });
+      props.blob.status !== "loading" && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
     }
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
     }
-    // if (JSON.stringify(props.blob) !== JSON.stringify(state.blob)) {
-    //   newState.blob = props.blob;
-    // }
+    if (props.blob.status !== state.blob.status) {
+      newState.blob.status = props.blob.status;
+    }
     return { ...newState };
   }
 
@@ -91,7 +91,6 @@ class SpectrogramPage extends Component {
               <SpectrogramPanel
                 fetchMoreData={this.props.fetchMoreData}
                 connection={this.state.connection}
-                updateBlobSize={this.props.updateBlobSize}
                 fft={fft}
                 blob={blob}
                 meta={meta}

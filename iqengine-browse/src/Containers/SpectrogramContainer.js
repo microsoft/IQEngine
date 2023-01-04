@@ -9,7 +9,7 @@ import {
   updateConnectionRecording,
   resetConnection,
 } from '../Store/Actions/ConnectionActions';
-import { fetchMoreData, resetBlob, updateBlobTaps, updateBlobSize } from '../Store/Actions/BlobActions';
+import { fetchMoreData, resetBlob, updateBlobTaps } from '../Store/Actions/BlobActions';
 import { fetchMetaDataBlob, resetMeta } from '../Store/Actions/FetchMetaActions';
 
 function mapStateToProps(state) {
@@ -31,7 +31,6 @@ function mapDispatchToProps(dispatch) {
     updateConnectionDataFileHandle: (handle) => dispatch(updateConnectionDataFileHandle(handle)),
     updateConnectionRecording: (recording) => dispatch(updateConnectionRecording(recording)),
     updateBlobTaps: (taps) => dispatch(updateBlobTaps(taps)),
-    updateBlobSize: (x) => dispatch(updateBlobSize(x)),
     fetchMoreData: (args) => dispatch(fetchMoreData(args)),
     fetchMetaDataBlob: (connection) => dispatch(fetchMetaDataBlob(connection)),
     resetConnection: () => dispatch(resetConnection()),
