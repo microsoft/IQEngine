@@ -32,6 +32,7 @@ class SettingsPane extends Component {
     this.setState({
       window: event,
     });
+    this.props.updateWindowChange(event);
   };
 
   onSubmitMagnitudeMax = () => {

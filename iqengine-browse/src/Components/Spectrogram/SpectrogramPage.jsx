@@ -14,6 +14,7 @@ class SpectrogramPage extends Component {
       fftSize: 1024,
       magnitudeMax: 255,
       magnitudeMin: 30,
+      window : "hamming",
     };
   }
 
@@ -59,6 +60,12 @@ class SpectrogramPage extends Component {
     });
   };
 
+  handleWindowChange = (x) => {
+    this.setState({
+      window : x,
+    });
+  };
+
   handleMagnitudeMax = (max) => {
     this.setState({
       magnitudeMax: max,
@@ -82,6 +89,7 @@ class SpectrogramPage extends Component {
                 updateMagnitudeMax={this.handleMagnitudeMax}
                 updateMagnitudeMin={this.handleMagnitudeMin}
                 updateFftsize={this.handleFftSize}
+                updateWindowChange={this.handleWindowChange}
                 fft={fft}
                 blob={blob}
                 meta={meta}
@@ -94,6 +102,7 @@ class SpectrogramPage extends Component {
                 fft={fft}
                 blob={blob}
                 meta={meta}
+                window={this.state.window}
               />
             </Col>
           </Row>

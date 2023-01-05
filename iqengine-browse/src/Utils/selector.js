@@ -29,7 +29,7 @@ export const clear_fft_data = () => {
   window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
-export const select_fft = (blob, fft, meta) => {
+export const select_fft = (blob, fft, meta, windowFunction) => {
   let blob_size = window.iq_data.length; // this is actually the number of int16's that have been downloaded so far
   let fft_size = fft.size;
   let magnitude_max = fft.magnitudeMax;
@@ -76,8 +76,10 @@ export const select_fft = (blob, fft, meta) => {
     let samples_slice = window.iq_data.slice(i * fft_size * 2, (i + 1) * fft_size * 2); // mult by 2 because this is int/floats not IQ samples
 
     // Apply a hamming window
-    for (let window_i = 0; window_i < fft_size; window_i++) {
-      samples_slice[window_i] = samples_slice[window_i] * (0.54 - 0.46 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
+    if (windowFunction === 'hamming') {
+      for (let window_i = 0; window_i < fft_size; window_i++) {
+        samples_slice[window_i] = samples_slice[window_i] * (0.54 - 0.46 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
+      }
     }
 
     const f = new FFT(fft_size);

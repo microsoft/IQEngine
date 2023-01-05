@@ -33,7 +33,7 @@ export default function blobReducer(state = initialState, action) {
     case FETCH_MORE_DATA_LOADING: // FetchMoreData/pending, where FetchMoreData is the async thunk function
       return {
         ...state,
-        status: "loading",
+        status: 'loading',
       };
     case FETCH_MORE_DATA_SUCCESS: // FetchMoreData/fulfilled, where FetchMoreData is the async thunk function
       let size = window.iq_data.length + action.payload.samples.length; // Don't use byte length because the new array has to be specified by the num of elements not bytes
@@ -52,7 +52,6 @@ export default function blobReducer(state = initialState, action) {
       new_iq_data.set(action.payload.samples, window.iq_data.length); // see above comment.  units are elements, not bytes!
       window.iq_data = new_iq_data;
       // window.iq_data = [].concat(window.iq_data, action.payload); // adds new samples to iq_data.  works as long as we only grab <=100k samples at a time (call stack limit)
-      console.log('window.iq_data length is now', window.iq_data.length);
       return {
         ...state,
         status: 'idle',

@@ -5,9 +5,9 @@ import { select_fft } from '../../Utils/selector';
 import React, { useRef } from 'react';
 
 const SpectrogramViewer = (props) => {
-  let { blob, fft, meta } = props;
+  let { blob, fft, meta, windowFunction } = props;
 
-  let select_fft_return = select_fft(blob, fft, meta); // select_fft_return.image_data grows each time we grab more samples
+  let select_fft_return = select_fft(blob, fft, meta, windowFunction); // select_fft_return.image_data grows each time we grab more samples
   //const dispatch = useDispatch();
   const canvasRef = useRef(null);
   const canvas = canvasRef.current;

@@ -52,7 +52,6 @@ const SpectrogramPanel = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('------------ isBottom:', isBottom, 'status:', blob.status);
     if (isBottom && blob.status !== 'loading') {
       console.log('Fetching more Data!');
       // Call fetch more multiple times since it only grabs a few dozen rows each call
@@ -78,6 +77,7 @@ const SpectrogramPanel = (props) => {
           fft={props.fft}
           meta={props.meta}
           blob={props.blob}
+          windowFunction={props.window}
         />
         <AnnotationViewer
           timescale_width={timescale_width}
