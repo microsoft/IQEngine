@@ -18,12 +18,19 @@ class SettingsPane extends Component {
       magnitudeMax: 255,
       magnitudeMin: 30,
       taps: '[' + new Float32Array(1).fill(1).toString() + ']',
+      window: "hamming"
     };
   }
 
   onChangeMagnitudeMax = (event) => {
     this.setState({
       magnitudeMax: event.target.value,
+    });
+  };
+
+  onChangeWindow = (event) => {
+    this.setState({
+      window: event,
     });
   };
 
@@ -121,6 +128,11 @@ class SettingsPane extends Component {
         <DropdownButton title="Data Type" id="dropdown-menu-align-right" onSelect>
           <Dropdown.Item eventKey="cf32_le">complex float32</Dropdown.Item>
           <Dropdown.Item eventKey="ci16_le">complex int16</Dropdown.Item>
+        </DropdownButton>
+
+        <DropdownButton title="Window" id="dropdown-menu-align-right" onSelect={this.onChangeWindow}>
+          <Dropdown.Item eventKey="hamming">Hamming</Dropdown.Item>
+          <Dropdown.Item eventKey="none">None</Dropdown.Item>
         </DropdownButton>
         <p></p>
       </Form>
