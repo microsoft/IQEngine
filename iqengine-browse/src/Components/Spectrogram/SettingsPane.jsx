@@ -52,7 +52,7 @@ class SettingsPane extends Component {
       this.setState({
         error: {
           ...error,
-          magnitudeMax: "Magnitude max must be an integer, greater than the magnitude min, and between 0 and 255",
+          magnitudeMax: "Magnitude max must be an integer, greater than the magnitude min, and between 1 and 255",
         }
       })
     }
@@ -80,7 +80,7 @@ class SettingsPane extends Component {
       this.setState({
         error: {
           ...error,
-          magnitudeMin: "Magnitude min must be an integer, less than the magnitude max, and between 0 and 255",
+          magnitudeMin: "Magnitude min must be an integer, less than the magnitude max, and between 1 and 255",
         }
       })
     }
