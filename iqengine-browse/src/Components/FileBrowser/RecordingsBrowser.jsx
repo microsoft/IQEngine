@@ -112,6 +112,7 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
             <th>Sample Rate [MHz]</th>
             <th># of Annotations</th>
             <th style={{ width: '10%' }}>Author</th>
+            <th style={{ width: '10%' }}>Email</th>
           </tr>
         </thead>
         <tbody>{DisplayData}</tbody>

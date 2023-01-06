@@ -57,6 +57,7 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
         </div>
       </td>
       <td className="align-middle">{info.author}</td>
+      <td className="align-middle">{info.email}</td>
     </tr>
   );
 }

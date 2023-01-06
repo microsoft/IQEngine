@@ -15,6 +15,17 @@ async function blobToString(blob) {
 
 function parseMeta(json_string, baseUrl, fName) {
   const obj = JSON.parse(json_string); // string to JSON
+  const emailName = obj['global']['core:author'];
+  var author = emailName.split('<');
+  var email;
+  if (author.length === 1) {
+    email = null;
+  } else {
+    email = author[1].split('>');
+    email = email[0].trim();
+    author = author[0].trim();
+  }
+
   return {
     name: fName,
     sampleRate: obj['global']['core:sample_rate'] / 1e6, // in MHz
@@ -22,7 +33,8 @@ function parseMeta(json_string, baseUrl, fName) {
     frequency: obj['captures'][0]['core:frequency'] / 1e6, // in MHz
     annotations: obj['annotations'],
     numberOfAnnotation: obj['annotations'].length,
-    author: obj['global']['core:author'],
+    author: author,
+    email: email,
     type: 'file',
     thumbnailUrl: baseUrl + fName + '.png',
   };
