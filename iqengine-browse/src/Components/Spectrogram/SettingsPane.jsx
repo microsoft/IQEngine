@@ -18,7 +18,7 @@ class SettingsPane extends Component {
       magnitudeMax: 255,
       magnitudeMin: 30,
       taps: '[' + new Float32Array(1).fill(1).toString() + ']',
-      window: "hamming"
+      windowFunction: 'hamming',
     };
   }
 
@@ -28,9 +28,9 @@ class SettingsPane extends Component {
     });
   };
 
-  onChangeWindow = (event) => {
+  onChangeWindowFunction = (event) => {
     this.setState({
-      window: event,
+      windowFunction: event,
     });
     this.props.updateWindowChange(event);
   };
@@ -82,7 +82,7 @@ class SettingsPane extends Component {
   };
 
   render() {
-    const { size, taps, magnitudeMax, magnitudeMin } = this.state;
+    const { size, taps, magnitudeMax, magnitudeMin, windowFunction } = this.state;
 
     return (
       <Form>
@@ -126,14 +126,18 @@ class SettingsPane extends Component {
           </InputGroup>
         </Form.Group>
 
-        <DropdownButton title="Data Type" id="dropdown-menu-align-right" onSelect>
+        <DropdownButton title="Data Type" variant="secondary" className="mb-3" id="dropdown-menu-align-right" onSelect>
           <Dropdown.Item eventKey="cf32_le">complex float32</Dropdown.Item>
           <Dropdown.Item eventKey="ci16_le">complex int16</Dropdown.Item>
         </DropdownButton>
 
-        <DropdownButton title="Window" id="dropdown-menu-align-right" onSelect={this.onChangeWindow}>
-          <Dropdown.Item eventKey="hamming">Hamming</Dropdown.Item>
-          <Dropdown.Item eventKey="none">None</Dropdown.Item>
+        <DropdownButton title="Window" variant="secondary" className="mb-3" id="dropdown-menu-align-right" onSelect={this.onChangeWindowFunction}>
+          <Dropdown.Item active={windowFunction === 'hamming'} eventKey="hamming">
+            Hamming
+          </Dropdown.Item>
+          <Dropdown.Item active={windowFunction === 'none'} eventKey="none">
+            None
+          </Dropdown.Item>
         </DropdownButton>
         <p></p>
       </Form>
