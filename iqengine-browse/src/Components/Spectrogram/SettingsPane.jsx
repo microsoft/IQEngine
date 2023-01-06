@@ -19,6 +19,9 @@ class SettingsPane extends Component {
       magnitudeMin: 30,
       taps: '[' + new Float32Array(1).fill(1).toString() + ']',
       windowFunction: 'hamming',
+      error: {magnitudeMax: "",
+        magnitudeMin: "",
+        size: "" }
     };
   }
 
@@ -36,7 +39,23 @@ class SettingsPane extends Component {
   };
 
   onSubmitMagnitudeMax = () => {
-    this.props.updateMagnitudeMax(this.state.magnitudeMax);
+    const { magnitudeMax, error, magnitudeMin } = this.state;
+    if (parseInt(magnitudeMax) && (magnitudeMax > magnitudeMin && magnitudeMax < "256")) {
+      this.props.updateMagnitudeMax(magnitudeMax);
+      this.setState({
+        error: {
+          ...error,
+          magnitudeMax: ""
+        }
+      })
+    } else {
+      this.setState({
+        error: {
+          ...error,
+          magnitudeMax: "Magnitude max must be an integer, greater than the magnitude min, and between 0 and 255",
+        }
+      })
+    }
   };
 
   onChangeMagnitudeMin = (event) => {
@@ -46,7 +65,25 @@ class SettingsPane extends Component {
   };
 
   onSubmitMagnitudeMin = () => {
-    this.props.updateMagnitudeMin(this.state.magnitudeMin);
+    const { magnitudeMin, error, magnitudeMax } = this.state;
+    const min = parseInt(magnitudeMin);
+    const max = parseInt(magnitudeMax);
+    if (min && min >= 0 && min < max) {
+      this.props.updateMagnitudeMax(magnitudeMin);
+      this.setState({
+        error: {
+          ...error,
+          magnitudeMin: ""
+        }
+      })
+    } else {
+      this.setState({
+        error: {
+          ...error,
+          magnitudeMin: "Magnitude min must be an integer, less than the magnitude max, and between 0 and 255",
+        }
+      })
+    }
   };
 
   onChangeFftsize = (event) => {
@@ -56,7 +93,24 @@ class SettingsPane extends Component {
   };
 
   onSubmitFftsize = () => {
-    this.props.updateFftsize(this.state.size);
+    const {size, error} = this.state;
+    const intSize = parseInt(size);
+    if (intSize >= 64 && (Math.sqrt(intSize) % 2 === 0)) {
+      this.props.updateFftsize(this.state.size);
+      this.setState({
+        error: {
+          ...error,
+          size: ""
+        }
+      })
+    } else {
+      this.setState({
+        error: {
+          ...error,
+          size: "Size must be a power of 2 and at least 64",
+        }
+      })
+    }
   };
 
   onChangeTaps = (event) => {
@@ -82,12 +136,13 @@ class SettingsPane extends Component {
   };
 
   render() {
-    const { size, taps, magnitudeMax, magnitudeMin, windowFunction } = this.state;
+    const { size, taps, magnitudeMax, magnitudeMin, windowFunction, error } = this.state;
 
     return (
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Magnitude Max</Form.Label>
+          <div style={{color:"red", marginBottom:"2px"}}>{error.magnitudeMax}</div>
           <InputGroup className="mb-3">
             <Form.Control type="text" defaultValue={magnitudeMax} onChange={this.onChangeMagnitudeMax} size="sm" />
             <Button className="btn btn-secondary" onClick={this.onSubmitMagnitudeMax}>
@@ -98,6 +153,7 @@ class SettingsPane extends Component {
 
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Magnitude Min</Form.Label>
+          <div style={{color:"red", marginBottom:"2px"}}>{error.magnitudeMin}</div>
           <InputGroup className="mb-3">
             <Form.Control type="text" defaultValue={magnitudeMin} onChange={this.onChangeMagnitudeMin} size="sm" />
             <Button className="btn btn-secondary" onClick={this.onSubmitMagnitudeMin}>
@@ -108,6 +164,7 @@ class SettingsPane extends Component {
 
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>FFT Size</Form.Label>
+          <div style={{color:"red", marginBottom:"2px"}}>{error.size}</div>
           <InputGroup className="mb-3">
             <Form.Control type="text" defaultValue={size} onChange={this.onChangeFftsize} size="sm" />
             <Button className="btn btn-secondary" onClick={this.onSubmitFftsize}>
