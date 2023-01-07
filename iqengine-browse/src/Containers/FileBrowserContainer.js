@@ -8,11 +8,13 @@ import {
   updateConnectionDataFileHandle,
   updateConnectionRecording,
 } from '../Store/Actions/ConnectionActions';
+import { fetchRecordingsList } from '../Store/Actions/RecordingsListActions';
 
 function mapStateToProps(state) {
-  const { connectionReducer } = state;
+  const { connectionReducer, recordingsListReducer } = state;
   return {
-    ...connectionReducer,
+    connection: { ...connectionReducer },
+    recording: { ...recordingsListReducer },
   };
 }
 
@@ -24,6 +26,7 @@ function mapDispatchToProps(dispatch) {
     updateConnectionMetaFileHandle: (handle) => dispatch(updateConnectionMetaFileHandle(handle)),
     updateConnectionDataFileHandle: (handle) => dispatch(updateConnectionDataFileHandle(handle)),
     updateConnectionRecording: (recording) => dispatch(updateConnectionRecording(recording)),
+    fetchRecordingsList: (connection) => dispatch(fetchRecordingsList(connection)),
   };
 }
 

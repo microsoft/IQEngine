@@ -15,14 +15,13 @@ import RecordingsBrowser from './RecordingsBrowser';
 class FileBrowser extends Component {
   constructor(props) {
     super(props);
-    this.setRecordingList.bind(this);
     this.state = {
-      recordingList: [], // look at the end of DataFetcher to see how this data structure works
-      accountName: props.accountName,
-      containerName: props.containerName,
-      sasToken: props.sasToken,
-      metafilehandle: props.metafilehandle,
-      datafilehandle: props.datafilehandle,
+      recording: props.recording, // look at the end of DataFetcher to see how this data structure works
+      accountName: props.connection.accountName,
+      containerName: props.connection.containerName,
+      sasToken: props.connection.sasToken,
+      metafilehandle: props.connection.metafilehandle,
+      datafilehandle: props.connection.datafilehandle,
     };
   }
 
@@ -39,13 +38,8 @@ class FileBrowser extends Component {
     }
   }
 
-  // Allows child to set state in parent component (this component)
-  setRecordingList = (x) => {
-    this.setState({ recordingList: x });
-  };
-
   render() {
-    const { accountName, containerName, sasToken, metafilehandle, datafilehandle } = this.state;
+    const { accountName, containerName, sasToken, metafilehandle, datafilehandle, recording } = this.state;
     return (
       <div>
         <Container>
@@ -65,7 +59,7 @@ class FileBrowser extends Component {
             </Col>
             <Col>
               <ConnectionStringInput
-                setRecordingList={this.setRecordingList}
+                setRecordingList={this.props.fetchRecordingsList}
                 updateConnectionAccountName={this.props.updateConnectionAccountName}
                 updateConnectionContainerName={this.props.updateConnectionContainerName}
                 updateConnectionSasToken={this.props.updateConnectionSasToken}
@@ -81,7 +75,7 @@ class FileBrowser extends Component {
           updateConnectionRecording={this.props.updateConnectionRecording}
           updateConnectionMetaFileHandle={this.props.updateConnectionMetaFileHandle}
           updateConnectionDataFileHandle={this.props.updateConnectionDataFileHandle}
-          data={this.state.recordingList}
+          data={recording.recordingsList}
         />
       </div>
     );
