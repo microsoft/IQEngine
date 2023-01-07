@@ -21,6 +21,7 @@ const Sidebar = (props) => {
                 updateMagnitudeMax={props.updateMagnitudeMax}
                 updateMagnitudeMin={props.updateMagnitudeMin}
                 updateFftsize={props.updateFftsize}
+                updateWindowChange={props.updateWindowChange}
                 meta={props.meta}
               />
             </Accordion.Body>

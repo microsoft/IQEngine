@@ -3,7 +3,6 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { COUNT_PER_FETCH } from '../Utils/constants';
-
 function convolve(array, taps) {
   //console.log(taps);
 
@@ -50,7 +49,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   // FIXME the first time this function is called, the data_type hasnt been set yet
   if (!meta.global['core:datatype']) {
     console.log("WARNING: data_type hasn't been set yet");
-    return new Int16Array(0); // return no samples
+    return { 'samples': new Int16Array(0), 'data_type': 'ci16_le' }; // return no samples
   }
   const data_type = meta.global['core:datatype'];
 
@@ -106,7 +105,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
     console.error('unsupported data_type');
     samples = new Int16Array(buffer);
   }
-  return samples; // these represent the new samples
+  return { 'samples': samples, 'data_type': data_type }; // these represent the new samples
 });
 
 export default FetchMoreData;

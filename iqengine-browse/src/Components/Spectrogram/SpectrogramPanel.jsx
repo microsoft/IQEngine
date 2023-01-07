@@ -18,7 +18,7 @@ const SpectrogramPanel = (props) => {
 
   let spectrogram_width = dimensions.width - text_width - timescale_width;
 
-  let { fetchMoreData, updateBlobSize, connection, blob, meta } = props;
+  let { fetchMoreData, connection, blob, meta } = props;
   let { status } = props.blob;
 
   // hooks let you use state and other React features without writing a class, useEffect lets you perform side effects in function components
@@ -54,20 +54,16 @@ const SpectrogramPanel = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('------------ isBottom:', isBottom, 'status:', status);
-    if (isBottom) {
+    if (isBottom && blob.status !== 'loading') {
       console.log('Fetching more Data!');
       // Call fetch more multiple times since it only grabs a few dozen rows each call
-      for (let i = 0; i < FETCHES_PER_USEEFFECT; i++) {
-        fetchMoreData({ connection: connection, blob: blob, meta: meta });
-        updateBlobSize(blob.size + COUNT_PER_FETCH);
-      }
+      fetchMoreData({ connection: connection, blob: blob, meta: meta });
     }
-  }, [isBottom, fetchMoreData, updateBlobSize, status, blob, connection, meta]);
+  }, [isBottom, fetchMoreData, blob, connection, meta]);
 
   useEffect(() => {
     if (isBottom && status === 'idle') {
-      console.log('Finished loading more DATA! - unsetting bottom');
+      console.log('Finished loading more DATA! - unsetting bottom ');
       setIsBottom(false);
     }
   }, [isBottom, status]);
@@ -84,6 +80,7 @@ const SpectrogramPanel = (props) => {
             fft={props.fft}
             meta={props.meta}
             blob={props.blob}
+            windowFunction={props.window}
           />
           <AnnotationViewer
             timescale_width={timescale_width}

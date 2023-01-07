@@ -1,14 +1,14 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import blobReducer from './BlobReducer';
-import fftReducer from './FFTReducer';
 import connectionReducer from './ConnectionReducer';
 import fetchMetaReducer from './FetchMetaReducer';
+import recordingsListReducer from './RecordingsListReducer';
 
 const rootReducer = combineReducers({
   blobReducer,
   connectionReducer,
-  fftReducer,
   fetchMetaReducer,
+  recordingsListReducer,
 });
 
 export default rootReducer;
