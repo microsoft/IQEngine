@@ -35,7 +35,7 @@ const RulerTop = (props) => {
       setLabels(temp_labels);
     }
   }, [blob, fft, meta, spectrogram_width, windowFunction]);
-  console.log(ticks);
+
   if (ticks.length > 1) {
     return (
       <Layer>
