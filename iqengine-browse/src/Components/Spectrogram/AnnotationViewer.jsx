@@ -89,7 +89,7 @@ const AnnotationViewer = (props) => {
           height={(annotation.height * 2) / fft_size}
           fillEnabled="false"
           stroke="black"
-          strokeWidth="4"
+          strokeWidth={4}
           key={index}
         />
       ))}
