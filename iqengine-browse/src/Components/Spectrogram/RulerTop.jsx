@@ -2,66 +2,56 @@
 // Licensed under the MIT License.
 
 import { select_fft } from '../../Utils/selector';
-import React, { useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Layer, Rect, Text } from 'react-konva';
 
 const RulerTop = (props) => {
-  let { blob, fft, meta } = props;
+  let { blob, fft, meta, windowFunction, spectrogram_width } = props;
 
-  let select_fft_return = select_fft(blob, fft, meta);
+  const [ticks, setTicks] = useState([]);
+  const [labels, setLabels] = useState([]);
 
-  const canvasRulerRef = useRef(null);
-  const canvas = canvasRulerRef.current;
-  if (canvas && select_fft_return) {
-    const context = canvas.getContext('2d');
-
-    const spectrogram_width_scale = props.spectrogram_width / select_fft_return.image_data.width;
-    const spectrogram_width = Math.floor(select_fft_return.image_data.width * spectrogram_width_scale);
-    const upper_tick_height = props.upper_tick_height;
-    canvas.setAttribute('width', spectrogram_width + props.timescale_width + props.text_width); // reset canvas pixels width
-    canvas.setAttribute('height', upper_tick_height); // don't use style for this
-
-    // Draw the spectrogram
-    context.beginPath();
-    context.rect(0, 0, canvas.width, canvas.height);
-    // Draw the horizontal scales
-    const num_ticks = 16;
-    context.font = '16px serif';
-    context.fillStyle = 'white';
-    const font_height = context.measureText('100').actualBoundingBoxAscent;
-    for (let i = 0; i <= num_ticks; i++) {
-      context.beginPath();
-      context.lineWidth = '1';
-      context.strokeStyle = 'white';
-      if (i % (num_ticks / 4) === 0) {
-        const txt = (((i / num_ticks) * select_fft_return.sample_rate - select_fft_return.sample_rate / 2) / 1e6).toString();
-        const txt_width = context.measureText(txt).width;
-        context.fillText(txt, (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale - txt_width / 2, font_height); // in ms
-        context.moveTo((select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, font_height + 2);
-        context.lineTo((select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, upper_tick_height - 2);
-      } else {
-        context.moveTo((select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, font_height + 10);
-        context.lineTo((select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, upper_tick_height - 2);
+  useEffect(() => {
+    let select_fft_return = select_fft(blob, fft, meta);
+    if (select_fft_return) {
+      const spectrogram_width_scale = spectrogram_width / select_fft_return.image_data.width;
+      const num_ticks = 16;
+      //const font_height = context.measureText('100').actualBoundingBoxAscent;
+      const font_height = 10;
+      const temp_ticks = [];
+      const temp_labels = [];
+      for (let i = 0; i <= num_ticks; i++) {
+        if (i % (num_ticks / 4) === 0) {
+          const text = (((i / num_ticks) * select_fft_return.sample_rate - select_fft_return.sample_rate / 2) / 1e6).toString();
+          //const txt_width = context.measureText(text).width;
+          const txt_width = 15; // just manually setting this for now
+          temp_labels.push({ text: text, x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale - txt_width / 2, y: font_height }); // in ms
+          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 0, width: 0, height: 4 });
+        } else {
+          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 0, width: 0, height: 10 });
+        }
       }
-
-      context.stroke();
+      setTicks(temp_ticks);
+      setLabels(temp_labels);
     }
-
-    //context.putImageData(select_fft_return.image_data, 0, 0,0,0, select_fft_return.image_data.width*2,select_fft_return.image_data.height);
-    //let clearImgData = new ImageData(select_fft_return.image_data, lines, pxPerLine);
+  }, [blob, fft, meta, spectrogram_width, windowFunction]);
+  console.log(ticks);
+  if (ticks.length > 1) {
+    return (
+      <Layer>
+        {ticks.map((tick, index) => (
+          // couldnt get Line to work, kept getting NaN errors, so just using Rect instead
+          <Rect x={tick.x} y={tick.y} width={tick.width} height={tick.height} fillEnabled="false" stroke="white" strokeWidth={1} key={index} />
+        ))}
+        {labels.map((label, index) => (
+          // for Text params see https://konvajs.org/api/Konva.Text.html
+          <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} stroke="white" key={index} />
+        ))}
+      </Layer>
+    );
+  } else {
+    return <></>;
   }
-  //this.offScreenCvs =  cvs;
-  return (
-    <canvas
-      ref={canvasRulerRef}
-      style={{
-        position: 'sticky',
-        top: 0,
-        gridRow: '1',
-        gridColumn: '1',
-        zIndex: '9',
-      }}
-    ></canvas>
-  );
 };
 
 export { RulerTop };
