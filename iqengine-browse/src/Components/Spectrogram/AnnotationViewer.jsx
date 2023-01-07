@@ -3,7 +3,7 @@
 
 import { select_fft } from '../../Utils/selector';
 import React from 'react';
-import { Layer, Rect } from 'react-konva';
+import { Layer, Rect, Text } from 'react-konva';
 
 const AnnotationViewer = (props) => {
   let { blob, fft, meta } = props;
@@ -82,16 +82,28 @@ const AnnotationViewer = (props) => {
     <Layer>
       {select_fft_return.annotations.map((annotation, index) => (
         // for params of Rect see https://konvajs.org/api/Konva.Rect.html
-        <Rect
-          x={annotation.x * spectrogram_width_scale * fft_size}
-          y={(annotation.y * 2) / fft_size + upper_tick_height}
-          width={annotation.width * spectrogram_width_scale * fft_size}
-          height={(annotation.height * 2) / fft_size}
-          fillEnabled="false"
-          stroke="black"
-          strokeWidth={4}
-          key={index}
-        />
+        // for Text params see https://konvajs.org/api/Konva.Text.html
+        <>
+          <Rect
+            x={annotation.x * spectrogram_width_scale * fft_size}
+            y={(annotation.y * 2) / fft_size + upper_tick_height}
+            width={annotation.width * spectrogram_width_scale * fft_size}
+            height={(annotation.height * 2) / fft_size}
+            fillEnabled="false"
+            stroke="black"
+            strokeWidth={4}
+            key={index}
+          />
+          <Text
+            text={annotation.description}
+            fontFamily="serif"
+            fontSize="20"
+            x={annotation.x * spectrogram_width_scale * fft_size}
+            y={(annotation.y * 2) / fft_size + upper_tick_height - 20}
+            stroke="black"
+            key={index}
+          />
+        </>
       ))}
     </Layer>
   );
