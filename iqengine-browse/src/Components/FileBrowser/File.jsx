@@ -39,6 +39,11 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
     );
   });
 
+  function NewlineText(props) {
+    const text = props.text;
+    return <div className="datatypetext">{text}</div>;
+  }
+
   return (
     <tr>
       <td>
@@ -54,10 +59,16 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
           {info.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}
         </Link>
       </td>
-      <td className="align-middle">{info.dataType}</td>
-      <td className="align-middle">{info.frequency}</td>
-      <td className="align-middle">{info.sampleRate}</td>
-      <td className="align-middle">
+      <td className="align-middle" style={{ textAlign: 'center' }}>
+        <NewlineText text={info.dataType} />
+      </td>
+      <td className="align-middle" style={{ textAlign: 'center' }}>
+        {info.frequency}
+      </td>
+      <td className="align-middle" style={{ textAlign: 'center' }}>
+        {info.sampleRate}
+      </td>
+      <td className="align-middle" style={{ textAlign: 'center' }}>
         <div>
           <Button type="button" variant="secondary" onClick={toggle}>
             {info.numberOfAnnotation}

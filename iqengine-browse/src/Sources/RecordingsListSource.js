@@ -29,7 +29,17 @@ function parseMeta(json_string, baseUrl, fName) {
   return {
     name: fName,
     sampleRate: obj['global']['core:sample_rate'] / 1e6, // in MHz
-    dataType: obj['global']['core:datatype'],
+    dataType: obj['global']['core:datatype']
+      .replace('c', 'complex\n')
+      .replace('r', 'real\n')
+      .replace('f', 'float\n')
+      .replace('i', 'signed int\n')
+      .replace('u', 'unsigned int\n')
+      .replace('8', '8 bits')
+      .replace('16', '16 bits')
+      .replace('32', '32 bits')
+      .replace('64', '64 bits')
+      .replace('_le', ''),
     frequency: obj['captures'][0]['core:frequency'] / 1e6, // in MHz
     annotations: obj['annotations'],
     numberOfAnnotation: obj['annotations'].length,

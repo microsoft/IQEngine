@@ -14,3 +14,8 @@ h1 a {
   color: rgb(255, 255, 255);
   text-decoration: none;
 }
+
+/* this is only so that in datatype column we get newlines after each thing */
+div.datatypetext {
+  white-space: pre-wrap;
+}
