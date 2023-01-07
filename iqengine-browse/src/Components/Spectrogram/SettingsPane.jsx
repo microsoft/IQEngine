@@ -19,15 +19,9 @@ class SettingsPane extends Component {
       magnitudeMin: 30,
       taps: '[' + new Float32Array(1).fill(1).toString() + ']',
       windowFunction: 'hamming',
-      error: { magnitudeMax: '', magnitudeMin: '', size: '' },
+      error: { magMax: '', magMin: '', size: '' }, // holds error string for each input
     };
   }
-
-  onChangeMagnitudeMax = (event) => {
-    this.setState({
-      magnitudeMax: event.target.value,
-    });
-  };
 
   onChangeWindowFunction = (event) => {
     this.setState({
@@ -36,21 +30,27 @@ class SettingsPane extends Component {
     this.props.updateWindowChange(event);
   };
 
+  onChangeMagnitudeMax = (event) => {
+    this.setState({
+      magnitudeMax: parseInt(event.target.value),
+    });
+  };
+
   onSubmitMagnitudeMax = () => {
     const { magnitudeMax, error, magnitudeMin } = this.state;
-    if (parseInt(magnitudeMax) && magnitudeMax > magnitudeMin && magnitudeMax < '256') {
+    if (parseInt(magnitudeMax) && magnitudeMax > magnitudeMin && magnitudeMax < 256) {
       this.props.updateMagnitudeMax(magnitudeMax);
       this.setState({
         error: {
           ...error,
-          magnitudeMax: '',
+          magMax: '',
         },
       });
     } else {
       this.setState({
         error: {
           ...error,
-          magnitudeMax: 'Magnitude max must be an integer, greater than the magnitude min, and between 1 and 255',
+          magMax: 'Magnitude max must be an integer, greater than the magnitude min, and between 1 and 255',
         },
       });
     }
@@ -58,7 +58,7 @@ class SettingsPane extends Component {
 
   onChangeMagnitudeMin = (event) => {
     this.setState({
-      magnitudeMin: event.target.value,
+      magnitudeMin: parseInt(event.target.value),
     });
   };
 
@@ -67,18 +67,18 @@ class SettingsPane extends Component {
     const min = parseInt(magnitudeMin);
     const max = parseInt(magnitudeMax);
     if (min && min >= 0 && min < max) {
-      this.props.updateMagnitudeMax(magnitudeMin);
+      this.props.updateMagnitudeMin(magnitudeMin);
       this.setState({
         error: {
           ...error,
-          magnitudeMin: '',
+          magMin: '',
         },
       });
     } else {
       this.setState({
         error: {
           ...error,
-          magnitudeMin: 'Magnitude min must be an integer, less than the magnitude max, and between 1 and 255',
+          magMin: 'Magnitude min must be an integer, less than the magnitude max, and between 1 and 255',
         },
       });
     }
@@ -86,7 +86,7 @@ class SettingsPane extends Component {
 
   onChangeFftsize = (event) => {
     this.setState({
-      size: event.target.value,
+      size: parseInt(event.target.value),
     });
   };
 
@@ -139,7 +139,7 @@ class SettingsPane extends Component {
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Magnitude Max</Form.Label>
-          <div style={{ color: 'red', marginBottom: '2px' }}>{error.magnitudeMax}</div>
+          <div style={{ color: 'red', marginBottom: '2px' }}>{error.magMax}</div>
           <InputGroup className="mb-3">
             <Form.Control type="text" defaultValue={magnitudeMax} onChange={this.onChangeMagnitudeMax} size="sm" />
             <Button className="btn btn-secondary" onClick={this.onSubmitMagnitudeMax}>
@@ -150,7 +150,7 @@ class SettingsPane extends Component {
 
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Magnitude Min</Form.Label>
-          <div style={{ color: 'red', marginBottom: '2px' }}>{error.magnitudeMin}</div>
+          <div style={{ color: 'red', marginBottom: '2px' }}>{error.magMin}</div>
           <InputGroup className="mb-3">
             <Form.Control type="text" defaultValue={magnitudeMin} onChange={this.onChangeMagnitudeMin} size="sm" />
             <Button className="btn btn-secondary" onClick={this.onSubmitMagnitudeMin}>
