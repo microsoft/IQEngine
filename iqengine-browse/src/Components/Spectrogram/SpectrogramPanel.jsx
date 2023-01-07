@@ -5,8 +5,7 @@ import { SpectrogramViewer } from './SpectrogramViewer';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import React, { useEffect, useState } from 'react';
-import { FETCHES_PER_USEEFFECT, COUNT_PER_FETCH } from '../../Utils/constants';
-import { Stage, Layer, Rect, Circle } from 'react-konva';
+import { Stage } from 'react-konva';
 
 const SpectrogramPanel = (props) => {
   const [isBottom, setIsBottom] = useState(false);

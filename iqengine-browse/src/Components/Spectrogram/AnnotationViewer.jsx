@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 import { select_fft } from '../../Utils/selector';
-import React, { useRef } from 'react';
-import { Stage, Layer, Rect, Circle } from 'react-konva';
+import React from 'react';
+import { Layer, Rect } from 'react-konva';
 
 const AnnotationViewer = (props) => {
   let { blob, fft, meta } = props;
@@ -15,15 +15,15 @@ const AnnotationViewer = (props) => {
   }
 
   let spectrogram_width_scale = 1;
-  const timescale_width = props.timescale_width;
-  const text_width = props.text_width;
+  //const timescale_width = props.timescale_width;
+  //const text_width = props.text_width;
   const upper_tick_height = props.upper_tick_height;
   const fft_size = select_fft_return.fft_size;
 
   spectrogram_width_scale = select_fft_return.image_data ? props.spectrogram_width / select_fft_return.image_data.width : 1;
-  const spectrogram_width = Math.floor(select_fft_return.image_data.width * spectrogram_width_scale);
-  const width = spectrogram_width + timescale_width + text_width;
-  const height = select_fft_return.image_data.height; // don't use style for this
+  //const spectrogram_width = Math.floor(select_fft_return.image_data.width * spectrogram_width_scale);
+  //const width = spectrogram_width + timescale_width + text_width;
+  //const height = select_fft_return.image_data.height; // don't use style for this
 
   /*
   if (canvas && select_fft_return) {
