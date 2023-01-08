@@ -1,0 +1,21 @@
+.file-local {
+  border: 1px solid transparent;
+  width: 400px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-local-title {
+    padding: 5px;
+    text-align: center;
+}
+
+.file-local-buttons {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}

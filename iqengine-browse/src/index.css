@@ -1,12 +1,9 @@
 :root {
-  --theme-color: 0deg;
-  --theme-saturation: 0%;
-  --theme-lightness: 13%;
-
-  --bg-color-darkest: hsl(var(--theme-color) var(--theme-saturation) var(--theme-lightness));
-  --bg-color-dark: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 0%));
-  --bg-color-light: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 25%));
-  --bg-color-lightest: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 50%));
+  --theme-font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --theme-font-size: 14pt;
+  --theme-c: 0deg;
+  --theme-s: 0%;
+  --theme-l: 15%;
 }
 
 html,
@@ -16,11 +13,53 @@ body,
   margin: 0;
   box-sizing: border-box;
   height: 100vh;
-  background-color: var(--bg-color-dark);
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 14pt;
+  font-family: var(--theme-font-family);
+  font-size: var(--theme-font-size);
   color: #ffffff;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+button,
+input,
+textarea,
+select {
+  font-size: var(--theme-font-size);
+}
+
+.bg0 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 0%);
+}
+
+.bg1 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 5%);
+}
+
+.bg2 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 10%);
+}
+
+.bg3 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 15%);
+}
+
+.bg4 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 20%);
+}
+
+.bg5 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 25%);
+}
+
+.bg6 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 30%);
+}
+
+.bg7 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 35%);
+}
+
+.bg8 {
+  background-color: hsl(var(--theme-c) var(--theme-s) 40%);
 }

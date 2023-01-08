@@ -1,11 +1,9 @@
 body[data-theme='meadow'] {
-  --theme-color: 120deg;
-  --theme-saturation: 10%;
-  --theme-lightness: 15%;
+  --theme-c: 90deg;
+  --theme-s: 50%;
 }
 
 body[data-theme='sky'] {
-  --theme-color: 230deg;
-  --theme-saturation: 10%;
-  --theme-lightness: 15%;
+  --theme-c: 200deg;
+  --theme-s: 50%;
 }

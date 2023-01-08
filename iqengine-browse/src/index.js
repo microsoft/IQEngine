@@ -3,6 +3,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootswatch/dist/darkly/bootstrap.min.css'; // needs to come before any css imports
 import './index.css';
 import './theme.css';
 import App from './App';

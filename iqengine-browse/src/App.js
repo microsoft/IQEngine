@@ -18,11 +18,13 @@ const App = () => {
           </Link>
         </div>
         <div>
-          <Link to="/" className="header-link home">
-            Home
+          <Link to="/">
+            <button className="btn btn-primary">Home</button>
           </Link>
-          <Link to="/browser" className="header-link browser">
-            Browser
+          <Link to="/browser">
+            <button className="btn btn-primary" style={{ marginLeft: '10px' }}>
+              Browser
+            </button>
           </Link>
         </div>
       </header>

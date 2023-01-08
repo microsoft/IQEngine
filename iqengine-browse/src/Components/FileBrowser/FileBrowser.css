@@ -1,26 +1,18 @@
 .file-browser {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  padding: 1rem;
+  flex: 1;
+  height: 100%;
 }
 
 .file-source {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.file-local {
-  border: 1px solid azure;
-  padding: 1rem;
-}
-
-.file-azure {
-  border: 1px solid azure;
-  padding: 1rem;
-}
-
-.recordings {
-  flex: 1;
-  height: 100vh;
+.file-list {
+  /* padding: 1rem; */
 }

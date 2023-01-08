@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import './LocalFileBrowser.css';
 
 // this is duplicate of the code in ConnectionString.jsx but includes file handles
 function parseMeta(json_string, baseUrl, fName, metaFileHandle, dataFileHandle) {
@@ -80,12 +80,16 @@ const LocalFileChooser = (props) => {
   };
 
   return (
-    <div className="file-local">
-      <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
-      <Button onClick={openDir}>Open Local Directory</Button>
-      &nbsp; &nbsp; or &nbsp; &nbsp;
-      <Button onClick={openFile}>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
-      <br />
+    <div className="file-local bg8">
+      <h4 className="file-local-title bg6">Browse Local Files</h4>
+      <div className="file-local-buttons">
+        <button className="btn btn-primary" onClick={openDir}>
+          Open Local Directory
+        </button>
+        <button className="btn btn-primary" onClick={openFile}>
+          Select 1 .sigmf-meta and 1 .sigmf-data
+        </button>
+      </div>
     </div>
   );
 };

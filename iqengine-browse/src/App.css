@@ -13,31 +13,6 @@ header {
     text-decoration: none;
 }
 
-.header-link {
-    font-size: 20pt;
-    color: #ffffff;
-    text-decoration: none;
-    background-color: darkturquoise;
-    padding: 0 10px;
-    border-radius: 5px;
-    color: #222222;
-    margin-left: 10px;
-}
-
-.header-link:before {
-  margin-right: 5px;
-}
-
-.header-link.home:before {
-  font-size: 25pt;
-  content: '\2302';
-}
-
-.header-link.browser:before {
-  font-size: 18pt;
-  content: '\1F50D';
-}
-
 main {
   padding: 5rem;
   font-size: 120%;

@@ -3,6 +3,7 @@
 
 import React from 'react';
 import Directory from './Directory';
+import './RecordingsList.css';
 
 function isFolder(file) {
   return file.name.endsWith('/');
@@ -74,12 +75,12 @@ function GroupByFolder(files, root) {
   return files;
 }
 
-export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
-  const gfiles = data.map((data) => data.name);
+const RecordingsList = (props) => {
+  const gfiles = props.data.map((data) => data.name);
   let dataTree = [];
 
   if (gfiles.length > 0) {
-    dataTree = GroupByFolder(data, '');
+    dataTree = GroupByFolder(props.data, '');
   }
 
   //console.log(dataTree);
@@ -88,9 +89,9 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
       <Directory
         key={Math.random()}
         files={info}
-        updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-        updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-        updateConnectionRecording={updateConnectionRecording}
+        updateConnectionMetaFileHandle={props.updateConnectionMetaFileHandle}
+        updateConnectionDataFileHandle={props.updateConnectionDataFileHandle}
+        updateConnectionRecording={props.updateConnectionRecording}
       />
     );
   });
@@ -101,7 +102,7 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
   }
 
   return (
-    <div className="recordings">
+    <div className="recordings-list">
       <table className="table">
         <thead>
           <tr>
@@ -118,4 +119,6 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
       </table>
     </div>
   );
-}
+};
+
+export default RecordingsList;

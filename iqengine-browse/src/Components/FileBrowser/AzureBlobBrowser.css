@@ -1,0 +1,32 @@
+.file-azure {
+  border: 1px solid transparent;
+  width: 400px;
+  border-radius: 5px;
+}
+
+.file-azure-title {
+  padding: 5px;
+  text-align: center;
+}
+
+.iq-form {
+  padding: 1rem;
+}
+
+.iq-form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+
+.iq-form-label {
+  padding: 5px;
+  display: inline-block;
+}
+
+.iq-form-input {
+  padding: 5px;
+  border-radius: 0 0 3px 3px;
+  border: none;
+}

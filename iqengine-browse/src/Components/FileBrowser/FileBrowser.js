@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 import React, { Component } from 'react';
-import LocalFileChooser from './LocalFileChooser';
+import LocalFileBrowser from './LocalFileBrowser';
 import './FileBrowser.css';
-import ConnectionString from './ConnectionString';
-import RecordingsBrowser from './RecordingsBrowser';
+import AzureBlobBrowser from './AzureBlobBrowser';
+import RecordingsList from './RecordingsList';
 
 const FileBrowser = (props) => {
   const state = {
@@ -20,16 +20,14 @@ const FileBrowser = (props) => {
   return (
     <div className="file-browser">
       <div className="file-source">
-        <LocalFileChooser
-          className="file-local"
+        <LocalFileBrowser
           setRecordingList={props.setRecordingList}
           updateConnectionMetaFileHandle={props.updateConnectionMetaFileHandle}
           updateConnectionDataFileHandle={props.updateConnectionDataFileHandle}
           metafilehandle={state.metafilehandle}
           datafilehandle={state.datafilehandle}
         />
-        <ConnectionString
-          className="file-azure"
+        <AzureBlobBrowser
           setRecordingList={props.fetchRecordingsList}
           updateConnectionAccountName={props.updateConnectionAccountName}
           updateConnectionContainerName={props.updateConnectionContainerName}
@@ -39,9 +37,7 @@ const FileBrowser = (props) => {
           sasToken={state.sasToken}
         />
       </div>
-
-      <RecordingsBrowser
-        className="recordings"
+      <RecordingsList
         updateConnectionRecording={props.updateConnectionRecording}
         updateConnectionMetaFileHandle={props.updateConnectionMetaFileHandle}
         updateConnectionDataFileHandle={props.updateConnectionDataFileHandle}

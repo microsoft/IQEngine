@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import React, { useState } from 'react';
+import './AzureBlobBrowser.css';
 
 const ConnectionString = (props) => {
   const [accountName, setAccountName] = useState(props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME);
@@ -29,26 +30,25 @@ const ConnectionString = (props) => {
     props.setRecordingList({ accountName: accountName, containerName: containerName, sasToken: sasToken }); // updates the parent (App.js) state with the RecordingList
   };
   return (
-    <div className="file-azure">
-      <h4>Browse Azure Blob Storage</h4>
-      <form>
-        <div>
-          <label>Storage Account Name:</label>
-          <input type="text" defaultValue={accountName} onChange={onAccountNameChange} size="sm" />
+    <div className="file-azure bg8">
+      <h4 className="file-azure-title bg6">Browse Azure Blob Storage</h4>
+      <form className="iq-form">
+        <div className="iq-form-row bg2">
+          <label className="iq-form-label">Storage Account Name:</label>
+          <input className="iq-form-input" type="text" defaultValue={accountName} onChange={onAccountNameChange} size="sm" />
         </div>
-        <div>
-          <label>Container Name:</label>
-          <input type="text" defaultValue={containerName} onChange={onContainerNameChange} size="sm" />
+        <div className="iq-form-row bg2">
+          <label className="iq-form-label">Container Name:</label>
+          <input className="iq-form-input" type="text" defaultValue={containerName} onChange={onContainerNameChange} size="sm" />
         </div>
-        <div>
-          <label>SAS Token for Container:</label>
-          <input type="password" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
+        <div className="iq-form-row bg2">
+          <label className="iq-form-label">SAS Token for Container:</label>
+          <input className="iq-form-input" type="password" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
         </div>
+        <button className="btn btn-success" onClick={onSubmit}>
+          Browse Recordings
+        </button>
       </form>
-
-      <button className="btn btn-success" onClick={onSubmit}>
-        Browse Recordings
-      </button>
     </div>
   );
 };
