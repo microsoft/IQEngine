@@ -1,31 +1,39 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React, { Component } from 'react';
-import '@fortawesome/react-fontawesome';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
+import Home from './Components/Home/Home';
 import FileBrowserContainer from './Containers/FileBrowserContainer';
 import SpectrogramContainer from './Containers/SpectrogramContainer';
+import './App.css';
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <h1 className="display-1">
-          <Link to="/">
-            <center>IQEngine</center>
+const App = () => {
+  return (
+    <>
+      <header>
+        <div>
+          <Link to="/" className="header-title">
+            IQEngine
           </Link>
-        </h1>
+        </div>
+        <div>
+          <Link to="/" className="header-link home">
+            Home
+          </Link>
+          <Link to="/browser" className="header-link browser">
+            Browser
+          </Link>
+        </div>
+      </header>
 
-        <Routes>
-          <Route exact path="/" element={<FileBrowserContainer />} />
-
-          <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
-        </Routes>
-      </div>
-    );
-  }
-}
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route exact path="/browser" element={<FileBrowserContainer />} />
+        <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
+      </Routes>
+    </>
+  );
+};
 
 export default App;

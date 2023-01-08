@@ -80,7 +80,7 @@ const LocalFileChooser = (props) => {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="file-local">
       <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
       <Button onClick={openDir}>Open Local Directory</Button>
       &nbsp; &nbsp; or &nbsp; &nbsp;

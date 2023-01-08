@@ -27,7 +27,7 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
       </td>
       <td className="align-middle">
         <Link
-          to={'spectrogram/' + info.name.replace('.sigmf-meta', '')}
+          to={'/spectrogram/' + info.name.replace('.sigmf-meta', '')}
           onClick={() => updateConnection(info.metaFileHandle, info.dataFileHandle, info.name.replace('.sigmf-meta', ''))}
         >
           {info.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}

@@ -1,83 +1,56 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React, { Component } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState } from 'react';
 
-class ConnectionStringInput extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accountName: '',
-      containerName: '',
-      sasToken: '',
-    };
-  }
+const ConnectionString = (props) => {
+  const [accountName, setAccountName] = useState(props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME);
+  const [containerName, setContainerName] = useState(props.containerName || process.env.REACT_APP_AZURE_BLOB_CONTAINER_NAME);
+  const [sasToken, setSasToken] = useState(process.env.REACT_APP_AZURE_BLOB_SAS_TOKEN);
 
-  static getDerivedStateFromProps(props, state) {
-    if (props !== state) {
-      return {
-        accountName: props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME,
-        containerName: props.containerName || process.env.REACT_APP_AZURE_BLOB_CONTAINER_NAME,
-        sasToken: props.sasToken || process.env.REACT_APP_AZURE_BLOB_SAS_TOKEN,
-      };
-    }
-  }
-
-  onAccountNameChange = (event) => {
-    this.setState({
-      accountName: event.target.value,
-    });
+  const onAccountNameChange = (event) => {
+    setAccountName(event.target.value);
   };
 
-  onContainerNameChange = (event) => {
-    this.setState({
-      containerName: event.target.value,
-    });
+  const onContainerNameChange = (event) => {
+    setContainerName(event.target.value);
   };
 
-  onSasTokenChange = (event) => {
-    this.setState({
-      sasToken: event.target.value,
-    });
+  const onSasTokenChange = (event) => {
+    setSasToken(event.target.value);
   };
 
-  onSubmit = async (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     // updates it in the store
-    const { accountName, containerName, sasToken } = this.state;
-    this.props.updateConnectionAccountName(accountName);
-    this.props.updateConnectionContainerName(containerName);
-    this.props.updateConnectionSasToken(sasToken);
-    this.props.setRecordingList({ accountName: accountName, containerName: containerName, sasToken: sasToken }); // updates the parent (App.js) state with the RecordingList
+    props.updateConnectionAccountName(accountName);
+    props.updateConnectionContainerName(containerName);
+    props.updateConnectionSasToken(sasToken);
+    props.setRecordingList({ accountName: accountName, containerName: containerName, sasToken: sasToken }); // updates the parent (App.js) state with the RecordingList
   };
-
-  render() {
-    const { accountName, containerName, sasToken } = this.state;
-
-    return (
-      <div id="ConnectionStringContainer" className="container-fluid">
-        <h4 style={{ textAlign: 'center' }}>Browse Azure Blob Storage</h4>
-        <div className="form-group">
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Storage Account Name:</Form.Label>
-            <Form.Control type="text" defaultValue={accountName} onChange={this.onAccountNameChange} size="sm" />
-
-            <Form.Label>Container Name:</Form.Label>
-            <Form.Control type="text" defaultValue={containerName} onChange={this.onContainerNameChange} size="sm" />
-
-            <Form.Label>SAS Token for Container:</Form.Label>
-            <Form.Control type="text" defaultValue={sasToken} onChange={this.onSasTokenChange} size="sm" />
-          </Form.Group>
-
-          <Button className="btn btn-success" onClick={this.onSubmit}>
-            Browse Recordings
-          </Button>
+  return (
+    <div className="file-azure">
+      <h4>Browse Azure Blob Storage</h4>
+      <form>
+        <div>
+          <label>Storage Account Name:</label>
+          <input type="text" defaultValue={accountName} onChange={onAccountNameChange} size="sm" />
         </div>
-      </div>
-    );
-  }
-}
+        <div>
+          <label>Container Name:</label>
+          <input type="text" defaultValue={containerName} onChange={onContainerNameChange} size="sm" />
+        </div>
+        <div>
+          <label>SAS Token for Container:</label>
+          <input type="password" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
+        </div>
+      </form>
 
-export default ConnectionStringInput;
+      <button className="btn btn-success" onClick={onSubmit}>
+        Browse Recordings
+      </button>
+    </div>
+  );
+};
+
+export default ConnectionString;

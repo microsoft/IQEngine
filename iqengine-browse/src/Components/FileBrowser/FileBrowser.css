@@ -1,0 +1,26 @@
+.file-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.file-source {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.file-local {
+  border: 1px solid azure;
+  padding: 1rem;
+}
+
+.file-azure {
+  border: 1px solid azure;
+  padding: 1rem;
+}
+
+.recordings {
+  flex: 1;
+  height: 100vh;
+}

@@ -1,16 +1,26 @@
-.zoom {
-  transition: transform 0.2s; /* Animation */
-  width: 200px;
-  height: 100px;
-  margin: 0 auto;
+:root {
+  --theme-color: 0deg;
+  --theme-saturation: 0%;
+  --theme-lightness: 13%;
+
+  --bg-color-darkest: hsl(var(--theme-color) var(--theme-saturation) var(--theme-lightness));
+  --bg-color-dark: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 0%));
+  --bg-color-light: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 25%));
+  --bg-color-lightest: hsl(var(--theme-color) calc(var(--theme-saturation) + 3%) calc(var(--theme-lightness) + 50%));
 }
 
-.zoom:hover {
-  transform: translate(150px, 0px) scale(3);
-}
-
-/* for IQEngine h1 title at top */
-h1 a {
-  color: rgb(255, 255, 255);
-  text-decoration: none;
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  background-color: var(--bg-color-dark);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14pt;
+  color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }

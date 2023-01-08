@@ -101,7 +101,7 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
   }
 
   return (
-    <div className="container-fluid">
+    <div className="recordings">
       <table className="table">
         <thead>
           <tr>
