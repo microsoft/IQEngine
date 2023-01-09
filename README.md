@@ -1,7 +1,23 @@
 # IQEngine
 
-IQEngine is a web app that provides RF engineers and researchers with a way to store and share RF recordings easily.
-These RF recordings are in the form of binary IQ files, with a metadata file for each one, that contains information about how the recording was taken, as well as any annotations that label interesting portions of the recording. IQEngine uses the SigMF standard for the metadata and annotations, and as such, the IQEngine tooling is very SigMF-specific. The entry-point into IQEngine is a file browser web app that shows you all of the RF recordings in your cloud storage account (currently only supports Azure), with important metadata displayed in columns. Using this screen, anyone can get a quick glimpse into the dataset. You can click on a single recording to be brought into a spectrogram viewer, which is an interactive web-based viewer, inspired by popular desktop apps such as Inspectrum and Baudline.
-The real power behind having this kind of interface be web-based is that the user doesn't have to download the entire RF recording to view it, they only download the portions they are viewing at any given time. This makes it much easier to share recordings and collaborate with others, by lowering the level of effort needed to check out a new RF dataset. In the past, you would have to download a large zip file full of RF recordings, usually several GB in size, and then open each file in a desktop app, assuming you already have it installed and know how to use it. Now, you can simply link people to a web page where they can immediately see the entire list of RF recordings, and view each one individually, without installing any software or downloading massive files. Lastly, for convinience, IQEngine comes with a detection algorithm that can automatically add annotations to an RF recording based on a few detection parameters such as threshold and minimum bandwidth, as well as a way to insert metadata into a mongodb database and perform queries.
+<h4 style="text-align: center;"><i>Browse terabytes of RF recordings without having to install anything or download any files</i></h4>
+
+* Analyze RF recordings
+* Organize *lots* of RF recordings
+* Test signal detection/classification algorithms and visualize results
+* Education - play around with different Fourier and wavelet transforms and filters by applying them to interesting signals
+* Share your RF recordings/datasets with others, without them having to download files or install software
+
+Try IQEngine using [this instance](todo) hosted by GNU Radio and connected to the official SigMF examples repository.
+
+IQEngine is a web app that provides a way to store, share, and analyze RF recordings.  You can view recordings stored on your local machine, or store them in Azure blob storage so that anyone with the credentials can view them.
+
+IQEngine uses the SigMF standard for the metadata and annotations.  The main page of IQEngine is a listing of the SigMF recordings, either in a blob storage container or local directory, providing a quick glimpse of the recordings, using spectrogram thumbnails and metadata summary.  You can click on a recording to be brought into a spectrogram viewer, which is an interactive web-based viewer.  The user only downloads the portions they are viewing at any given time. 
+
+No more downloading large zip files full of RF recordings and installing software. 
+
+IQEngine also comes with signal detection algorithms that can automatically add annotations to an RF recording based on a few detection parameters such as threshold and minimum bandwidth.  
+
+For those who have *lots* of RF recordings, IQEngine can automatically insert metadata into a MongoDB database when files are uploaded to blob storage.  You can then perform queries in the IQEngine web app.
 
 IQEngine is a work in progress, check back again soon!

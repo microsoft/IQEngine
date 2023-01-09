@@ -14,7 +14,7 @@ class SpectrogramPage extends Component {
       fftSize: 1024,
       magnitudeMax: 255,
       magnitudeMin: 30,
-      window : "hamming",
+      window: 'hamming',
     };
   }
 
@@ -26,7 +26,7 @@ class SpectrogramPage extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetConnection();
+    // make sure not to resetConnection() here or else it screws up ability to switch between recordings without clicking the browse button again
     this.props.resetMeta();
     window.iq_data = [];
     this.props.resetBlob();
@@ -37,7 +37,7 @@ class SpectrogramPage extends Component {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
-      props.blob.status !== "loading" && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
+      props.blob.status !== 'loading' && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
     }
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
@@ -62,7 +62,7 @@ class SpectrogramPage extends Component {
 
   handleWindowChange = (x) => {
     this.setState({
-      window : x,
+      window: x,
     });
   };
 
@@ -77,8 +77,8 @@ class SpectrogramPage extends Component {
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
-      magnitudeMin: magnitudeMin
-    }
+      magnitudeMin: magnitudeMin,
+    };
     return (
       <div>
         <Container fluid>
