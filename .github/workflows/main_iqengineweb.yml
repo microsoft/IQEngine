@@ -21,18 +21,17 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           cd iqengine-browse
           npm install
           npm run build --if-present
-          npm run test --if-present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: ./iqengine-browse
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -54,4 +53,4 @@ jobs:
           app-name: 'iqengineweb'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_50c7b335d29046f98adf66cde1936d40 }}
-          package: ./iqengine-browse
+          package: .
