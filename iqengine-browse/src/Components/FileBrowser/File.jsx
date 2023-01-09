@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import { formControlClasses } from '@mui/material';
 
 export default function FileRow({ info, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
   const [modal, setModal] = useState(false);
