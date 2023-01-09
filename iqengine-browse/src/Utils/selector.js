@@ -52,6 +52,8 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
       annotations: window.annotations,
       sample_rate: window.sample_rate,
       fft_size: fft_size, // scales will break without this
+      autoMax: 255,
+      autoMin: 0,
     };
     return select_fft_return;
   }
@@ -70,6 +72,9 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     starting_row = Math.floor(previous_blob_size / fft_size / 2);
     new_fft_data.set(window.fft_data, 0);
   }
+
+  let autoMin;
+  let autoMax;
 
   // loop through each row
   for (let i = starting_row; i < num_ffts; i++) {
@@ -93,7 +98,6 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
         samples_slice[window_i] = samples_slice[window_i] * (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
       }
     }
-  
 
     const f = new FFT(fft_size);
     const out = f.createComplexArray(); // creates an empty array the length of fft.size*2
@@ -113,6 +117,19 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     let maximum_val = Math.max(...magnitudes);
     magnitudes = magnitudes.map((x) => x / maximum_val); // highest value is now 1
     magnitudes = magnitudes.map((x) => x * 255); // now from 0 to 255
+
+    // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
+    let std = getStandardDeviation(magnitudes);
+
+    function getStandardDeviation (array) {
+      const n = array.length
+      const mean = array.reduce((a, b) => a + b) / n
+      return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+    }
+
+    let mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
+    autoMin = mean - std;
+    autoMax = mean + std;
 
     // apply magnitude min and max
     magnitudes = magnitudes.map((x) => x / ((magnitude_max - magnitude_min) / 255));
@@ -176,6 +193,8 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     image_data: new ImageData(window.fft_data, fft_size, num_ffts),
     annotations: window.annotations,
     sample_rate: window.sample_rate,
+    autoMax: autoMax,
+    autoMin: autoMin,
   };
   return select_fft_return;
 };
