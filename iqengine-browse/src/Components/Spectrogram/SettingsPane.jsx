@@ -189,8 +189,17 @@ class SettingsPane extends Component {
           <Dropdown.Item active={windowFunction === 'hamming'} eventKey="hamming">
             Hamming
           </Dropdown.Item>
-          <Dropdown.Item active={windowFunction === 'none'} eventKey="none">
-            None
+          <Dropdown.Item active={windowFunction === 'rectangle'} eventKey="rectangle">
+            Rectangle
+          </Dropdown.Item>
+          <Dropdown.Item active={windowFunction === 'hanning'} eventKey="hanning">
+            Hanning
+          </Dropdown.Item>
+          <Dropdown.Item active={windowFunction === 'barlett'} eventKey="barlett">
+            Barlett
+          </Dropdown.Item>
+          <Dropdown.Item active={windowFunction === 'blackman'} eventKey="blackman">
+            Blackman
           </Dropdown.Item>
         </DropdownButton>
         <p></p>
