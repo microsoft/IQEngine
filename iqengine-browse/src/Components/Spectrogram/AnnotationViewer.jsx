@@ -2,87 +2,90 @@
 // Licensed under the MIT License.
 
 import { select_fft } from '../../Utils/selector';
-import React, { useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Layer, Rect, Text } from 'react-konva';
 
 const AnnotationViewer = (props) => {
-  let { blob, fft, meta } = props;
+  let { blob, fft, meta, windowFunction, spectrogram_width, upper_tick_height } = props;
 
-  let select_fft_return = select_fft(blob, fft, meta);
+  const [fftSize, setFftSize] = useState();
+  const [spectrogramWidthScale, setSpectrogramWidthScale] = useState();
+  const [annotations, setAnnotations] = useState([]);
+  const [ticks, setTicks] = useState([]);
+  const [labels, setLabels] = useState([]);
 
-  const canvasAnnotationRef = useRef(null);
-  const canvas = canvasAnnotationRef.current;
-  if (canvas && select_fft_return) {
-    //console.log("Generating annotations", select_fft_return.fft_size)
-    const context = canvas.getContext('2d');
-
-    const spectrogram_width_scale = select_fft_return.image_data ? props.spectrogram_width / select_fft_return.image_data.width : 1;
-    const spectrogram_width = Math.floor(select_fft_return.image_data.width * spectrogram_width_scale);
-    const timescale_width = props.timescale_width;
-    const text_width = props.text_width;
-    const upper_tick_height = props.upper_tick_height;
-    canvas.setAttribute('width', spectrogram_width + timescale_width + text_width); // reset canvas pixels width
-    canvas.setAttribute('height', select_fft_return.image_data.height); // don't use style for this
-
-    // Draw the spectrogram
-
-    // Draw any rectangles from annotations
-    for (let i = 0; i < select_fft_return.annotations.length; i++) {
-      //console.log(select_fft_return.annotations[i]);
-      context.beginPath();
-      context.lineWidth = '4';
-      context.strokeStyle = 'black';
-      //context.rect(select_fft_return.annotations[i].x , select_fft_return.annotations[i].y, select_fft_return.annotations[i].width, select_fft_return.annotations[i].height);
-      context.rect(
-        select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size,
-        (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height,
-        select_fft_return.annotations[i].width * spectrogram_width_scale * select_fft_return.fft_size,
-        (select_fft_return.annotations[i].height * 2) / select_fft_return.fft_size
-      );
-      // add the label
-      context.font = 'bold 28px serif';
-      context.fillText(
-        select_fft_return.annotations[i].description,
-        select_fft_return.annotations[i].x * spectrogram_width_scale * select_fft_return.fft_size,
-        (select_fft_return.annotations[i].y * 2) / select_fft_return.fft_size + upper_tick_height - 5
-      );
-      context.stroke();
+  useEffect(() => {
+    let ret = select_fft(blob, fft, meta);
+    if (!ret) {
+      return;
     }
+    setAnnotations(ret.annotations);
+    setFftSize(ret.fft_size);
+    setSpectrogramWidthScale(ret.image_data ? spectrogram_width / ret.image_data.width : 1);
 
     // Draw the vertical scales
-    let ticks = select_fft_return.image_data.height / 10;
-    context.font = '16px serif';
-    const font_height = context.measureText('100').actualBoundingBoxAscent;
-    //const max_txt_width = context.measureText("100").width;
-    let time_per_row = select_fft_return.fft_size / select_fft_return.sample_rate;
-    for (let i = 0; i < ticks; i++) {
-      context.beginPath();
-      context.lineWidth = '1';
-      context.strokeStyle = 'white';
-      context.moveTo(spectrogram_width + 5, upper_tick_height + i * 10);
+    let num_ticks = ret.image_data.height / 10;
+    const timescale_width = 5;
+    let time_per_row = ret.fft_size / ret.sample_rate;
+    const temp_ticks = [];
+    const temp_labels = [];
+    for (let i = 0; i < num_ticks; i++) {
       if (i % 10 === 0) {
-        context.lineTo(spectrogram_width + timescale_width, upper_tick_height + i * 10);
-        context.fillStyle = '#FFFFFF'; // font color
-        context.fillText((i * time_per_row * 10 * 1e3).toString(), spectrogram_width + 22, upper_tick_height + i * 10 + font_height / 2); // in ms
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 15, height: 0 });
+        temp_labels.push({
+          text: (i * time_per_row * 10 * 1e3).toString(),
+          x: spectrogram_width + 24,
+          y: upper_tick_height + i * 10 - 7,
+        }); // in ms
       } else {
-        context.lineTo(spectrogram_width + timescale_width - 10, i * 10 + upper_tick_height);
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 5, height: 0 });
       }
-
-      context.stroke();
     }
+    setTicks(temp_ticks);
+    setLabels(temp_labels);
+  }, [blob, fft, meta, spectrogram_width, windowFunction, upper_tick_height]);
 
-    //context.putImageData(select_fft_return.image_data, 0, 0,0,0, select_fft_return.image_data.width*2,select_fft_return.image_data.height);
-    //let clearImgData = new ImageData(select_fft_return.image_data, lines, pxPerLine);
+  if (annotations.length <= 1) {
+    return <></>;
   }
-  //this.offScreenCvs =  cvs;
+
   return (
-    <canvas
-      ref={canvasAnnotationRef}
-      style={{
-        gridRow: '1',
-        gridColumn: '1',
-        zIndex: '2',
-      }}
-    ></canvas>
+    <Layer>
+      {annotations.map((annotation, index) => (
+        // for params of Rect see https://konvajs.org/api/Konva.Rect.html
+        // for Text params see https://konvajs.org/api/Konva.Text.html
+        <>
+          <Rect
+            x={annotation.x * spectrogramWidthScale * fftSize}
+            y={(annotation.y * 2) / fftSize + upper_tick_height}
+            width={annotation.width * spectrogramWidthScale * fftSize}
+            height={(annotation.height * 2) / fftSize}
+            fillEnabled="false"
+            stroke="black"
+            strokeWidth={4}
+            key={index}
+          />
+          <Text
+            text={annotation.description}
+            fontFamily="serif"
+            fontSize="24"
+            x={annotation.x * spectrogramWidthScale * fftSize}
+            y={(annotation.y * 2) / fftSize + upper_tick_height - 23}
+            fill="black"
+            fontStyle="bold"
+            key={index + 1000000}
+          />
+        </>
+      ))}
+      {ticks.map((tick, index) => (
+        // couldnt get Line to work, kept getting NaN errors, so just using Rect instead
+        <Rect x={tick.x} y={tick.y} width={tick.width} height={tick.height} fillEnabled="false" stroke="white" strokeWidth={1} key={index} />
+      ))}
+      {labels.map((label, index) => (
+        // for Text params see https://konvajs.org/api/Konva.Text.html
+        <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} fill="white" key={index} align="center" />
+      ))}
+    </Layer>
   );
 };
 

@@ -51,6 +51,12 @@ function parseMeta(json_string, baseUrl, fName) {
 }
 export const FetchRecordingsList = (connection) => async (dispatch) => {
   dispatch(fetchRecordingsListLoading());
+
+  // this happens when its a local folder being opened
+  if ('entries' in connection) {
+    dispatch(fetchRecordingsListSuccess(connection.entries));
+  }
+
   const { accountName, containerName, sasToken } = connection;
   const baseUrl = `https://${accountName}.blob.core.windows.net/${containerName}/`;
   const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);

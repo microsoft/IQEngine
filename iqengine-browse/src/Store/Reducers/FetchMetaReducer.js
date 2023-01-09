@@ -17,7 +17,7 @@ export default function fetchMetaReducer(state = initialState, action) {
         annotations: [],
         captures: [],
         global: {},
-      }
+      };
     }
     default:
       return state;
