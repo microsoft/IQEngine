@@ -21,10 +21,7 @@ const AnnotationViewer = (props) => {
     }
     setAnnotations(ret.annotations);
     setFftSize(ret.fft_size);
-    setSpectrogramWidthScale(ret.image_data ? props.spectrogram_width / ret.image_data.width : 1);
-    //const spectrogram_width = Math.floor(select_fft_return.image_data.width * spectrogram_width_scale);
-    //const width = spectrogram_width + timescale_width + text_width;
-    //const height = select_fft_return.image_data.height; // don't use style for this
+    setSpectrogramWidthScale(ret.image_data ? spectrogram_width / ret.image_data.width : 1);
 
     // Draw the vertical scales
     let num_ticks = ret.image_data.height / 10;
@@ -46,7 +43,7 @@ const AnnotationViewer = (props) => {
     }
     setTicks(temp_ticks);
     setLabels(temp_labels);
-  }, [blob, fft, meta, spectrogram_width, windowFunction]);
+  }, [blob, fft, meta, spectrogram_width, windowFunction, upper_tick_height]);
 
   if (annotations.length <= 1) {
     return <></>;
