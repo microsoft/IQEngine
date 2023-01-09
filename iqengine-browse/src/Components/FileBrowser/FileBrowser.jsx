@@ -46,7 +46,7 @@ class FileBrowser extends Component {
           <Row>
             <Col>
               <LocalFileChooser
-                setRecordingList={this.setRecordingList}
+                setRecordingList={this.props.fetchRecordingsList}
                 updateConnectionMetaFileHandle={this.props.updateConnectionMetaFileHandle}
                 updateConnectionDataFileHandle={this.props.updateConnectionDataFileHandle}
                 metafilehandle={metafilehandle}
