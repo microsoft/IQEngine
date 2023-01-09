@@ -23,20 +23,18 @@ jobs:
 
       - name: npm install and build
         run: |
-          cd iqengine-browse
           npm install
           npm run build --if-present
 
       - name: Zip artifact for deployment
         run: |
-          cd iqengine-browse
           zip release.zip ./* -r
         
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: iqengine-browse/release.zip
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
