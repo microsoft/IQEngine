@@ -1,0 +1,27 @@
+.info-pane {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1rem;
+  margin: 5px;
+  flex-wrap: wrap;
+}
+
+.info-pane-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.info-pane-item-title {
+  background-color: dimgrey;
+  padding: 0 5px;
+  border-radius: 5px 0 0 5px;
+  white-space: nowrap;
+}
+
+.info-pane-item-value {
+  border-radius: 0 5px 5px 0;
+  padding: 0 5px;
+  background-color: #fff;
+  color: #000;
+  white-space: nowrap;
+}

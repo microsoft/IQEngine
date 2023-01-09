@@ -66,8 +66,13 @@ const SpectrogramPanel = (props) => {
     }
   }, [isBottom, status]);
 
+  const loadMore = () => {
+    setIsBottom(true);
+  };
+
   return (
-    <div>
+    <>
+      <button onClick={loadMore}>Load more...</button>
       <div id="spectrogram-panel" style={{ display: 'grid', position: 'relative' }}>
         <SpectrogramViewer
           timescale_width={timescale_width}
@@ -98,7 +103,7 @@ const SpectrogramPanel = (props) => {
           blob={props.blob}
         />
       </div>
-    </div>
+    </>
   );
 };
 

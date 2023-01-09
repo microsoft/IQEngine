@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { useState } from 'react';
-import FileRow from './File';
+import File from './File';
 import styled from 'styled-components';
 import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpen from '@mui/icons-material/FolderOpen';
@@ -55,7 +55,7 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
   }
   return (
     <>
-      <FileRow
+      <File
         key={Math.random()}
         info={files}
         updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}

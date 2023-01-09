@@ -1,0 +1,35 @@
+.spectrogram {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  flex: 1;
+  gap: 1rem;
+  height: 100%;
+}
+
+.spectrogram-info {
+  padding: 10px;
+  border: 1px solid #aaa;
+}
+
+.spectrogram-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  gap: 1rem;
+  height: 100%;
+}
+
+.spectrogram-settings {
+  border: 1px solid #aaa;
+}
+
+.spectrogram-pic {
+  border: 1px solid #aaa;
+  flex: 1;
+  overflow: auto;
+}
+
+.spectrogram-annotations {
+  border: 1px solid #aaa;
+}

@@ -1,0 +1,51 @@
+.settings-pane {
+  width: 350px;
+}
+
+.settings-pane.false {
+  width: 50px;
+}
+
+.settings-pane .settings-pane-title {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.settings-pane.false .settings-pane-text {
+  display: none;
+}
+
+.settings-pane .settings-pane-close::before {
+  content: '-'
+}
+
+.settings-pane.false .settings-pane-close::before {
+  content: '+'
+}
+
+.settings-pane .settings-pane-form {
+  padding: 1rem;
+}
+
+.settings-pane.false .settings-pane-form {
+  display: none;
+}
+
+.settings-pane-form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+
+.settings-pane-form-label {
+  padding: 5px;
+  display: inline-block;
+}
+
+.settings-pane-form-input {
+  padding: 5px;
+  border-radius: 0 0 3px 3px;
+  border: none;
+}

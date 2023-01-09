@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import SpectrogramPage from '../Components/Spectrogram/SpectrogramPage';
+import Spectrogram from '../Components/Spectrogram/Spectrogram';
 import {
   updateConnectionAccountName,
   updateConnectionContainerName,
@@ -39,6 +39,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const SpectrogramContainer = connect(mapStateToProps, mapDispatchToProps)(SpectrogramPage);
+const SpectrogramContainer = connect(mapStateToProps, mapDispatchToProps)(Spectrogram);
 
 export default SpectrogramContainer;

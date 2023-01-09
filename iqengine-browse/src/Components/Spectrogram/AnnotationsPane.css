@@ -1,0 +1,33 @@
+.annotations-pane {
+  width: 200px;
+}
+
+.annotations-pane.false {
+  width: 50px;
+}
+
+.annotations-pane-title {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.annotations-pane.false .annotations-pane-text {
+  display: none;
+}
+
+.annotations-pane .annotations-pane-close::before {
+  content: '-'
+}
+
+.annotations-pane.false .annotations-pane-close::before {
+  content: '+'
+}
+
+.annotations-pane-list {
+  padding: 1rem;
+}
+
+.annotations-pane.false .annotations-pane-list {
+  display: none;
+}
