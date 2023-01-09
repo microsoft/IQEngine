@@ -28,23 +28,20 @@ const AnnotationViewer = (props) => {
 
     // Draw the vertical scales
     let num_ticks = ret.image_data.height / 10;
-    //const font_height = context.measureText('100').actualBoundingBoxAscent;
-    const font_height = 10;
-    //const max_txt_width = context.measureText("100").width;
-    const timescale_width = 20;
+    const timescale_width = 5;
     let time_per_row = ret.fft_size / ret.sample_rate;
     const temp_ticks = [];
     const temp_labels = [];
     for (let i = 0; i < num_ticks; i++) {
       if (i % 10 === 0) {
-        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 5, height: 0 });
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 15, height: 0 });
         temp_labels.push({
           text: (i * time_per_row * 10 * 1e3).toString(),
-          x: spectrogram_width + 22,
-          y: upper_tick_height + i * 10 + font_height / 2,
+          x: spectrogram_width + 24,
+          y: upper_tick_height + i * 10 - 7,
         }); // in ms
       } else {
-        temp_ticks.push({ x: spectrogram_width + timescale_width - 10, y: upper_tick_height + i * 10, width: 5, height: 0 });
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 5, height: 0 });
       }
     }
     setTicks(temp_ticks);
@@ -74,10 +71,11 @@ const AnnotationViewer = (props) => {
           <Text
             text={annotation.description}
             fontFamily="serif"
-            fontSize="20"
+            fontSize="24"
             x={annotation.x * spectrogramWidthScale * fftSize}
-            y={(annotation.y * 2) / fftSize + upper_tick_height - 20}
-            stroke="black"
+            y={(annotation.y * 2) / fftSize + upper_tick_height - 23}
+            fill="black"
+            fontStyle="bold"
             key={index + 1000000}
           />
         </>
@@ -88,7 +86,7 @@ const AnnotationViewer = (props) => {
       ))}
       {labels.map((label, index) => (
         // for Text params see https://konvajs.org/api/Konva.Text.html
-        <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} stroke="white" key={index} />
+        <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} fill="white" key={index} align="center" />
       ))}
     </Layer>
   );

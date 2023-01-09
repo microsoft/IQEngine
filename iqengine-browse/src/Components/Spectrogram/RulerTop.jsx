@@ -16,19 +16,15 @@ const RulerTop = (props) => {
     if (select_fft_return) {
       const spectrogram_width_scale = spectrogram_width / select_fft_return.image_data.width;
       const num_ticks = 16;
-      //const font_height = context.measureText('100').actualBoundingBoxAscent;
-      const font_height = 10;
       const temp_ticks = [];
       const temp_labels = [];
       for (let i = 0; i <= num_ticks; i++) {
         if (i % (num_ticks / 4) === 0) {
           const text = (((i / num_ticks) * select_fft_return.sample_rate - select_fft_return.sample_rate / 2) / 1e6).toString();
-          //const txt_width = context.measureText(text).width;
-          const txt_width = 15; // just manually setting this for now
-          temp_labels.push({ text: text, x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale - txt_width / 2, y: font_height }); // in ms
-          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 0, width: 0, height: 4 });
+          temp_labels.push({ text: text, x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale - 7 / 2, y: 0 }); // in ms
+          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 20, width: 0, height: 5 });
         } else {
-          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 0, width: 0, height: 10 });
+          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 10, width: 0, height: 15 });
         }
       }
       setTicks(temp_ticks);
@@ -45,7 +41,7 @@ const RulerTop = (props) => {
         ))}
         {labels.map((label, index) => (
           // for Text params see https://konvajs.org/api/Konva.Text.html
-          <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} stroke="white" key={index} />
+          <Text text={label.text} fontFamily="serif" fontSize="16" x={label.x} y={label.y} fill="white" key={index} align="center" />
         ))}
       </Layer>
     );
