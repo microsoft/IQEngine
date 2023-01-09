@@ -5,10 +5,12 @@ import { SpectrogramViewer } from './SpectrogramViewer';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import React, { useEffect, useState } from 'react';
+import { Stage } from 'react-konva';
 
 const SpectrogramPanel = (props) => {
   const [isBottom, setIsBottom] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 100, height: 100 });
+  const [stageDimensions, setStageDimensions] = useState({ stageWidth: 700, stageHeight: 700 });
 
   const timescale_width = 20;
   const text_width = 30;
@@ -69,34 +71,37 @@ const SpectrogramPanel = (props) => {
   return (
     <div>
       <div id="spectrogram-panel" style={{ display: 'grid', position: 'relative' }}>
-        <SpectrogramViewer
-          timescale_width={timescale_width}
-          text_width={text_width}
-          upper_tick_height={upper_tick_height}
-          spectrogram_width={spectrogram_width}
-          fft={props.fft}
-          meta={props.meta}
-          blob={props.blob}
-          windowFunction={props.window}
-        />
-        <AnnotationViewer
-          timescale_width={timescale_width}
-          text_width={text_width}
-          upper_tick_height={upper_tick_height}
-          spectrogram_width={spectrogram_width}
-          fft={props.fft}
-          meta={props.meta}
-          blob={props.blob}
-        />
-        <RulerTop
-          timescale_width={timescale_width}
-          text_width={text_width}
-          upper_tick_height={upper_tick_height}
-          spectrogram_width={spectrogram_width}
-          fft={props.fft}
-          meta={props.meta}
-          blob={props.blob}
-        />
+        <Stage width={stageDimensions.stageWidth} height={stageDimensions.stageHeight}>
+          <SpectrogramViewer
+            timescale_width={timescale_width}
+            text_width={text_width}
+            upper_tick_height={upper_tick_height}
+            spectrogram_width={spectrogram_width}
+            fft={props.fft}
+            meta={props.meta}
+            blob={props.blob}
+            windowFunction={props.window}
+            setStageDimensions={setStageDimensions}
+          />
+          <AnnotationViewer
+            timescale_width={timescale_width}
+            text_width={text_width}
+            upper_tick_height={upper_tick_height}
+            spectrogram_width={spectrogram_width}
+            fft={props.fft}
+            meta={props.meta}
+            blob={props.blob}
+          />
+          <RulerTop
+            timescale_width={timescale_width}
+            text_width={text_width}
+            upper_tick_height={upper_tick_height}
+            spectrogram_width={spectrogram_width}
+            fft={props.fft}
+            meta={props.meta}
+            blob={props.blob}
+          />
+        </Stage>
       </div>
     </div>
   );

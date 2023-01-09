@@ -76,7 +76,7 @@ const LocalFileChooser = (props) => {
     const dirHandle = await window.showDirectoryPicker();
     const entries = await handleDirectoryEntry(dirHandle, [], '');
     //console.log(entries);
-    props.setRecordingList(entries); // updates the parent (App.js) state with the RecordingList
+    props.setRecordingList({ entries: entries }); // updates the parent (App.js) state with the RecordingList
   };
 
   return (

@@ -75,12 +75,25 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
   for (let i = starting_row; i < num_ffts; i++) {
     let samples_slice = window.iq_data.slice(i * fft_size * 2, (i + 1) * fft_size * 2); // mult by 2 because this is int/floats not IQ samples
 
-    // Apply a hamming window
+    // Apply a hamming window and hanning window
     if (windowFunction === 'hamming') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
         samples_slice[window_i] = samples_slice[window_i] * (0.54 - 0.46 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
       }
+    } else if (windowFunction === 'hanning') {
+      for (let window_i = 0; window_i < fft_size; window_i++) {
+        samples_slice[window_i] = samples_slice[window_i] * (0.50 - 0.50 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
+      }
+    } else if (windowFunction === 'bartlett') {
+      for (let window_i = 0; window_i < fft_size; window_i++) {
+        samples_slice[window_i] = samples_slice[window_i] * ((2 / (fft_size - 1)) * (((fft_size - 1) / 2)) - Math.abs(window_i - ((fft_size - 1) / 2)));
+      }
+    } else if (windowFunction === 'blackman') {
+      for (let window_i = 0; window_i < fft_size; window_i++) {
+        samples_slice[window_i] = samples_slice[window_i] * (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
+      }
     }
+  
 
     const f = new FFT(fft_size);
     const out = f.createComplexArray(); // creates an empty array the length of fft.size*2
