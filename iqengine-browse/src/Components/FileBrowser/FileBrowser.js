@@ -2,15 +2,12 @@
 // Licensed under the MIT License.
 
 import React, { Component } from 'react';
-// import ConnectionStringInput from './Components/FileBrowser/ConnectionString';
-// import RecordingsBrowser from './Components/FileBrowser/RecordingsBrowser';
-// import LocalFileChooser from './Components/FileBrowser/LocalFileChooser';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import LocalFileChooser from './LocalFileChooser';
-import ConnectionStringInput from './ConnectionString';
+import LocalFileBrowser from './LocalFileBrowser';
 import RecordingsBrowser from './RecordingsBrowser';
+import AzureBlobBrowser from './AzureBlobBrowser';
 
 class FileBrowser extends Component {
   constructor(props) {
@@ -45,7 +42,7 @@ class FileBrowser extends Component {
         <Container>
           <Row>
             <Col>
-              <LocalFileChooser
+              <LocalFileBrowser
                 setRecordingList={this.props.fetchRecordingsList}
                 updateConnectionMetaFileHandle={this.props.updateConnectionMetaFileHandle}
                 updateConnectionDataFileHandle={this.props.updateConnectionDataFileHandle}
@@ -58,7 +55,7 @@ class FileBrowser extends Component {
               <div className="vr" style={{ opacity: 0.6, minHeight: 250 }}></div>
             </Col>
             <Col>
-              <ConnectionStringInput
+              <AzureBlobBrowser
                 setRecordingList={this.props.fetchRecordingsList}
                 updateConnectionAccountName={this.props.updateConnectionAccountName}
                 updateConnectionContainerName={this.props.updateConnectionContainerName}
