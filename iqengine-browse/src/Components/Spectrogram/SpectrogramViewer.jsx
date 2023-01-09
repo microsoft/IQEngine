@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Layer, Image } from 'react-konva';
 
 export const SpectrogramViewer = (props) => {
-  let { blob, fft, meta, windowFunction, spectrogram_width, setStageDimensions } = props;
+  let { blob, fft, meta, windowFunction, spectrogram_width, setStageDimensions, text_width, timescale_width, upper_tick_height } = props;
 
   const [image, setImage] = useState();
   const [spectrogramWidth, setSpectrogramWidth] = useState(200);
@@ -19,20 +19,20 @@ export const SpectrogramViewer = (props) => {
       setSpectrogramWidth(Math.floor(select_fft_return.image_data.width * spectrogram_width_scale));
       setHeight(select_fft_return.image_data.height);
       setStageDimensions({
-        stageWidth: spectrogramWidth + props.timescale_width + props.text_width,
-        stageHeight: props.upper_tick_height + select_fft_return.image_data.height,
+        stageWidth: spectrogramWidth + timescale_width + text_width,
+        stageHeight: upper_tick_height + select_fft_return.image_data.height,
       });
       // Draw the spectrogram
       createImageBitmap(select_fft_return.image_data).then((ret) => {
         setImage(ret);
       });
     }
-  }, [blob, fft, meta, spectrogram_width, windowFunction]);
+  }, [blob, fft, meta, spectrogram_width, windowFunction, text_width, timescale_width, setStageDimensions, spectrogramWidth, upper_tick_height]);
 
   //this.offScreenCvs =  cvs;
   return (
     <Layer>
-      <Image image={image} x={0} y={props.upper_tick_height} width={spectrogramWidth} height={height} />
+      <Image image={image} x={0} y={upper_tick_height} width={spectrogramWidth} height={height} />
     </Layer>
   );
 };
