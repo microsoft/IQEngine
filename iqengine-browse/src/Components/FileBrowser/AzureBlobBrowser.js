@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-class ConnectionStringInput extends Component {
+class AzureBlobBrowser extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -80,4 +80,4 @@ class ConnectionStringInput extends Component {
   }
 }
 
-export default ConnectionStringInput;
+export default AzureBlobBrowser;

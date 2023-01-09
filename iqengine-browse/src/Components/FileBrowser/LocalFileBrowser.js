@@ -54,7 +54,7 @@ async function handleDirectoryEntry(handle, out, dir) {
   return out;
 }
 
-const LocalFileChooser = (props) => {
+const LocalFileBrowser = (props) => {
   const navigate = useNavigate();
 
   const openFile = async () => {
@@ -90,4 +90,4 @@ const LocalFileChooser = (props) => {
   );
 };
 
-export default LocalFileChooser;
+export default LocalFileBrowser;
