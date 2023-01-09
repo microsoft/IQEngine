@@ -53,4 +53,4 @@ jobs:
           app-name: 'iqengineweb'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_50c7b335d29046f98adf66cde1936d40 }}
-          package: .
+          package: ./iqengine-browse
