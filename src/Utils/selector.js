@@ -175,10 +175,10 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
 
     if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
       annotations_list.push({
-        x: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size,
-        y: sample_start / fft_size, // divide by 2 is because sample start is in int/floats not IQ samples
-        width: ((freq_upper_edge - freq_lower_edge) / sample_rate) * fft_size,
-        height: sample_count / fft_size,
+        x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side
+        x2: ((freq_upper_edge - lower_freq) / sample_rate) * fft_size, // right side
+        y1: sample_start / fft_size, // top
+        y2: (sample_start + sample_count) / fft_size, // bottom
         description: description,
       });
     }
