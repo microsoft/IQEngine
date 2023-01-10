@@ -6,11 +6,21 @@ import React, { useState, useEffect } from 'react';
 import { Layer, Image } from 'react-konva';
 
 export const SpectrogramViewer = (props) => {
-  let { 
-    blob, fft, meta, windowFunction, spectrogram_width, 
-    setStageDimensions, text_width, timescale_width, upper_tick_height, 
-    autoscale, updateMagnitudeMax, updateMagnitudeMin, updateAutoScale
-   } = props;
+  let {
+    blob,
+    fft,
+    meta,
+    windowFunction,
+    spectrogram_width,
+    setStageDimensions,
+    text_width,
+    timescale_width,
+    upper_tick_height,
+    autoscale,
+    updateMagnitudeMax,
+    updateMagnitudeMin,
+    updateAutoScale,
+  } = props;
 
   const [image, setImage] = useState();
   const [spectrogramWidth, setSpectrogramWidth] = useState(200);
@@ -30,14 +40,28 @@ export const SpectrogramViewer = (props) => {
       createImageBitmap(select_fft_return.image_data).then((ret) => {
         setImage(ret);
       });
-      if (autoscale) {
-        updateAutoScale();
+      if (autoscale && select_fft_return.autoMax) {
+        updateAutoScale(); // toggles it off so this only will happen once
         updateMagnitudeMax(select_fft_return.autoMax);
         updateMagnitudeMin(select_fft_return.autoMin);
       }
     }
-  }, [blob, fft, meta, spectrogram_width, windowFunction, text_width, timescale_width, setStageDimensions, 
-      spectrogramWidth, upper_tick_height, updateAutoScale, updateMagnitudeMax, updateMagnitudeMin, autoscale]);
+  }, [
+    blob,
+    fft,
+    meta,
+    spectrogram_width,
+    windowFunction,
+    text_width,
+    timescale_width,
+    setStageDimensions,
+    spectrogramWidth,
+    upper_tick_height,
+    updateAutoScale,
+    updateMagnitudeMax,
+    updateMagnitudeMin,
+    autoscale,
+  ]);
 
   //this.offScreenCvs =  cvs;
   return (
