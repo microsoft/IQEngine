@@ -29,6 +29,10 @@ const AnnotationViewer = (props) => {
   const [labels, setLabels] = useState([]);
   const [dragDropData, setDragDropData] = useState(null);
 
+  // These two lines are a hack used to force a re-render when an annotation is updated, which for some reason wasnt updating
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
   const previewItem = getPreview(dragDropData);
 
   useEffect(() => {
@@ -86,6 +90,7 @@ const AnnotationViewer = (props) => {
     const annot_pos_y = e.target.id().split('-')[2];
     annotations[annot_indx][annot_pos_x] = x / spectrogramWidthScale; // reverse the calcs done to generate the coords
     annotations[annot_indx][annot_pos_y] = y - upper_tick_height;
+    forceUpdate(); // TODO remove the forceupdate and do it the proper way (possibly using spread?)
   }
 
   function onDrop(e) {
