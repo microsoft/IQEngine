@@ -45,7 +45,7 @@ const AzureBlobBrowser = (props) => {
           <Form.Control type="text" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
         </Form.Group>
 
-        <Button className="btn btn-success" onClick={onSubmit}>
+        <Button variant='success' onClick={onSubmit}>
           Browse Recordings
         </Button>
       </div>

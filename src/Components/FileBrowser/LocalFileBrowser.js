@@ -82,9 +82,9 @@ const LocalFileBrowser = (props) => {
   return (
     <div className="container-fluid">
       <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
-      <Button onClick={openDir}>Open Local Directory</Button>
+      <Button onClick={openDir} variant='success'>Open Local Directory</Button>
       &nbsp; &nbsp; or &nbsp; &nbsp;
-      <Button onClick={openFile}>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
+      <Button onClick={openFile} variant='success'>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
       <br />
     </div>
   );
