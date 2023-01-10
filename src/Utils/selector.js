@@ -29,7 +29,13 @@ export const clear_fft_data = () => {
   window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
-export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => {
+function getStandardDeviation(array) {
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+}
+
+export const select_fft = (blob, fft, meta, windowFunction, autoscale = false) => {
   let blob_size = window.iq_data.length; // this is actually the number of int16's that have been downloaded so far
   let fft_size = fft.size;
   let magnitude_max = fft.magnitudeMax;
@@ -52,8 +58,8 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => 
       annotations: window.annotations,
       sample_rate: window.sample_rate,
       fft_size: fft_size, // scales will break without this
-      autoMax: 255,
-      autoMin: 0,
+      autoMax: null,
+      autoMin: null,
     };
     return select_fft_return;
   }
@@ -120,27 +126,23 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => 
     magnitudes = magnitudes.map((x) => x / maximum_val); // highest value is now 1
     magnitudes = magnitudes.map((x) => x * 255); // now from 0 to 255
 
-    // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
-    let std = getStandardDeviation(magnitudes);
-
-    function getStandardDeviation(array) {
-      const n = array.length;
-      const mean = array.reduce((a, b) => a + b) / n;
-      return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-
+    // When you click the button this code will run once, then it will turn itself off until you click it again
     if (autoscale) {
       // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
-      let std = getStandardDeviation(magnitudes);
-  
-      function getStandardDeviation (array) {
-        const n = array.length
-        const mean = array.reduce((a, b) => a + b) / n
-        return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+      const std = getStandardDeviation(magnitudes);
+      const mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
+      // for now we're just going to use whatever the last FFT row's value is for min/max
+      autoMin = mean - 1.5 * std;
+      autoMax = mean + 1.5 * std;
+      if (autoMin < 0) {
+        autoMin = 0;
       }
-  
-      let mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
-      autoMin = mean - std;
-      autoMax = mean + std;
+      if (autoMax > 255) {
+        autoMax = 255;
+      }
+      // It's a bit ugly with a dozen decimal places, so round to 3
+      autoMax = Math.round(autoMax * 1000) / 1000;
+      autoMin = Math.round(autoMin * 1000) / 1000;
     }
 
     // apply magnitude min and max
