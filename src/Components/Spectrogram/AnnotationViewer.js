@@ -82,12 +82,10 @@ const AnnotationViewer = (props) => {
     const x = e.target.x(); // look at box coords instead of cursor coords because above code didnt work
     const y = e.target.y();
     const annot_indx = e.target.id().split('-')[0];
-    const annot_pos = e.target.id().split('-')[1];
-    console.log(x, y, annot_indx, annot_pos);
-    if (annot_pos === 'UL') {
-      annotations[annot_indx].x = x / spectrogramWidthScale / fftSize; // reverse the calcs done to generate the coords
-      annotations[annot_indx].y = ((y - upper_tick_height) * fftSize) / 2;
-    }
+    const annot_pos_x = e.target.id().split('-')[1];
+    const annot_pos_y = e.target.id().split('-')[2];
+    annotations[annot_indx][annot_pos_x] = x / spectrogramWidthScale; // reverse the calcs done to generate the coords
+    annotations[annot_indx][annot_pos_y] = y - upper_tick_height;
   }
 
   function onDrop(e) {
@@ -137,7 +135,7 @@ const AnnotationViewer = (props) => {
             onDragEnd={onDragEnd}
             onMouseOver={onMouseOver}
             onMouseOut={onMouseOut}
-            id={index.toString() + '-UL'} // upper left
+            id={index.toString() + '-x1-y1'} // tells the event which annotation, and which x and y to update
           />
           {/* Top Right Corner */}
           <Rect
@@ -151,6 +149,11 @@ const AnnotationViewer = (props) => {
             strokeWidth={1}
             key={index + 5000000}
             draggable
+            onDragStart={(e) => onDragStart(e, 'rectangle')}
+            onDragEnd={onDragEnd}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            id={index.toString() + '-x2-y1'} // tells the event which annotation, and which x and y to update
           />
           {/* Bottom Left Corner */}
           <Rect
@@ -164,6 +167,11 @@ const AnnotationViewer = (props) => {
             strokeWidth={1}
             key={index + 6000000}
             draggable
+            onDragStart={(e) => onDragStart(e, 'rectangle')}
+            onDragEnd={onDragEnd}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            id={index.toString() + '-x1-y2'} // tells the event which annotation, and which x and y to update
           />
           {/* Bottom Right Corner */}
           <Rect
@@ -177,7 +185,13 @@ const AnnotationViewer = (props) => {
             strokeWidth={1}
             key={index + 7000000}
             draggable
+            onDragStart={(e) => onDragStart(e, 'rectangle')}
+            onDragEnd={onDragEnd}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            id={index.toString() + '-x2-y2'} // tells the event which annotation, and which x and y to update
           />
+          {/* Description Label */}
           <Text
             text={annotation.description}
             fontFamily="serif"
