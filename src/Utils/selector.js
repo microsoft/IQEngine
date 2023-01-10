@@ -29,7 +29,13 @@ export const clear_fft_data = () => {
   window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
-export const select_fft = (blob, fft, meta, windowFunction) => {
+function getStandardDeviation(array) {
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+}
+
+export const select_fft = (blob, fft, meta, windowFunction, autoscale = false) => {
   let blob_size = window.iq_data.length; // this is actually the number of int16's that have been downloaded so far
   let fft_size = fft.size;
   let magnitude_max = fft.magnitudeMax;
@@ -52,8 +58,8 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
       annotations: window.annotations,
       sample_rate: window.sample_rate,
       fft_size: fft_size, // scales will break without this
-      autoMax: 255,
-      autoMin: 0,
+      autoMax: null,
+      autoMin: null,
     };
     return select_fft_return;
   }
@@ -73,8 +79,8 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     new_fft_data.set(window.fft_data, 0);
   }
 
-  let autoMin;
-  let autoMax;
+  let autoMin = 0;
+  let autoMax = 0;
 
   // loop through each row
   for (let i = starting_row; i < num_ffts; i++) {
@@ -87,15 +93,17 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
       }
     } else if (windowFunction === 'hanning') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * (0.50 - 0.50 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
+        samples_slice[window_i] = samples_slice[window_i] * (0.5 - 0.5 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
       }
     } else if (windowFunction === 'bartlett') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * ((2 / (fft_size - 1)) * (((fft_size - 1) / 2)) - Math.abs(window_i - ((fft_size - 1) / 2)));
+        samples_slice[window_i] = samples_slice[window_i] * ((2 / (fft_size - 1)) * ((fft_size - 1) / 2) - Math.abs(window_i - (fft_size - 1) / 2));
       }
     } else if (windowFunction === 'blackman') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
+        samples_slice[window_i] =
+          samples_slice[window_i] *
+          (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
       }
     }
 
@@ -118,18 +126,24 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     magnitudes = magnitudes.map((x) => x / maximum_val); // highest value is now 1
     magnitudes = magnitudes.map((x) => x * 255); // now from 0 to 255
 
-    // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
-    let std = getStandardDeviation(magnitudes);
-
-    function getStandardDeviation (array) {
-      const n = array.length
-      const mean = array.reduce((a, b) => a + b) / n
-      return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+    // When you click the button this code will run once, then it will turn itself off until you click it again
+    if (autoscale) {
+      // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
+      const std = getStandardDeviation(magnitudes);
+      const mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
+      // for now we're just going to use whatever the last FFT row's value is for min/max
+      autoMin = mean - 1.5 * std;
+      autoMax = mean + 1.5 * std;
+      if (autoMin < 0) {
+        autoMin = 0;
+      }
+      if (autoMax > 255) {
+        autoMax = 255;
+      }
+      // It's a bit ugly with a dozen decimal places, so round to 3
+      autoMax = Math.round(autoMax * 1000) / 1000;
+      autoMin = Math.round(autoMin * 1000) / 1000;
     }
-
-    let mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
-    autoMin = mean - std;
-    autoMax = mean + std;
 
     // apply magnitude min and max
     magnitudes = magnitudes.map((x) => x / ((magnitude_max - magnitude_min) / 255));
@@ -173,10 +187,10 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
 
     if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
       annotations_list.push({
-        x: (freq_lower_edge - lower_freq) / sample_rate,
-        y: sample_start / 2, // divide by 2 is because sample start is in int/floats not IQ samples
-        width: (freq_upper_edge - freq_lower_edge) / sample_rate,
-        height: sample_count / 2,
+        x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side
+        x2: ((freq_upper_edge - lower_freq) / sample_rate) * fft_size, // right side
+        y1: sample_start / fft_size, // top
+        y2: (sample_start + sample_count) / fft_size, // bottom
         description: description,
       });
     }
