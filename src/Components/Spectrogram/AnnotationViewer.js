@@ -111,10 +111,10 @@ const AnnotationViewer = (props) => {
         // for Text params see https://konvajs.org/api/Konva.Text.html
         <>
           <Rect
-            x={annotation.x * spectrogramWidthScale * fftSize}
-            y={(annotation.y * 2) / fftSize + upper_tick_height}
-            width={annotation.width * spectrogramWidthScale * fftSize}
-            height={(annotation.height * 2) / fftSize}
+            x={annotation.x * spectrogramWidthScale}
+            y={annotation.y + upper_tick_height}
+            width={annotation.width * spectrogramWidthScale}
+            height={annotation.height}
             fillEnabled="false"
             stroke="black"
             strokeWidth={4}
@@ -122,8 +122,8 @@ const AnnotationViewer = (props) => {
           />
           {/* Top Left Corner */}
           <Rect
-            x={annotation.x * spectrogramWidthScale * fftSize - 4}
-            y={(annotation.y * 2) / fftSize + upper_tick_height - 4}
+            x={annotation.x * spectrogramWidthScale - 4}
+            y={annotation.y + upper_tick_height - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -140,8 +140,8 @@ const AnnotationViewer = (props) => {
           />
           {/* Top Right Corner */}
           <Rect
-            x={annotation.x * spectrogramWidthScale * fftSize + annotation.width * spectrogramWidthScale * fftSize - 4}
-            y={(annotation.y * 2) / fftSize + upper_tick_height - 4}
+            x={annotation.x * spectrogramWidthScale + annotation.width * spectrogramWidthScale - 4}
+            y={annotation.y + upper_tick_height - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -153,8 +153,8 @@ const AnnotationViewer = (props) => {
           />
           {/* Bottom Left Corner */}
           <Rect
-            x={annotation.x * spectrogramWidthScale * fftSize - 4}
-            y={(annotation.y * 2) / fftSize + upper_tick_height + (annotation.height * 2) / fftSize - 4}
+            x={annotation.x * spectrogramWidthScale - 4}
+            y={annotation.y + upper_tick_height + annotation.height - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -166,8 +166,8 @@ const AnnotationViewer = (props) => {
           />
           {/* Bottom Right Corner */}
           <Rect
-            x={annotation.x * spectrogramWidthScale * fftSize + annotation.width * spectrogramWidthScale * fftSize - 4}
-            y={(annotation.y * 2) / fftSize + upper_tick_height + (annotation.height * 2) / fftSize - 4}
+            x={annotation.x * spectrogramWidthScale + annotation.width * spectrogramWidthScale - 4}
+            y={annotation.y + upper_tick_height + annotation.height - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -181,8 +181,8 @@ const AnnotationViewer = (props) => {
             text={annotation.description}
             fontFamily="serif"
             fontSize="24"
-            x={annotation.x * spectrogramWidthScale * fftSize}
-            y={(annotation.y * 2) / fftSize + upper_tick_height - 23}
+            x={annotation.x * spectrogramWidthScale}
+            y={annotation.y + upper_tick_height - 23}
             fill="black"
             fontStyle="bold"
             key={index + 1000000}
