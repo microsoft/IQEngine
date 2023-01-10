@@ -82,6 +82,10 @@ const SpectrogramPanel = (props) => {
             blob={props.blob}
             windowFunction={props.window}
             setStageDimensions={setStageDimensions}
+            updateMagnitudeMax={props.updateMagnitudeMax}
+            updateMagnitudeMin={props.updateMagnitudeMin}
+            updateAutoScale={props.updateAutoScale}
+            autoscale={props.autoscale}
           />
           <AnnotationViewer
             timescale_width={timescale_width}

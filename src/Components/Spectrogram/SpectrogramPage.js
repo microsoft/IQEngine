@@ -15,6 +15,7 @@ class SpectrogramPage extends Component {
       magnitudeMax: 255,
       magnitudeMin: 30,
       window: 'hamming',
+      autoscale: false,
     };
   }
 
@@ -72,8 +73,15 @@ class SpectrogramPage extends Component {
     });
   };
 
+  handleAutoScale = () => {
+    const { autoscale } = this.state;
+    this.setState({
+      autoscale: !autoscale,
+    });
+  };
+
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -93,6 +101,7 @@ class SpectrogramPage extends Component {
                 fft={fft}
                 blob={blob}
                 meta={meta}
+                updateAutoScale={this.handleAutoScale}
               />
             </Col>
             <Col>
@@ -103,6 +112,10 @@ class SpectrogramPage extends Component {
                 blob={blob}
                 meta={meta}
                 window={this.state.window}
+                updateMagnitudeMax={this.handleMagnitudeMax}
+                updateMagnitudeMin={this.handleMagnitudeMin}
+                updateAutoScale={this.handleAutoScale}
+                autoscale={autoscale}
               />
             </Col>
           </Row>
