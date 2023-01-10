@@ -87,15 +87,17 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => 
       }
     } else if (windowFunction === 'hanning') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * (0.50 - 0.50 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
+        samples_slice[window_i] = samples_slice[window_i] * (0.5 - 0.5 * Math.cos((2 * Math.PI * window_i) / (fft_size - 1)));
       }
     } else if (windowFunction === 'bartlett') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * ((2 / (fft_size - 1)) * (((fft_size - 1) / 2)) - Math.abs(window_i - ((fft_size - 1) / 2)));
+        samples_slice[window_i] = samples_slice[window_i] * ((2 / (fft_size - 1)) * ((fft_size - 1) / 2) - Math.abs(window_i - (fft_size - 1) / 2));
       }
     } else if (windowFunction === 'blackman') {
       for (let window_i = 0; window_i < fft_size; window_i++) {
-        samples_slice[window_i] = samples_slice[window_i] * (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
+        samples_slice[window_i] =
+          samples_slice[window_i] *
+          (0.42 - 0.5 * Math.cos((2 * Math.PI * window_i) / fft_size) + 0.08 * Math.cos((4 * Math.PI * window_i) / fft_size));
       }
     }
 
@@ -117,6 +119,14 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => 
     let maximum_val = Math.max(...magnitudes);
     magnitudes = magnitudes.map((x) => x / maximum_val); // highest value is now 1
     magnitudes = magnitudes.map((x) => x * 255); // now from 0 to 255
+
+    // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
+    let std = getStandardDeviation(magnitudes);
+
+    function getStandardDeviation(array) {
+      const n = array.length;
+      const mean = array.reduce((a, b) => a + b) / n;
+      return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 
     if (autoscale) {
       // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
@@ -175,10 +185,10 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => 
 
     if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
       annotations_list.push({
-        x: (freq_lower_edge - lower_freq) / sample_rate,
-        y: sample_start / 2, // divide by 2 is because sample start is in int/floats not IQ samples
-        width: (freq_upper_edge - freq_lower_edge) / sample_rate,
-        height: sample_count / 2,
+        x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side
+        x2: ((freq_upper_edge - lower_freq) / sample_rate) * fft_size, // right side
+        y1: sample_start / fft_size, // top
+        y2: (sample_start + sample_count) / fft_size, // bottom
         description: description,
       });
     }
