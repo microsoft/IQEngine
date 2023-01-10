@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -12,38 +12,47 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 const SettingsPane = (props) => {
   const [state, setState] = useState({
-        size: 1024,
-        magnitudeMax: 255,
-        magnitudeMin: 30,
-        taps: '[1]',
-        windowFunction: 'hamming',
-        error: { magnitudeMax: '', magnitudeMin: '', size: '' },
-      });
+    size: 1024,
+    taps: '[1]',
+    windowFunction: 'hamming',
+    error: { magMax: '', magMin: '', size: '' },
+  });
+
+  let [magnitudeMax, onChangeMagnitudeMax] = useState({ magnitudeMax: props.magnitudeMax });
+  let [magnitudeMin, onChangeMagnitudeMin] = useState({ magnitudeMin: props.magnitudeMin });
+
+  useEffect(() => {
+    onChangeMagnitudeMax({ magnitudeMax: props.magnitudeMax });
+  }, [props.magnitudeMax]);
+
+  useEffect(() => {
+    onChangeMagnitudeMin({ magnitudeMin: props.magnitudeMin });
+  }, [props.magnitudeMin]);
 
   const onChangeWindowFunction = (event) => {
-    setState({...state,
-      windowFunction: event,
-    });
+    setState({ ...state, windowFunction: event });
     props.updateWindowChange(event);
   };
 
-  const onChangeMagnitudeMax = (event) => {
-    setState({...state,
-      magnitudeMax: parseInt(event.target.value),
-    });
+  const onChangeTargetMagnitudeMax = (event) => {
+    onChangeMagnitudeMax({ magnitudeMax: parseInt(event.target.value) });
   };
 
   const onSubmitMagnitudeMax = () => {
-    if (parseInt(state.magnitudeMax) && state.magnitudeMax > state.magnitudeMin && state.magnitudeMax < 256) {
-      props.updateMagnitudeMax(state.magnitudeMax);
-      setState({...state,
+    const min = parseInt(magnitudeMin.magnitudeMin);
+    const max = parseInt(magnitudeMax.magnitudeMax);
+    if (parseInt(max) && max > min && max < 256) {
+      props.updateMagnitudeMax(max);
+      setState({
+        ...state,
         error: {
           ...state.error,
           magMax: '',
         },
       });
     } else {
-      setState({...state,
+      setState({
+        ...state,
         error: {
           ...state.error,
           magMax: 'Magnitude max must be an integer, greater than the magnitude min, and between 1 and 255',
@@ -52,25 +61,25 @@ const SettingsPane = (props) => {
     }
   };
 
-  const onChangeMagnitudeMin = (event) => {
-    setState({...state,
-      magnitudeMin: parseInt(event.target.value),
-    });
+  const onChangeTargetMagnitudeMin = (event) => {
+    onChangeMagnitudeMin({ magnitudeMin: parseInt(event.target.value) });
   };
 
   const onSubmitMagnitudeMin = () => {
-    const min = parseInt(state.magnitudeMin);
-    const max = parseInt(state.magnitudeMax);
+    const min = parseInt(magnitudeMin.magnitudeMin);
+    const max = parseInt(magnitudeMax.magnitudeMax);
     if (min && min >= 0 && min < max) {
-      props.updateMagnitudeMin(state.magnitudeMin);
-      setState({...state,
+      props.updateMagnitudeMin(magnitudeMin.magnitudeMin);
+      setState({
+        ...state,
         error: {
           ...state.error,
           magMin: '',
         },
       });
     } else {
-      setState({...state,
+      setState({
+        ...state,
         error: {
           ...state.error,
           magMin: 'Magnitude min must be an integer, less than the magnitude max, and between 1 and 255',
@@ -80,23 +89,23 @@ const SettingsPane = (props) => {
   };
 
   const onChangeFftsize = (event) => {
-    setState({...state,
-      size: parseInt(event.target.value),
-    });
+    setState({ ...state, size: parseInt(event.target.value) });
   };
 
   const onSubmitFftsize = () => {
     const intSize = parseInt(state.size);
     if (intSize >= 64 && Math.sqrt(intSize) % 2 === 0) {
       props.updateFftsize(state.size);
-      setState({...state,
+      setState({
+        ...state,
         error: {
           ...state.error,
           size: '',
         },
       });
     } else {
-      setState({...state,
+      setState({
+        ...state,
         error: {
           ...state.error,
           size: 'Size must be a power of 2 and at least 64',
@@ -106,9 +115,7 @@ const SettingsPane = (props) => {
   };
 
   const onChangeTaps = (event) => {
-    setState({...state,
-      taps: event.target.value,
-    });
+    setState({ ...state, taps: event.target.value });
   };
 
   const onSubmitTaps = () => {
@@ -126,76 +133,89 @@ const SettingsPane = (props) => {
     }
     props.updateBlobTaps(taps);
   };
-    return (
-      <Form>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Magnitude Max</Form.Label>
-          <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.magMax}</div>
-          <InputGroup className="mb-3">
-            <Form.Control type="text" defaultValue={state.magnitudeMax} onChange={onChangeMagnitudeMax} size="sm" />
-            <Button className="btn btn-secondary" onClick={onSubmitMagnitudeMax}>
-              <FontAwesomeIcon icon={faArrowRight} />
-            </Button>
-          </InputGroup>
-        </Form.Group>
+  console.log("max ",magnitudeMax)
+  console.log("min ",magnitudeMin)
+  return (
+    <Form>
+      <Button className="mb-3" variant="secondary" onClick={props.updateAutoScale} style={{ width: '100%', marginTop: '5px' }}>
+        Autoscale
+      </Button>
 
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Magnitude Min</Form.Label>
-          <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.magMin}</div>
-          <InputGroup className="mb-3">
-            <Form.Control type="text" defaultValue={state.magnitudeMin} onChange={onChangeMagnitudeMin} size="sm" />
-            <Button className="btn btn-secondary" onClick={onSubmitMagnitudeMin}>
-              <FontAwesomeIcon icon={faArrowRight} />
-            </Button>
-          </InputGroup>
-        </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Magnitude Max</Form.Label>
+        <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.magMax}</div>
+        <InputGroup className="mb-3">
+          <Form.Control type="text" value={magnitudeMax.magnitudeMax} onChange={onChangeTargetMagnitudeMax} size="sm" />
+          <Button variant="secondary" onClick={onSubmitMagnitudeMax}>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+        </InputGroup>
+      </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>FFT Size</Form.Label>
-          <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.size}</div>
-          <InputGroup className="mb-3">
-            <Form.Control type="text" defaultValue={state.size} onChange={onChangeFftsize} size="sm" />
-            <Button className="btn btn-secondary" onClick={onSubmitFftsize}>
-              <FontAwesomeIcon icon={faArrowRight} />
-            </Button>
-          </InputGroup>
-        </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Magnitude Min</Form.Label>
+        <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.magMin}</div>
+        <InputGroup className="mb-3">
+          <Form.Control type="text" value={magnitudeMin.magnitudeMin} onChange={onChangeTargetMagnitudeMin} size="sm" />
+          <Button variant="secondary" onClick={onSubmitMagnitudeMin}>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+        </InputGroup>
+      </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>FIR Filter Taps</Form.Label>
-          <InputGroup className="mb-3">
-            <Form.Control type="text" defaultValue={state.taps} onChange={onChangeTaps} size="sm" />
-            <Button className="btn btn-secondary" onClick={onSubmitTaps}>
-              <FontAwesomeIcon icon={faArrowRight} />
-            </Button>
-          </InputGroup>
-        </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>FFT Size</Form.Label>
+        <div style={{ color: 'red', marginBottom: '2px' }}>{state.error.size}</div>
+        <InputGroup className="mb-3">
+          <Form.Control type="text" defaultValue={state.size} onChange={onChangeFftsize} size="sm" />
+          <Button variant="secondary" onClick={onSubmitFftsize}>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+        </InputGroup>
+      </Form.Group>
 
-        <DropdownButton title="Data Type" variant="secondary" className="mb-3" id="dropdown-menu-align-right" onSelect>
-          <Dropdown.Item eventKey="cf32_le">complex float32</Dropdown.Item>
-          <Dropdown.Item eventKey="ci16_le">complex int16</Dropdown.Item>
-        </DropdownButton>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>FIR Filter Taps</Form.Label>
+        <InputGroup className="mb-3">
+          <Form.Control type="text" defaultValue={state.taps} onChange={onChangeTaps} size="sm" />
+          <Button variant="secondary" onClick={onSubmitTaps}>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+        </InputGroup>
+      </Form.Group>
 
-        <DropdownButton title="Window" variant="secondary" className="mb-3" id="dropdown-menu-align-right" onSelect={onChangeWindowFunction}>
-          <Dropdown.Item active={state.windowFunction === 'hamming'} eventKey="hamming">
-            Hamming
-          </Dropdown.Item>
-          <Dropdown.Item active={state.windowFunction === 'rectangle'} eventKey="rectangle">
-            Rectangle
-          </Dropdown.Item>
-          <Dropdown.Item active={state.windowFunction === 'hanning'} eventKey="hanning">
-            Hanning
-          </Dropdown.Item>
-          <Dropdown.Item active={state.windowFunction === 'barlett'} eventKey="barlett">
-            Barlett
-          </Dropdown.Item>
-          <Dropdown.Item active={state.windowFunction === 'blackman'} eventKey="blackman">
-            Blackman
-          </Dropdown.Item>
-        </DropdownButton>
-        <p></p>
-      </Form>
-    );
-  }
+      <DropdownButton title="Data Type" variant="secondary" style={{ width: '100%' }} className="mb-3" id="dropdown-menu-align-right" onSelect>
+        <Dropdown.Item eventKey="cf32_le">complex float32</Dropdown.Item>
+        <Dropdown.Item eventKey="ci16_le">complex int16</Dropdown.Item>
+      </DropdownButton>
+
+      <DropdownButton
+        title="Window"
+        variant="secondary"
+        style={{ width: '100%' }}
+        className="mb-3"
+        id="dropdown-menu-align-right"
+        onSelect={onChangeWindowFunction}
+      >
+        <Dropdown.Item active={state.windowFunction === 'hamming'} eventKey="hamming">
+          Hamming
+        </Dropdown.Item>
+        <Dropdown.Item active={state.windowFunction === 'rectangle'} eventKey="rectangle">
+          Rectangle
+        </Dropdown.Item>
+        <Dropdown.Item active={state.windowFunction === 'hanning'} eventKey="hanning">
+          Hanning
+        </Dropdown.Item>
+        <Dropdown.Item active={state.windowFunction === 'barlett'} eventKey="barlett">
+          Barlett
+        </Dropdown.Item>
+        <Dropdown.Item active={state.windowFunction === 'blackman'} eventKey="blackman">
+          Blackman
+        </Dropdown.Item>
+      </DropdownButton>
+      <p></p>
+    </Form>
+  );
+};
 
 export default SettingsPane;

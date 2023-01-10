@@ -29,7 +29,7 @@ export const clear_fft_data = () => {
   window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
-export const select_fft = (blob, fft, meta, windowFunction) => {
+export const select_fft = (blob, fft, meta, windowFunction, autoscale=false) => {
   let blob_size = window.iq_data.length; // this is actually the number of int16's that have been downloaded so far
   let fft_size = fft.size;
   let magnitude_max = fft.magnitudeMax;
@@ -73,8 +73,8 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     new_fft_data.set(window.fft_data, 0);
   }
 
-  let autoMin;
-  let autoMax;
+  let autoMin = 0;
+  let autoMax = 0;
 
   // loop through each row
   for (let i = starting_row; i < num_ffts; i++) {
@@ -118,18 +118,20 @@ export const select_fft = (blob, fft, meta, windowFunction) => {
     magnitudes = magnitudes.map((x) => x / maximum_val); // highest value is now 1
     magnitudes = magnitudes.map((x) => x * 255); // now from 0 to 255
 
-    // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
-    let std = getStandardDeviation(magnitudes);
-
-    function getStandardDeviation (array) {
-      const n = array.length
-      const mean = array.reduce((a, b) => a + b) / n
-      return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+    if (autoscale) {
+      // get the last calculated standard deviation and mean calculated from this loop and define the auto magnitude of min and max
+      let std = getStandardDeviation(magnitudes);
+  
+      function getStandardDeviation (array) {
+        const n = array.length
+        const mean = array.reduce((a, b) => a + b) / n
+        return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+      }
+  
+      let mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
+      autoMin = mean - std;
+      autoMax = mean + std;
     }
-
-    let mean = magnitudes.reduce((a, b) => a + b) / magnitudes.length;
-    autoMin = mean - std;
-    autoMax = mean + std;
 
     // apply magnitude min and max
     magnitudes = magnitudes.map((x) => x / ((magnitude_max - magnitude_min) / 255));
