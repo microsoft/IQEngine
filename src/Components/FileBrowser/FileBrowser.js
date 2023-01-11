@@ -11,6 +11,20 @@ import AzureBlobBrowser from './AzureBlobBrowser';
 import RepositoryTile from './RepositoryTile';
 
 const FileBrowser = (props) => {
+  const myobj = JSON.parse(process.env.REACT_APP_CONNECTION_INFO);
+
+  const name1 = myobj.settings[0]['name'];
+  const accountName1 = myobj.settings[0]['accountName'];
+  const containerName1 = myobj.settings[0]['containerName'];
+  const description1 = myobj.settings[0]['description'];
+  const imgUrl1 = myobj.settings[0]['imageURL'];
+
+  const name2 = myobj.settings[1]['name'];
+  const accountName2 = myobj.settings[1]['accountName'];
+  const containerName2 = myobj.settings[1]['containerName'];
+  const description2 = myobj.settings[1]['description'];
+  const imgUrl2 = myobj.settings[1]['imageURL'];
+
   return (
     <div>
       <Container>
@@ -38,13 +52,22 @@ const FileBrowser = (props) => {
         </Row>
         <Row>
           <Col>
-            <RepositoryTile></RepositoryTile>
+            <RepositoryTile
+              name={name1}
+              accountName={accountName1}
+              containerName={containerName1}
+              description={description1}
+              imgUrl={imgUrl1}
+            ></RepositoryTile>
           </Col>
           <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
-          <Col>
-            <RepositoryTile></RepositoryTile>
+            <RepositoryTile
+              name={name2}
+              accountName={accountName2}
+              containerName={containerName2}
+              description={description2}
+              imgUrl={imgUrl2}
+            ></RepositoryTile>
           </Col>
         </Row>
       </Container>
