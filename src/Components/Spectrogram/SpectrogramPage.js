@@ -83,11 +83,9 @@ class SpectrogramPage extends Component {
   };
 
   handleTileNumber = (num) => {
-    const { blob, meta, connection } = this.state;
     this.setState({
       tileNumber: num,
     });
-    this.props.fetchMoreData({ blob: blob, meta: meta, connection: connection, tileNumber: num });
   };
 
   render() {
