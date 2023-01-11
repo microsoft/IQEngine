@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React from 'react';
+import React, { useState } from 'react';
 import Directory from './Directory';
 
 function isFolder(file) {
@@ -75,12 +75,39 @@ function GroupByFolder(files, root) {
 }
 
 export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
+  const [currentFolder, setCurrentFolder] = useState('root');
+
   const gfiles = data.map((data) => data.name);
   let dataTree = [];
+  let currentDataTree = [];
 
   if (gfiles.length > 0) {
     dataTree = GroupByFolder(data, '');
     dataTree = { children: dataTree, name: 'root', type: 'folder' };
+    console.log(dataTree);
+    // find the portion corresponding to current folder TODO: make recursive
+    function findCurrentFolder(x) {
+      if (x.name === currentFolder) {
+        console.log('RETURNING');
+        return x;
+      }
+      for (const child of x.children) {
+        if (child.type === 'folder') {
+          if (child.name === currentFolder) {
+            console.log('GOT HERE');
+            return child;
+          }
+        }
+      }
+      // TODO make recursive
+    }
+    currentDataTree = findCurrentFolder(dataTree);
+    // remove all children from folders in currentDataTree so they dont show up
+    for (let i = 0; i < currentDataTree.children.length; i++) {
+      if (currentDataTree.children[i].type === 'folder') {
+        currentDataTree.children[i].children = [];
+      }
+    }
   }
 
   // Hide menu if the data hasnt loaded yet
@@ -106,10 +133,11 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
         <tbody>
           <Directory
             key={Math.random()}
-            item={dataTree}
+            item={currentDataTree}
             updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
             updateConnectionDataFileHandle={updateConnectionDataFileHandle}
             updateConnectionRecording={updateConnectionRecording}
+            setCurrentFolder={setCurrentFolder}
           />
         </tbody>
       </table>

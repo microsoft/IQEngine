@@ -21,15 +21,22 @@ const StyledFolderIcon = styled(FolderIcon)`
   margin-right: 4px;
 `;
 
-const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) => {
-  const [isExpanded, toggleExpanded] = useState(item.name === 'root'); // expand by default if its the root dir
+const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording, setCurrentFolder }) => {
+  //const [isExpanded, toggleExpanded] = useState(item.name === 'root'); // expand by default if its the root dir
+  const [isExpanded, toggleExpanded] = useState(true);
   if (item.type === 'folder') {
     return (
       <>
         <tr>
           <td></td>
           <td className="align-middle">
-            <p onClick={() => toggleExpanded(!isExpanded)}>
+            <p
+              onClick={() => {
+                toggleExpanded(!isExpanded);
+                setCurrentFolder(item.name);
+                console.log('setting current folder to', item.name);
+              }}
+            >
               {isExpanded ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
               {item.name}
             </p>
@@ -49,6 +56,7 @@ const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataF
               updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
               updateConnectionDataFileHandle={updateConnectionDataFileHandle}
               updateConnectionRecording={updateConnectionRecording}
+              setCurrentFolder={setCurrentFolder}
             />
           ))}
       </>
