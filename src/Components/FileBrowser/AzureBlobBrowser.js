@@ -28,6 +28,9 @@ const AzureBlobBrowser = (props) => {
     props.updateConnectionContainerName(containerName);
     props.updateConnectionSasToken(sasToken);
     props.setRecordingList({ accountName: accountName, containerName: containerName, sasToken: sasToken }); // updates the parent (App.js) state with the RecordingList
+    // Parse SAS Token to find if its read/write and other info
+    const writable = sasToken.slice(sasToken.search('sp')).split('&')[0].includes('w'); // boolean
+    const expires = sasToken.slice(sasToken.search('se')).split('&')[0].slice(3, 13); // YEAR-MONTH-DAY
   };
 
   return (
@@ -45,7 +48,7 @@ const AzureBlobBrowser = (props) => {
           <Form.Control type="text" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
         </Form.Group>
 
-        <Button variant='success' onClick={onSubmit}>
+        <Button variant="success" onClick={onSubmit}>
           Browse Recordings
         </Button>
       </div>
