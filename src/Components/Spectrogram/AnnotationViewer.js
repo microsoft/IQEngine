@@ -91,17 +91,11 @@ const AnnotationViewer = (props) => {
     const annot_pos_y = e.target.id().split('-')[2];
     annotations[annot_indx][annot_pos_x] = x / spectrogramWidthScale; // reverse the calcs done to generate the coords
     annotations[annot_indx][annot_pos_y] = y - upper_tick_height;
-    /* setAnnotations({
-      ...annotations, 
-      annotations[annot_indx]: x / spectrogramWidthScale,
-      }) */
     forceUpdate(); // TODO remove the forceupdate and do it the proper way (possibly using spread?)
-    props.updateMeta(annotations);
     updateAnnotationFields(annot_indx);
   }
 
   function onDrop(e) {
-    console.log('dropped');
     e.preventDefault();
     setDragDropData(null);
   }
@@ -109,12 +103,12 @@ const AnnotationViewer = (props) => {
   // function converting coordinates back into the annotations fields
   function updateAnnotationFields(f) {
     let updatedAnnotations = [...props.meta.annotations];
-    updatedAnnotations[f]['core:sample_start'] = fftSize * f.y2 - updatedAnnotations[f]['core:sample_count'];
-    updatedAnnotations[f]['core:sample_count'] = fftSize * f.y2 - updatedAnnotations[f]['core:sample_start'];
+    updatedAnnotations[f]['core:sample_start'] = annotations[f].y1 * fftSize;
+    updatedAnnotations[f]['core:sample_count'] = fftSize * annotations[f].y2 - updatedAnnotations[f]['core:sample_start'];
     updatedAnnotations[f]['core:freq_lower_edge'] =
-      (meta.global['core:sample_rate'] * f.x1) / fftSize + meta.captures[0]['core:frequency'] / 2 - meta.global['core:sample_rate'] / 2;
+      (annotations[f].x1 / fftSize) * meta.global['core:sample_rate'] - meta.global['core:sample_rate'] / 2 - meta.captures[0]['core:frequency'];
     updatedAnnotations[f]['core:freq_upper_edge'] =
-      (meta.global['core:sample_rate'] * f.x2) / fftSize + meta.captures[0]['core:frequency'] / 2 - meta.global['core:sample_rate'] / 2;
+      ((annotations[f].x1 - annotations[f].x2) / fftSize) * meta.global['core:sample_rate'] + updatedAnnotations[f]['core:freq_lower_edge'];
     props.updateMeta(updatedAnnotations);
   }
 
