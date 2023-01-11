@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
+import ScrollBar from './ScrollBar';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -117,6 +118,9 @@ class SpectrogramPage extends Component {
                 updateAutoScale={this.handleAutoScale}
                 autoscale={autoscale}
               />
+            </Col>
+            <Col>
+            <ScrollBar />
             </Col>
           </Row>
         </Container>
