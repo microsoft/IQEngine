@@ -1,8 +1,9 @@
 import logging
 
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-import azure.functions as func
 import matplotlib.pyplot as plt
+from pymongo import MongoClient
+import azure.functions as func
 from PIL import Image
 import numpy as np
 import urllib
@@ -11,10 +12,12 @@ import io
 import os
 
 connect_str = os.getenv("AzureWebJobsStorage")
+client = MongoClient(os.getenv("databaseconstring"))
 
 num_bytes = 1000000
 offset = 0
 fft_size = 1024
+
 def main(myblob: func.InputStream):
     #logging.info(f"Python blob trigger function processed blob \n"
                  #f"Name: {myblob.name}\n"
@@ -39,6 +42,7 @@ def main(myblob: func.InputStream):
     if ((extension != "sigmf-meta") and (extension != "sigmf-data")):
         logging.info("File is not a .sigmf-meta or .sigmf-data file")
         return
+    
 
     logging.info("Checking if both .sigmf-meta and .sigmf-data exist")
 
@@ -53,18 +57,28 @@ def main(myblob: func.InputStream):
     dataexists = blobdata.exists()
     logging.info(f"Does .sigmf-data exist: {dataexists}")
 
+
+    if (metaexists):
+        logging.info('getting meta and data files')
+        with urllib.request.urlopen(STORAGEACCOUNTURL + CONTAINERNAME + "/" + meta_name) as url:
+            meta_data = json.loads(url.read().decode())
+
+            if (extension == "sigmf-meta"):
+                logging.info("Inside if statement")
+                db = client.maindb
+                list_of_dicts = [meta_data]
+                db.iqenginemetadata.insert_many(list_of_dicts) 
+                logging.info("Insertion complete")
+
     if (not (metaexists and dataexists)):
         logging.info("either meta file or data file does not exist")
         return
-
-    logging.info('getting meta and data files')
-    with urllib.request.urlopen(STORAGEACCOUNTURL + CONTAINERNAME + "/" + meta_name) as url:
-        meta_data = json.loads(url.read().decode())
-        meta_data_global = meta_data.get("global", {})
-        datatype =  meta_data_global.get("core:datatype", 'cf32_le')
-        sample_rate = float(meta_data_global.get("core:sample_rate", 0))/1e6 # MHz
-        center_freq = float(meta_data.get("captures", [])[0].get("core:frequency", 0))/1e6 # MHz
-
+    
+    meta_data_global = meta_data.get("global", {})
+    datatype =  meta_data_global.get("core:datatype", 'cf32_le')
+    sample_rate = float(meta_data_global.get("core:sample_rate", 0))/1e6 # MHz
+    center_freq = float(meta_data.get("captures", [])[0].get("core:frequency", 0))/1e6 # MHz
+    
     bytes = container_client.get_blob_client(data_name).download_blob(offset, num_bytes).readall()
     if datatype == 'cf32_le':
         samples = np.frombuffer(bytes, dtype=np.complex64)
