@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
+import Button from 'react-bootstrap/Button';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -80,6 +81,26 @@ class SpectrogramPage extends Component {
     });
   };
 
+  handleMeta = (annotations) => {
+    this.setState({
+      meta: {
+        ...this.state.meta,
+        annotations: annotations,
+      },
+    });
+  };
+
+  downloadInfo() {
+    const fileData = JSON.stringify(this.state.meta);
+    const blob = new Blob([fileData], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.download = 'spectrogram-meta-data-modified.sigmf-meta';
+    link.href = url;
+    link.click();
+  }
+
   render() {
     const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
     const fft = {
@@ -105,6 +126,15 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  this.handleMeta();
+                  this.downloadInfo();
+                }}
+              >
+                Download
+              </Button>
               <SpectrogramPanel
                 fetchMoreData={this.props.fetchMoreData}
                 connection={this.state.connection}
@@ -116,6 +146,7 @@ class SpectrogramPage extends Component {
                 updateMagnitudeMin={this.handleMagnitudeMin}
                 updateAutoScale={this.handleAutoScale}
                 autoscale={autoscale}
+                updateMeta={this.handleMeta}
               />
             </Col>
           </Row>

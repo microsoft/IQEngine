@@ -4,6 +4,7 @@
 import { select_fft } from '../../Utils/selector';
 import React, { useState, useEffect } from 'react';
 import { Layer, Rect, Text, Circle } from 'react-konva';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 function getItem(item) {
   if (item.type === 'circle') {
@@ -90,13 +91,31 @@ const AnnotationViewer = (props) => {
     const annot_pos_y = e.target.id().split('-')[2];
     annotations[annot_indx][annot_pos_x] = x / spectrogramWidthScale; // reverse the calcs done to generate the coords
     annotations[annot_indx][annot_pos_y] = y - upper_tick_height;
+    /* setAnnotations({
+      ...annotations, 
+      annotations[annot_indx]: x / spectrogramWidthScale,
+      }) */
     forceUpdate(); // TODO remove the forceupdate and do it the proper way (possibly using spread?)
+    props.updateMeta(annotations);
+    updateAnnotationFields(annot_indx);
   }
 
   function onDrop(e) {
     console.log('dropped');
     e.preventDefault();
     setDragDropData(null);
+  }
+
+  // function converting coordinates back into the annotations fields
+  function updateAnnotationFields(f) {
+    let updatedAnnotations = [...props.meta.annotations];
+    updatedAnnotations[f]['core:sample_start'] = fftSize * f.y2 - updatedAnnotations[f]['core:sample_count'];
+    updatedAnnotations[f]['core:sample_count'] = fftSize * f.y2 - updatedAnnotations[f]['core:sample_start'];
+    updatedAnnotations[f]['core:freq_lower_edge'] =
+      (meta.global['core:sample_rate'] * f.x1) / fftSize + meta.captures[0]['core:frequency'] / 2 - meta.global['core:sample_rate'] / 2;
+    updatedAnnotations[f]['core:freq_upper_edge'] =
+      (meta.global['core:sample_rate'] * f.x2) / fftSize + meta.captures[0]['core:frequency'] / 2 - meta.global['core:sample_rate'] / 2;
+    props.updateMeta(updatedAnnotations);
   }
 
   // add cursor styling

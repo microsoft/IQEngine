@@ -98,6 +98,7 @@ const SpectrogramPanel = (props) => {
             meta={props.meta}
             blob={props.blob}
             stageRef={stageRef}
+            updateMeta={props.updateMeta}
           />
           <RulerTop
             timescale_width={timescale_width}

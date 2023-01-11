@@ -185,6 +185,7 @@ export const select_fft = (blob, fft, meta, windowFunction, autoscale = false) =
     window.sample_rate = sample_rate;
     let lower_freq = center_frequency - sample_rate / 2;
 
+    // converts frequency lower edge, upper edge, etc into the x and y coordinates
     if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
       annotations_list.push({
         x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side
