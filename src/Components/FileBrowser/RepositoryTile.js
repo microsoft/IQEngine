@@ -24,10 +24,13 @@ const RepositoryTile = (props) => {
           <Card>
             <Card.Body style={styleCenter}>
               <Card.Img variant="top" src={props.imgUrl} style={styleHeight}></Card.Img>
-              <Card.Title>{props.name}</Card.Title>
+              <center>
+                <Card.Title>{props.name}</Card.Title>
+              </center>
               <Card.Text style={styleObj}>Account Name: {props.accountName}</Card.Text>
               <Card.Text style={styleObj}>Container Name: {props.containerName}</Card.Text>
               <Card.Text style={styleObj}>{props.description}</Card.Text>
+              <Card.Text style={styleObj}>SAS Token expiration: {props.expires}</Card.Text>
             </Card.Body>
             <Button variant="success">Browse</Button>
           </Card>
