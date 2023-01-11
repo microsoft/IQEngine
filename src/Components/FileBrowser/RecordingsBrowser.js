@@ -80,20 +80,8 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
 
   if (gfiles.length > 0) {
     dataTree = GroupByFolder(data, '');
+    dataTree = { children: dataTree, name: 'root', type: 'folder' };
   }
-
-  //console.log(dataTree);
-  const DisplayData = dataTree.map((info, i) => {
-    return (
-      <Directory
-        key={Math.random()}
-        files={info}
-        updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-        updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-        updateConnectionRecording={updateConnectionRecording}
-      />
-    );
-  });
 
   // Hide menu if the data hasnt loaded yet
   if (dataTree.length === 0) {
@@ -105,17 +93,25 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
       <table className="table">
         <thead>
           <tr>
-            <th>Spectrogram</th>
+            <th style={{ textAlign: 'center' }}>Spectrogram</th>
             <th style={{ width: '25%' }}>Recording Name</th>
-            <th>Data Type</th>
-            <th>Freq [MHz]</th>
-            <th>Sample Rate [MHz]</th>
-            <th># of Annotations</th>
+            <th style={{ textAlign: 'center' }}>Data Type</th>
+            <th style={{ textAlign: 'center' }}>Freq [MHz]</th>
+            <th style={{ textAlign: 'center' }}>Sample Rate [MHz]</th>
+            <th style={{ textAlign: 'center' }}># of Annotations</th>
             <th style={{ width: '10%' }}>Author</th>
             <th style={{ width: '10%' }}>Email</th>
           </tr>
         </thead>
-        <tbody>{DisplayData}</tbody>
+        <tbody>
+          <Directory
+            key={Math.random()}
+            item={dataTree}
+            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+            updateConnectionRecording={updateConnectionRecording}
+          />
+        </tbody>
       </table>
     </div>
   );

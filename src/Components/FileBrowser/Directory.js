@@ -21,9 +21,9 @@ const StyledFolderIcon = styled(FolderIcon)`
   margin-right: 4px;
 `;
 
-const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) => {
-  const [isExpanded, toggleExpanded] = useState(false);
-  if (files.type === 'folder') {
+const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) => {
+  const [isExpanded, toggleExpanded] = useState(item.name === 'root'); // expand by default if its the root dir
+  if (item.type === 'folder') {
     return (
       <>
         <tr>
@@ -31,7 +31,7 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
           <td className="align-middle">
             <p onClick={() => toggleExpanded(!isExpanded)}>
               {isExpanded ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
-              {files.name}
+              {item.name}
             </p>
           </td>
           <td></td>
@@ -39,12 +39,13 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
           <td></td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         {isExpanded &&
-          files.children.map((item) => (
+          item.children.map((item) => (
             <Directory
               key={Math.random()}
-              files={item}
+              item={item}
               updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
               updateConnectionDataFileHandle={updateConnectionDataFileHandle}
               updateConnectionRecording={updateConnectionRecording}
@@ -57,7 +58,7 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
     <>
       <FileRow
         key={Math.random()}
-        info={files}
+        item={item}
         updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
         updateConnectionDataFileHandle={updateConnectionDataFileHandle}
         updateConnectionRecording={updateConnectionRecording}

@@ -6,7 +6,7 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-export default function FileRow({ info, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
+export default function FileRow({ item, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
   const [modal, setModal] = useState(false);
   const toggle = () => {
     setModal(!modal);
@@ -18,7 +18,7 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
     updateConnectionRecording(name);
   };
 
-  const annotationsData = info.annotations.map((item, index) => {
+  const annotationsData = item.annotations.map((item, index) => {
     const deepItemCopy = JSON.parse(JSON.stringify(item));
     delete deepItemCopy['core:sample_start'];
     delete deepItemCopy['core:sample_count'];
@@ -47,34 +47,34 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
     <tr>
       <td>
         <div className="zoom">
-          <img src={info.thumbnailUrl} alt="Spectrogram Thumbnail" style={{ width: '200px', height: '100px' }} />
+          <img src={item.thumbnailUrl} alt="Spectrogram Thumbnail" style={{ width: '200px', height: '100px' }} />
         </div>
       </td>
       <td className="align-middle">
         <Link
-          to={'spectrogram/' + info.name.replace('.sigmf-meta', '')}
-          onClick={() => updateConnection(info.metaFileHandle, info.dataFileHandle, info.name.replace('.sigmf-meta', ''))}
+          to={'spectrogram/' + item.name.replace('.sigmf-meta', '')}
+          onClick={() => updateConnection(item.metaFileHandle, item.dataFileHandle, item.name.replace('.sigmf-meta', ''))}
         >
-          {info.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}
+          {item.name.replaceAll('(slash)', '/').replace('.sigmf-meta', '')}
         </Link>
       </td>
       <td className="align-middle" style={{ textAlign: 'center' }}>
-        <NewlineText text={info.dataType} />
+        <NewlineText text={item.dataType} />
       </td>
       <td className="align-middle" style={{ textAlign: 'center' }}>
-        {info.frequency}
+        {item.frequency}
       </td>
       <td className="align-middle" style={{ textAlign: 'center' }}>
-        {info.sampleRate}
+        {item.sampleRate}
       </td>
       <td className="align-middle" style={{ textAlign: 'center' }}>
         <div>
           <Button type="button" variant="secondary" onClick={toggle}>
-            {info.numberOfAnnotation}
+            {item.numberOfAnnotation}
           </Button>
 
           <Modal isOpen={modal} toggle={toggle} size="lg">
-            <ModalHeader toggle={toggle}>{info.name}</ModalHeader>
+            <ModalHeader toggle={toggle}>{item.name}</ModalHeader>
             <ModalBody>
               <table className="table">
                 <thead>
@@ -93,8 +93,8 @@ export default function FileRow({ info, updateConnectionMetaFileHandle, updateCo
           </Modal>
         </div>
       </td>
-      <td className="align-middle">{info.author}</td>
-      <td className="align-middle">{info.email}</td>
+      <td className="align-middle">{item.author}</td>
+      <td className="align-middle">{item.email}</td>
     </tr>
   );
 }
