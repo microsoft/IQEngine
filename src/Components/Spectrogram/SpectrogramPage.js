@@ -17,6 +17,7 @@ class SpectrogramPage extends Component {
       magnitudeMin: 30,
       window: 'hamming',
       autoscale: false,
+      tileNumber: 0,
     };
   }
 
@@ -81,6 +82,14 @@ class SpectrogramPage extends Component {
     });
   };
 
+  handleTileNumber = (num) => {
+    const { blob, meta, connection } = this.state;
+    this.setState({
+      tileNumber: num,
+    });
+    this.props.fetchMoreData({ blob: blob, meta: meta, connection: connection, tileNumber: num });
+  };
+
   render() {
     const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
     const fft = {
@@ -119,8 +128,8 @@ class SpectrogramPage extends Component {
                 autoscale={autoscale}
               />
             </Col>
-            <Col>
-            <ScrollBar />
+            <Col className="col-1">
+              <ScrollBar handleTileNumber={this.handleTileNumber}/>
             </Col>
           </Row>
         </Container>
