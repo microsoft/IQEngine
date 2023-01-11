@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import LocalFileBrowser from './LocalFileBrowser';
 import RecordingsBrowser from './RecordingsBrowser';
 import AzureBlobBrowser from './AzureBlobBrowser';
+import RepositoryTile from './RepositoryTile';
 
 const FileBrowser = (props) => {
   return (
@@ -23,10 +24,6 @@ const FileBrowser = (props) => {
               datafilehandle={props.datafilehandle}
             />
           </Col>
-          <Col md="auto">
-            <br />
-            <div className="vr" style={{ opacity: 0.6, minHeight: 250 }}></div>
-          </Col>
           <Col>
             <AzureBlobBrowser
               setRecordingList={props.fetchRecordingsList}
@@ -37,6 +34,17 @@ const FileBrowser = (props) => {
               containerName={props.containerName}
               sasToken={props.sasToken}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <RepositoryTile></RepositoryTile>
+          </Col>
+          <Col>
+            <RepositoryTile></RepositoryTile>
+          </Col>
+          <Col>
+            <RepositoryTile></RepositoryTile>
           </Col>
         </Row>
       </Container>
