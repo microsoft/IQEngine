@@ -3,8 +3,10 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 azure-functions
-pydantic==1.10.2
+azure-storage-blob
+numpy
+matplotlib
+Pillow
+urllib3
+json5
 pymongo==4.2.0
-git+https://github.com/gnuradio/SigMF.git@1eef44a67636ab15078e7eecc00144b9e18cdaa3#egg=sigmf
-#git+https://github.com/pomeroy3/IQEngine-db.git@dev#egg=azuresigmf&subdirectory=AzureSigMF
-./AzureSigMF
