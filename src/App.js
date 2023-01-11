@@ -19,7 +19,6 @@ const App = () => {
 
       <Routes>
         <Route exact path="/" element={<FileBrowserContainer />} />
-
         <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
       </Routes>
     </div>

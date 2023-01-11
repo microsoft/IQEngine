@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { Container, Card } from 'react-bootstrap';
 
 const AzureBlobBrowser = (props) => {
   const [accountName, setAccountName] = useState(props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME);
@@ -35,23 +36,27 @@ const AzureBlobBrowser = (props) => {
 
   return (
     <div id="ConnectionStringContainer" className="container-fluid">
-      <h4 style={{ textAlign: 'center' }}>Browse Azure Blob Storage</h4>
-      <div className="form-group">
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Storage Account Name:</Form.Label>
-          <Form.Control type="text" defaultValue={accountName} onChange={onAccountNameChange} size="sm" />
+      <Card>
+        <Card.Body>
+          <h4 style={{ textAlign: 'center' }}>Browse Azure Blob Storage</h4>
+          <div className="form-group">
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Storage Account Name:</Form.Label>
+              <Form.Control type="text" defaultValue={accountName} onChange={onAccountNameChange} size="sm" />
 
-          <Form.Label>Container Name:</Form.Label>
-          <Form.Control type="text" defaultValue={containerName} onChange={onContainerNameChange} size="sm" />
+              <Form.Label>Container Name:</Form.Label>
+              <Form.Control type="text" defaultValue={containerName} onChange={onContainerNameChange} size="sm" />
 
-          <Form.Label>SAS Token for Container:</Form.Label>
-          <Form.Control type="text" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
-        </Form.Group>
+              <Form.Label>SAS Token for Container:</Form.Label>
+              <Form.Control type="text" defaultValue={sasToken} onChange={onSasTokenChange} size="sm" />
+            </Form.Group>
 
-        <Button variant="success" onClick={onSubmit}>
-          Browse Recordings
-        </Button>
-      </div>
+            <Button variant="success" onClick={onSubmit}>
+              Browse Recordings
+            </Button>
+          </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 };
