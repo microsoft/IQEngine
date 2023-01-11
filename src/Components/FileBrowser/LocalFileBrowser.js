@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
+import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 // this is duplicate of the code in ConnectionString.jsx but includes file handles
@@ -81,11 +81,19 @@ const LocalFileBrowser = (props) => {
 
   return (
     <div className="container-fluid">
-      <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
-      <Button onClick={openDir} variant='success'>Open Local Directory</Button>
-      &nbsp; &nbsp; or &nbsp; &nbsp;
-      <Button onClick={openFile} variant='success'>Select 1 .sigmf-meta and 1 .sigmf-data</Button>
-      <br />
+      <Card>
+        <Card.Body>
+          <h4 style={{ textAlign: 'center' }}>Browse Local Files</h4>
+          <Button onClick={openDir} variant="success">
+            Open Local Directory
+          </Button>
+          &nbsp; &nbsp; or &nbsp; &nbsp;
+          <Button onClick={openFile} variant="success">
+            Select 1 .sigmf-meta and 1 .sigmf-data
+          </Button>
+          <br />
+        </Card.Body>
+      </Card>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
+import ScrollBar from './ScrollBar';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class SpectrogramPage extends Component {
       magnitudeMin: 30,
       window: 'hamming',
       autoscale: false,
+      tileNumber: 0,
     };
   }
 
@@ -80,6 +82,12 @@ class SpectrogramPage extends Component {
     });
   };
 
+  handleTileNumber = (num) => {
+    this.setState({
+      tileNumber: num,
+    });
+  };
+
   render() {
     const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
     const fft = {
@@ -117,6 +125,9 @@ class SpectrogramPage extends Component {
                 updateAutoScale={this.handleAutoScale}
                 autoscale={autoscale}
               />
+            </Col>
+            <Col className="col-1">
+              <ScrollBar handleTileNumber={this.handleTileNumber}/>
             </Col>
           </Row>
         </Container>
