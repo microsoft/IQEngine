@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React from 'react';
+import React, { useState } from 'react';
 import Directory from './Directory';
 
 function isFolder(file) {
@@ -11,7 +11,7 @@ function isFolder(file) {
 function GroupByFolder(files, root) {
   const fileTree = {
     contents: [],
-    children: {},
+    children: [],
   };
 
   files.map((file) => {
@@ -39,7 +39,7 @@ function GroupByFolder(files, root) {
         if (folder in currentFolder.children === false) {
           currentFolder.children[folder] = {
             contents: [],
-            children: {},
+            children: [],
             type: 'folder',
           };
         }
@@ -75,28 +75,55 @@ function GroupByFolder(files, root) {
 }
 
 export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
+  const [currentFolder, setCurrentFolder] = useState('root');
+
   const gfiles = data.map((data) => data.name);
   let dataTree = [];
+  let currentDataTree = [];
 
   if (gfiles.length > 0) {
     dataTree = GroupByFolder(data, '');
+    dataTree = { children: dataTree, name: 'root', type: 'folder' };
+    // find the portion corresponding to current folder
+    function findCurrentFolder(x) {
+      // 1 layer deep (TODO: Make recursive)
+      if (x.name === currentFolder) {
+        x.parentName = 'root';
+        return x;
+      }
+      // 2 layers deep
+      for (const child of x.children) {
+        if (child.type === 'folder') {
+          if (child.name === currentFolder) {
+            child.parentName = x.name;
+            return child;
+          }
+        }
+      }
+      // 3 layers deep
+      for (const child of x.children) {
+        if (child.type === 'folder') {
+          for (const c of child.children) {
+            if (c.name === currentFolder) {
+              c.parentName = child.name;
+              return c;
+            }
+          }
+        }
+      }
+    }
+    currentDataTree = findCurrentFolder(dataTree);
+
+    // remove all children from folders in currentDataTree so they dont show up
+    for (let i = 0; i < currentDataTree.children.length; i++) {
+      if (currentDataTree.children[i].type === 'folder') {
+        currentDataTree.children[i].children = [];
+      }
+    }
   }
 
-  //console.log(dataTree);
-  const DisplayData = dataTree.map((info, i) => {
-    return (
-      <Directory
-        key={Math.random()}
-        files={info}
-        updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-        updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-        updateConnectionRecording={updateConnectionRecording}
-      />
-    );
-  });
-
   // Hide menu if the data hasnt loaded yet
-  if (dataTree.length === 0) {
+  if (currentDataTree.length === 0) {
     return <></>;
   }
 
@@ -105,17 +132,27 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
       <table className="table">
         <thead>
           <tr>
-            <th>Spectrogram</th>
+            <th style={{ textAlign: 'center' }}>Spectrogram</th>
             <th style={{ width: '25%' }}>Recording Name</th>
-            <th>Data Type</th>
-            <th>Freq [MHz]</th>
-            <th>Sample Rate [MHz]</th>
-            <th># of Annotations</th>
+            <th style={{ textAlign: 'center' }}>Data Type</th>
+            <th style={{ textAlign: 'center' }}>Freq [MHz]</th>
+            <th style={{ textAlign: 'center' }}>Sample Rate [MHz]</th>
+            <th style={{ textAlign: 'center' }}># of Annotations</th>
             <th style={{ width: '10%' }}>Author</th>
             <th style={{ width: '10%' }}>Email</th>
           </tr>
         </thead>
-        <tbody>{DisplayData}</tbody>
+        <tbody>
+          <Directory
+            key={Math.random()}
+            item={currentDataTree}
+            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+            updateConnectionRecording={updateConnectionRecording}
+            setCurrentFolder={setCurrentFolder}
+            currentFolder={currentFolder}
+          />
+        </tbody>
       </table>
     </div>
   );

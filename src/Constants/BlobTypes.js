@@ -1,5 +1,6 @@
 export const UPDATE_BLOB_TAPS = 'UPDATE_BLOB_TAPS';
 export const UPDATE_BLOB_SIZE = 'UPDATE_BLOB_SIZE';
+export const UPDATE_BLOB_TOTAL_BYTES = 'UPDATE_BLOB_TOTAL_BYTES';
 export const FETCH_MORE_DATA_LOADING = 'FetchMoreData/pending';
 export const FETCH_MORE_DATA_SUCCESS = 'FetchMoreData/fulfilled';
 export const FETCH_MORE_DATA_FAILURE = 'FetchMoreData/rejected';

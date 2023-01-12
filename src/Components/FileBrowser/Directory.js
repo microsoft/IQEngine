@@ -21,17 +21,33 @@ const StyledFolderIcon = styled(FolderIcon)`
   margin-right: 4px;
 `;
 
-const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) => {
-  const [isExpanded, toggleExpanded] = useState(false);
-  if (files.type === 'folder') {
+const Directory = ({
+  item,
+  updateConnectionMetaFileHandle,
+  updateConnectionDataFileHandle,
+  updateConnectionRecording,
+  setCurrentFolder,
+  currentFolder,
+}) => {
+  //const [isExpanded, toggleExpanded] = useState(item.name === 'root'); // expand by default if its the root dir
+  if (item.type === 'folder') {
     return (
       <>
         <tr>
           <td></td>
           <td className="align-middle">
-            <p onClick={() => toggleExpanded(!isExpanded)}>
-              {isExpanded ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
-              {files.name}
+            <p
+              onClick={() => {
+                if (currentFolder === item.name) {
+                  setCurrentFolder(item.parentName);
+                } else {
+                  setCurrentFolder(item.name);
+                  console.log('setting current folder to', item.name);
+                }
+              }}
+            >
+              {item.name === currentFolder ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
+              {item.name}
             </p>
           </td>
           <td></td>
@@ -39,17 +55,19 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
           <td></td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
-        {isExpanded &&
-          files.children.map((item) => (
-            <Directory
-              key={Math.random()}
-              files={item}
-              updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-              updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-              updateConnectionRecording={updateConnectionRecording}
-            />
-          ))}
+        {item.children.map((item) => (
+          <Directory
+            key={Math.random()}
+            item={item}
+            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+            updateConnectionRecording={updateConnectionRecording}
+            setCurrentFolder={setCurrentFolder}
+            currentFolder={currentFolder}
+          />
+        ))}
       </>
     );
   }
@@ -57,7 +75,7 @@ const Directory = ({ files, updateConnectionMetaFileHandle, updateConnectionData
     <>
       <FileRow
         key={Math.random()}
-        info={files}
+        item={item}
         updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
         updateConnectionDataFileHandle={updateConnectionDataFileHandle}
         updateConnectionRecording={updateConnectionRecording}

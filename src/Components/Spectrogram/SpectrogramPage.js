@@ -1,13 +1,17 @@
-import { SpectrogramPanel } from './SpectrogramPanel';
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
-import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
+import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
+import { Layer, Image, Stage } from 'react-konva';
+import { select_fft, clear_fft_data } from '../../Utils/selector';
+import { AnnotationViewer } from './AnnotationViewer';
+import { RulerTop } from './RulerTop';
 
 class SpectrogramPage extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       connection: props.connection,
       blob: props.blob,
@@ -17,33 +21,61 @@ class SpectrogramPage extends Component {
       magnitudeMin: 30,
       window: 'hamming',
       autoscale: false,
-      tileNumber: 0,
+      tileNumbers: [],
+      image: null,
+      annotations: [],
+      sampleRate: 1,
+      handleHeightPixels: 50,
+      stageRef: null,
     };
+  }
+
+  async getProperties(blobClient) {
+    const properties = await blobClient.getProperties();
+    const numBytes = properties.contentLength;
+    this.props.updateBlobTotalBytes(numBytes);
   }
 
   componentDidMount() {
     let { fetchMetaDataBlob, connection } = this.props;
-    window.iq_data = [];
+    window.iq_data = {};
     clear_fft_data();
     fetchMetaDataBlob(connection); // fetch the metadata
+
+    // Create BlobClient (connect to the data blob) if not local
+    if (connection.datafilehandle === undefined) {
+      let { accountName, containerName, sasToken, recording } = connection;
+      while (recording === '') {
+        console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
+      }
+      let blobName = recording + '.sigmf-data';
+      const { BlobServiceClient } = require('@azure/storage-blob');
+      const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const tempBlobClient = containerClient.getBlobClient(blobName);
+      this.props.updateConnectionBlobClient(tempBlobClient); // FIXME THIS ISNT WORKING YET SO IM JUST GETTING THE CLIENT AGAIN IN FETCHMOREDATA
+      this.getProperties(tempBlobClient);
+    }
   }
 
   componentWillUnmount() {
     // make sure not to resetConnection() here or else it screws up ability to switch between recordings without clicking the browse button again
     this.props.resetMeta();
-    window.iq_data = [];
+    window.iq_data = {};
     this.props.resetBlob();
   }
 
-  // Not sure why we can do fft but not blob (we have to do blob.size)?
   static getDerivedStateFromProps(props, state) {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
-      props.blob.status !== 'loading' && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
+      //NOT SURE WHY THIS WAS ADDED!  props.blob.status !== 'loading' && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
     }
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
+    }
+    if (props.blob.totalBytes !== state.blob.totalBytes) {
+      newState.blob.totalBytes = props.blob.totalBytes;
     }
     if (props.blob.status !== state.blob.status) {
       newState.blob.status = props.blob.status;
@@ -82,14 +114,90 @@ class SpectrogramPage extends Component {
     });
   };
 
-  handleTileNumber = (num) => {
+  // num is the y pixel coords of the top of the scrollbar handle, so range of 0 to the height of the scrollbar minus height of handle
+  setTileNumbers = (handleTop) => {
+    const totalBytes = this.state.blob.totalBytes;
+    const data_type = this.state.meta.global['core:datatype'];
+
+    let bytes_per_sample = 2;
+    if (data_type === 'ci16_le') {
+      bytes_per_sample = 2;
+    } else if (data_type === 'cf32_le') {
+      bytes_per_sample = 4;
+    } else {
+      bytes_per_sample = 2;
+    }
+
+    const totalNumFFTs = totalBytes / bytes_per_sample / 2 / this.state.fftSize; // divide by 2 because IQ
+    const scrollBarHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
+    const handleFraction = scrollBarHeight / totalNumFFTs;
+    console.log('handleFraction:', handleFraction);
+    const handleHeightPixels = handleFraction * scrollBarHeight;
+    this.setState({ handleHeightPixels: handleHeightPixels });
+
+    // Find which tiles are within view
+    const tileSizeInRows = TILE_SIZE_IN_BYTES / bytes_per_sample / 2 / this.state.fftSize;
+    console.log('tileSizeInRows:', tileSizeInRows);
+    const numTilesInFile = Math.ceil(totalNumFFTs / tileSizeInRows);
+    console.log('numTilesInFile:', numTilesInFile);
+    const lowerTile = (totalNumFFTs / tileSizeInRows) * (handleTop / scrollBarHeight);
+    const upperTile = (totalNumFFTs / tileSizeInRows) * ((handleTop + handleHeightPixels) / scrollBarHeight);
+    console.log(lowerTile, upperTile); // its not going to go all the way to numTilesInFile because the handle isnt resizing itself yet
+
+    // mimicing python's range() function which gives array of integers between two values non-inclusive of end
+    function range(start, end) {
+      return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
+    }
+
+    const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+    console.log(tiles);
     this.setState({
-      tileNumber: num,
+      tileNumbers: tiles,
     });
+
+    // Fetch the tiles
+    if (this.state.blob.status !== 'loading') {
+      for (let tile of tiles) {
+        if (!(tile.toString() in window.iq_data)) {
+          console.log('fetchMoreData with tile', tile);
+          this.props.fetchMoreData({ tile: tile, connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
+        }
+      }
+    } else {
+      console.log('BLOB STATUS IS LOADING');
+    }
+
+    // Update the image (eventually this should get moved somewhere else)
+    let ret = select_fft(
+      lowerTile,
+      upperTile,
+      bytes_per_sample,
+      this.state.fftSize,
+      this.state.magnitudeMax,
+      this.state.magnitudeMin,
+      this.state.meta,
+      this.state.window,
+      this.state.autoscale
+    );
+    if (ret) {
+      // Draw the spectrogram
+      createImageBitmap(ret.image_data).then((ret) => {
+        this.setState({ image: ret });
+        console.log('Image Updated');
+      });
+      if (this.state.autoscale && ret.autoMax) {
+        this.updateAutoScale(); // toggles it off so this only will happen once
+        this.updateMagnitudeMax(ret.autoMax);
+        this.updateMagnitudeMin(ret.autoMin);
+      }
+
+      this.setState({ annotations: ret.annotations });
+      this.setState({ sampleRate: ret.sample_rate });
+    }
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, handleHeightPixels, stageRef } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -113,21 +221,43 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <SpectrogramPanel
-                fetchMoreData={this.props.fetchMoreData}
-                connection={this.state.connection}
-                fft={fft}
-                blob={blob}
-                meta={meta}
-                window={this.state.window}
-                updateMagnitudeMax={this.handleMagnitudeMax}
-                updateMagnitudeMin={this.handleMagnitudeMin}
-                updateAutoScale={this.handleAutoScale}
-                autoscale={autoscale}
-              />
+              <Stage width={600} height={20}>
+                <RulerTop
+                  fftSize={fftSize}
+                  sampleRate={sampleRate}
+                  timescale_width={20}
+                  text_width={10}
+                  upper_tick_height={0}
+                  spectrogram_width={600}
+                  fft={fft}
+                  meta={meta}
+                  blob={blob}
+                  spectrogramWidthScale={600 / fftSize}
+                />
+              </Stage>
+              <Stage width={600} height={600} stageRef={stageRef}>
+                <Layer>
+                  <Image image={image} x={0} y={0} width={600} height={600} />
+                </Layer>
+                <AnnotationViewer
+                  timescale_width={20}
+                  text_width={10}
+                  upper_tick_height={0}
+                  spectrogram_width={600}
+                  fft={fft}
+                  meta={meta}
+                  blob={blob}
+                  stageRef={stageRef}
+                  annotations={annotations}
+                  spectrogramWidthScale={600 / fftSize}
+                  spectrogramHeightScale={1}
+                  fftSize={fftSize}
+                  sampleRate={sampleRate}
+                />
+              </Stage>
             </Col>
-            <Col className="col-1">
-              <ScrollBar handleTileNumber={this.handleTileNumber}/>
+            <Col style={{ justifyContent: 'left' }}>
+              <ScrollBar setTileNumbers={this.setTileNumbers} />
             </Col>
           </Row>
         </Container>
