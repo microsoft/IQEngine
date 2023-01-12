@@ -18,7 +18,7 @@ class SpectrogramPage extends Component {
       magnitudeMin: 30,
       window: 'hamming',
       autoscale: false,
-      tileNumber: 0,
+      tileNumbers: [],
     };
   }
 
@@ -108,7 +108,7 @@ class SpectrogramPage extends Component {
   };
 
   // num is the y pixel coords of the top of the scrollbar handle, so range of 0 to the height of the scrollbar minus height of handle
-  handleTileNumber = (num) => {
+  setTileNumbers = (handleTop) => {
     const totalBytes = this.state.blob.totalBytes;
     const data_type = this.state.meta.global['core:datatype'];
 
@@ -125,8 +125,25 @@ class SpectrogramPage extends Component {
     const scrollBarHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
     const handleFraction = scrollBarHeight / totalNumFFTs;
     console.log('handleFraction:', handleFraction);
+    const handleHeightPixels = handleFraction * scrollBarHeight;
+
+    // Find which tiles are within view
+    const tileSizeInRows = 400; // ARBITRARY.  TODO: should probably store tile size in bytes in the constants file, then calc tileSizeInRows
+    const numTilesInFile = Math.ceil(totalNumFFTs / tileSizeInRows);
+    console.log('numTilesInFile:', numTilesInFile);
+    const lowerTile = (totalNumFFTs / tileSizeInRows) * (handleTop / scrollBarHeight);
+    const upperTile = (totalNumFFTs / tileSizeInRows) * ((handleTop + handleHeightPixels) / scrollBarHeight);
+    console.log(lowerTile, upperTile); // its not going to go all the way to numTilesInFile because the handle isnt resizing itself yet
+
+    // mimicing python's range() function which gives array of integers between two values non-inclusive of end
+    function range(start, end) {
+      return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
+    }
+
+    const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+    console.log(tiles);
     this.setState({
-      tileNumber: num,
+      tileNumbers: tiles,
     });
   };
 
@@ -158,7 +175,7 @@ class SpectrogramPage extends Component {
               <Spectrogram fft={fft} blob={blob} meta={meta} />
             </Col>
             <Col className="col-1">
-              <ScrollBar handleTileNumber={this.handleTileNumber} />
+              <ScrollBar setTileNumbers={this.setTileNumbers} />
             </Col>
           </Row>
         </Container>
