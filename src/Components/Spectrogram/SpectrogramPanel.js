@@ -58,7 +58,6 @@ const SpectrogramPanel = (props) => {
   useEffect(() => {
     if (isBottom && blob.status !== 'loading') {
       console.log('Fetching more Data!');
-      // Call fetch more multiple times since it only grabs a few dozen rows each call
       fetchMoreData({ connection: connection, blob: blob, meta: meta });
     }
   }, [isBottom, fetchMoreData, blob, connection, meta]);

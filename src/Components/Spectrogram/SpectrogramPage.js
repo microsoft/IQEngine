@@ -57,7 +57,6 @@ class SpectrogramPage extends Component {
     this.props.resetBlob();
   }
 
-  // Not sure why we can do fft but not blob (we have to do blob.size)?
   static getDerivedStateFromProps(props, state) {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
@@ -145,6 +144,13 @@ class SpectrogramPage extends Component {
     this.setState({
       tileNumbers: tiles,
     });
+
+    // Fetch the tiles
+    if (this.state.blob.status !== 'loading') {
+      this.props.fetchMoreData({ connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
+    } else {
+      console.log('BLOB STATUS IS LOADING');
+    }
   };
 
   render() {
