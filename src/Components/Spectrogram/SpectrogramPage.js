@@ -25,6 +25,7 @@ class SpectrogramPage extends Component {
   async getProperties(blobClient) {
     const properties = await blobClient.getProperties();
     const numBytes = properties.contentLength;
+    this.props.updateBlobTotalBytes(numBytes);
   }
 
   componentDidMount() {

@@ -7,6 +7,7 @@ import {
   FETCH_MORE_DATA_SUCCESS,
   RESET_BLOB_OBJ,
   UPDATE_BLOB_SIZE,
+  UPDATE_BLOB_TOTAL_BYTES,
   UPDATE_BLOB_TAPS,
 } from '../../Constants/BlobTypes';
 
@@ -14,6 +15,7 @@ window.iq_data = []; // This is GROSS!!! but it works?! We need a cleaner way to
 
 const initialState = {
   size: 0,
+  totalBytes: 0,
   status: 'idle',
   taps: new Float32Array(1).fill(1),
 };
@@ -29,6 +31,11 @@ export default function blobReducer(state = initialState, action) {
       return {
         ...state,
         size: action.payload,
+      };
+    case UPDATE_BLOB_TOTAL_BYTES:
+      return {
+        ...state,
+        totalBytes: action.payload,
       };
     case FETCH_MORE_DATA_LOADING: // FetchMoreData/pending, where FetchMoreData is the async thunk function
       return {
