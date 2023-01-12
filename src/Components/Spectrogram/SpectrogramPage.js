@@ -1,15 +1,16 @@
-import { Spectrogram } from './Spectrogram';
-import { SpectrogramPanel } from './SpectrogramPanel';
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
+import { Layer, Image, Stage } from 'react-konva';
+import { select_fft2 } from '../../Utils/selector2';
 
 class SpectrogramPage extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       connection: props.connection,
       blob: props.blob,
@@ -20,6 +21,7 @@ class SpectrogramPage extends Component {
       window: 'hamming',
       autoscale: false,
       tileNumbers: [],
+      image: null,
     };
   }
 
@@ -37,7 +39,7 @@ class SpectrogramPage extends Component {
 
     // Create BlobClient (connect to the data blob) if not local
     if (connection.datafilehandle === undefined) {
-      let { accountName, containerName, sasToken, recording, blobClient } = connection;
+      let { accountName, containerName, sasToken, recording } = connection;
       while (recording === '') {
         console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
       }
@@ -153,10 +155,34 @@ class SpectrogramPage extends Component {
     } else {
       console.log('BLOB STATUS IS LOADING');
     }
+
+    // Update the image (eventually this should get moved somewhere else)
+    let ret = select_fft2(
+      lowerTile,
+      upperTile,
+      bytes_per_sample,
+      this.state.fftSize,
+      this.state.magnitudeMax,
+      this.state.magnitudeMin,
+      this.state.meta,
+      this.state.window,
+      this.state.autoscale
+    );
+    if (ret) {
+      // Draw the spectrogram
+      createImageBitmap(ret.image_data).then((ret) => {
+        this.setState({ image: ret });
+      });
+      if (this.state.autoscale && ret.autoMax) {
+        this.updateAutoScale(); // toggles it off so this only will happen once
+        this.updateMagnitudeMax(ret.autoMax);
+        this.updateMagnitudeMin(ret.autoMin);
+      }
+    }
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, autoscale } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -180,7 +206,11 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <Spectrogram fft={fft} blob={blob} meta={meta} />
+              <Stage width={600} height={600}>
+                <Layer>
+                  <Image image={this.state.image} x={0} y={0} width={600} height={600} />
+                </Layer>
+              </Stage>
             </Col>
             <Col className="col-1">
               <ScrollBar setTileNumbers={this.setTileNumbers} />
