@@ -22,6 +22,11 @@ class SpectrogramPage extends Component {
     };
   }
 
+  async getProperties(blobClient) {
+    const properties = await blobClient.getProperties();
+    const numBytes = properties.contentLength;
+  }
+
   componentDidMount() {
     let { fetchMetaDataBlob, connection } = this.props;
     window.iq_data = [];
@@ -30,19 +35,17 @@ class SpectrogramPage extends Component {
 
     // Create BlobClient (connect to the data blob) if not local
     if (connection.datafilehandle === undefined) {
-      console.log('==========');
       let { accountName, containerName, sasToken, recording, blobClient } = connection;
-
       while (recording === '') {
         console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
       }
       let blobName = recording + '.sigmf-data';
-
-      // Get the blob client TODO: REFACTOR SO WE DONT HAVE TO REMAKE THE CLIENT EVERY TIME!
       const { BlobServiceClient } = require('@azure/storage-blob');
       const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
       const containerClient = blobServiceClient.getContainerClient(containerName);
-      this.props.updateConnectionBlobClient(containerClient.getBlobClient(blobName));
+      const tempBlobClient = containerClient.getBlobClient(blobName);
+      this.props.updateConnectionBlobClient(tempBlobClient);
+      this.getProperties(tempBlobClient);
     }
   }
 
