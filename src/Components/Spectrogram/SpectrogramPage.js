@@ -6,6 +6,7 @@ import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 import { Layer, Image, Stage } from 'react-konva';
 import { select_fft, clear_fft_data } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
+import { RulerTop } from './RulerTop';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -220,6 +221,20 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
+              <Stage width={600} height={20}>
+                <RulerTop
+                  fftSize={fftSize}
+                  sampleRate={sampleRate}
+                  timescale_width={20}
+                  text_width={10}
+                  upper_tick_height={0}
+                  spectrogram_width={600}
+                  fft={fft}
+                  meta={meta}
+                  blob={blob}
+                  spectrogramWidthScale={600 / fftSize}
+                />
+              </Stage>
               <Stage width={600} height={600} stageRef={stageRef}>
                 <Layer>
                   <Image image={image} x={0} y={0} width={600} height={600} />
