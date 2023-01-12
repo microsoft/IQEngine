@@ -3,7 +3,7 @@ import Sidebar from './Sidebar';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { Layer, Image, Stage } from 'react-konva';
-import { select_fft, clear_fft_data, calculateTileNumbers } from '../../Utils/selector';
+import { select_fft, clear_fft_data, calculateTileNumbers, range } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 
@@ -28,8 +28,6 @@ class SpectrogramPage extends Component {
       stageRef: null,
       bytesPerSample: 2,
       data_type: '',
-      fetchSize: 0,
-      startFetch: 0,
       upperTile: -1,
       lowerTile: -1,
     };
@@ -72,17 +70,23 @@ class SpectrogramPage extends Component {
     }
     if (props.blob.size !== prevProps.blob.size) {
       newState.blob.size = props.blob.size;
-      const { fetchSize, blob, bytesPerSample, fftSize, tileNumber } = newState;
+      const { blob, bytesPerSample, fftSize, tileNumber } = newState;
       let { lowerTile, upperTile } = newState;
-      
       // check whether we have fetched all the data so we can update the spectrogram
-      if (blob.size - newState.startFetch === fetchSize) {
-        newState.startFetch += fetchSize;
-        if (upperTile === -1 || lowerTile === -1) {
-          let vals = calculateTileNumbers(tileNumber, bytesPerSample, blob, fftSize);
-          lowerTile = vals.lowerTile;
-          upperTile = vals.upperTile
+      if (upperTile === -1 || lowerTile === -1) {
+        let vals = calculateTileNumbers(tileNumber, bytesPerSample, blob, fftSize);
+        lowerTile = vals.lowerTile;
+        upperTile = vals.upperTile;
+      }
+      const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+      let shouldRender = true;
+      for (let tile in tiles) {
+        if (!window.iq_data.hasOwnProperty(tile.toString())) {
+          shouldRender = false;
+          break;
         }
+      }
+      if (shouldRender) {
         this.renderImage(lowerTile, upperTile);
       }
     }
@@ -158,26 +162,27 @@ class SpectrogramPage extends Component {
     const { blob, connection, data_type, bytesPerSample, fftSize } = this.state;
     const { upperTile, lowerTile } = calculateTileNumbers(handleTop, bytesPerSample, blob, fftSize);
     this.setState({ lowerTile: lowerTile, upperTile: upperTile });
-    // mimicing python's range() function which gives array of integers between two values non-inclusive of end
-    function range(start, end) {
-      return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
-    }
+
     const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
-    this.setState({ fetchSize: tiles.length });
     this.setState({
       tileNumber: tiles[0],
     });
 
+    var allFetched = true;
     // Fetch the tiles
     if (blob.status !== 'loading') {
       for (let tile of tiles) {
         if (!(tile.toString() in window.iq_data)) {
           console.log('fetchMoreData with tile', tile);
+          allFetched = false;
           this.props.fetchMoreData({ tile: tile, connection: connection, blob: blob, data_type: data_type });
         }
       }
     } else {
       console.log('BLOB STATUS IS LOADING');
+    }
+    if (allFetched) {
+      this.renderImage(lowerTile, upperTile);
     }
   };
 

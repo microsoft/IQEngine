@@ -25,11 +25,6 @@ function getStandardDeviation(array) {
   return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
-// mimicing python's range() function which gives array of integers between two values non-inclusive of end
-function range(start, end) {
-  return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
-}
-
 function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale) {
   let startTime = performance.now();
   const clearBuf = new ArrayBuffer(fft_size * num_ffts * 4); // fills with 0s ie. rgba 0,0,0,0 = transparent
@@ -232,4 +227,10 @@ export function calculateTileNumbers(handleTop, bytesPerSample, blob, fftSize) {
   const upperTile = (totalNumFFTs / tileSizeInRows) * ((handleTop + handleHeightPixels) / scrollBarHeight);
   console.log(lowerTile, upperTile); // its not going to go all the way to numTilesInFile because the handle isnt resizing itself yet
   return { lowerTile: lowerTile, upperTile: upperTile };
+}
+
+// mimicing python's range() function which gives array of integers between two values non-inclusive of end
+
+export function range(start, end) {
+  return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
 }
