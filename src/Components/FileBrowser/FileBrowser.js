@@ -11,6 +11,9 @@ import AzureBlobBrowser from './AzureBlobBrowser';
 import RepositoryTile from './RepositoryTile';
 
 const FileBrowser = (props) => {
+  const tileObj = JSON.parse(process.env.REACT_APP_CONNECTION_INFO);
+  const tileObjInfo = tileObj.settings;
+
   return (
     <div>
       <Container>
@@ -37,15 +40,11 @@ const FileBrowser = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
+          {tileObjInfo.map((item, i) => (
+            <Col>
+              <RepositoryTile key={i} item={item}></RepositoryTile>
+            </Col>
+          ))}
         </Row>
       </Container>
 
