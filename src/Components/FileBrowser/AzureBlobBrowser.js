@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Container, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 const AzureBlobBrowser = (props) => {
   const [accountName, setAccountName] = useState(props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME);
