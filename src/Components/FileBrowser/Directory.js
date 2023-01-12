@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { useState } from 'react';
 import FileRow from './File';
 import styled from 'styled-components';
 import FolderIcon from '@mui/icons-material/Folder';

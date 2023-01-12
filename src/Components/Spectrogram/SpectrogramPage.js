@@ -197,7 +197,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, handleHeightPixels, stageRef } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, stageRef } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
