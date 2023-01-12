@@ -19,8 +19,20 @@ function getPreview(data) {
 }
 
 const AnnotationViewer = (props) => {
-  let { blob, fft, meta, windowFunction, spectrogram_width, upper_tick_height, stageRef, spectrogramWidthScale, fftSize, annotations, sampleRate } =
-    props;
+  let {
+    blob,
+    fft,
+    meta,
+    windowFunction,
+    spectrogram_width,
+    upper_tick_height,
+    stageRef,
+    spectrogramWidthScale,
+    spectrogramHeightScale,
+    fftSize,
+    annotations,
+    sampleRate,
+  } = props;
 
   const [ticks, setTicks] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -105,9 +117,9 @@ const AnnotationViewer = (props) => {
           {/* Main rectangle */}
           <Rect
             x={annotation.x1 * spectrogramWidthScale}
-            y={annotation.y1 + upper_tick_height}
+            y={(annotation.y1 + upper_tick_height) * spectrogramHeightScale}
             width={(annotation.x2 - annotation.x1) * spectrogramWidthScale}
-            height={annotation.y2 - annotation.y1}
+            height={(annotation.y2 - annotation.y1) * spectrogramHeightScale}
             fillEnabled="false"
             stroke="black"
             strokeWidth={4}

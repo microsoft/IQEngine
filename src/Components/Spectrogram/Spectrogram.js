@@ -14,7 +14,7 @@ const Spectrogram = (props) => {
         <AnnotationViewer
           timescale_width={20}
           text_width={10}
-          upper_tick_height={10}
+          upper_tick_height={0}
           spectrogram_width={600}
           fft={props.fft}
           meta={props.meta}
@@ -22,6 +22,7 @@ const Spectrogram = (props) => {
           stageRef={stageRef}
           annotations={props.annotations}
           spectrogramWidthScale={600 / props.fftSize}
+          spectrogramHeightScale={1}
           fftSize={props.fftSize}
           sampleRate={props.sampleRate}
         />

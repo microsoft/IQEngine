@@ -173,7 +173,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   const image_data = new ImageData(trimmed_fft_data, fft_size, num_final_ffts);
 
   // Annotation portion
-  let annotations_list = window.annotations;
+  let annotations_list = [];
   for (let i = 0; i < meta.annotations.length; i++) {
     let freq_lower_edge = meta.annotations[i]['core:freq_lower_edge'];
     let freq_upper_edge = meta.annotations[i]['core:freq_upper_edge'];
@@ -190,12 +190,15 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     window.sample_rate = sample_rate;
     let lower_freq = center_frequency - sample_rate / 2;
 
-    if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
+    if (
+      (sample_start >= start_sample_index && sample_start < stop_sample_index) ||
+      (sample_start + sample_count >= start_sample_index && sample_start + sample_count < stop_sample_index)
+    ) {
       annotations_list.push({
         x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side. units are in fractions of an FFT size, e.g. 0-1024
         x2: ((freq_upper_edge - lower_freq) / sample_rate) * fft_size, // right side
-        y1: sample_start / fft_size, // top
-        y2: (sample_start + sample_count) / fft_size, // bottom
+        y1: (sample_start - start_sample_index) / fft_size, // top
+        y2: (sample_start - start_sample_index + sample_count) / fft_size, // bottom
         description: description,
       });
     }

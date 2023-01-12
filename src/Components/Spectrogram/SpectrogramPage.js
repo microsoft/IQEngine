@@ -24,6 +24,7 @@ class SpectrogramPage extends Component {
       image: null,
       annotations: [],
       sampleRate: 1,
+      handleHeightPixels: 50,
     };
   }
 
@@ -130,6 +131,7 @@ class SpectrogramPage extends Component {
     const handleFraction = scrollBarHeight / totalNumFFTs;
     console.log('handleFraction:', handleFraction);
     const handleHeightPixels = handleFraction * scrollBarHeight;
+    this.setState({ handleHeightPixels: handleHeightPixels });
 
     // Find which tiles are within view
     const tileSizeInRows = TILE_SIZE_IN_BYTES / bytes_per_sample / 2 / this.state.fftSize;
@@ -193,7 +195,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, handleHeightPixels } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
