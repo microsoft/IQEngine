@@ -4,7 +4,7 @@ import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 import { Layer, Image, Stage } from 'react-konva';
-import { select_fft2, clear_fft_data } from '../../Utils/selector2';
+import { select_fft, clear_fft_data } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
 
 class SpectrogramPage extends Component {
@@ -167,7 +167,7 @@ class SpectrogramPage extends Component {
     }
 
     // Update the image (eventually this should get moved somewhere else)
-    let ret = select_fft2(
+    let ret = select_fft(
       lowerTile,
       upperTile,
       bytes_per_sample,

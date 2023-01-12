@@ -126,7 +126,7 @@ function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_mi
 }
 
 // lowerTile and upperTile are in fractions of a tile
-export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, magnitudeMax, magnitudeMin, meta, windowFunction, autoscale = false) => {
+export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magnitudeMax, magnitudeMin, meta, windowFunction, autoscale = false) => {
   let fft_size = fftSize;
   const num_ffts = TILE_SIZE_IN_BYTES / bytes_per_sample / 2 / fftSize; // per tile
   let magnitude_max = magnitudeMax;
