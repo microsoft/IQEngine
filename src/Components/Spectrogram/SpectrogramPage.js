@@ -104,7 +104,9 @@ class SpectrogramPage extends Component {
     });
   };
 
+  // num is the y pixel coords of the top of the scrollbar handle, so range of 0 to the height of the scrollbar minus height of handle
   handleTileNumber = (num) => {
+    console.log('====', num);
     this.setState({
       tileNumber: num,
     });

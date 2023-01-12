@@ -10,8 +10,15 @@ const ScrollBar = (props) => {
 
   const handleClick = (e) => {
     let currentY = e.evt.offsetY;
-    setY(currentY - handlerHeight / 2);
-    props.handleTileNumber(currentY - handlerHeight / 2);
+    let newY = currentY - handlerHeight / 2;
+    if (newY < 0) {
+      newY = 0;
+    }
+    if (newY > stageHeight - handlerHeight) {
+      newY = stageHeight - handlerHeight;
+    }
+    setY(newY);
+    props.handleTileNumber(newY);
   };
 
   const handleDragMove = (e) => {
