@@ -1,3 +1,4 @@
+import { Spectrogram } from './Spectrogram';
 import { SpectrogramPanel } from './SpectrogramPanel';
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
@@ -26,6 +27,23 @@ class SpectrogramPage extends Component {
     window.iq_data = [];
     clear_fft_data();
     fetchMetaDataBlob(connection); // fetch the metadata
+
+    // Create BlobClient (connect to the data blob) if not local
+    if (connection.datafilehandle === undefined) {
+      console.log('==========');
+      let { accountName, containerName, sasToken, recording, blobClient } = connection;
+
+      while (recording === '') {
+        console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
+      }
+      let blobName = recording + '.sigmf-data';
+
+      // Get the blob client TODO: REFACTOR SO WE DONT HAVE TO REMAKE THE CLIENT EVERY TIME!
+      const { BlobServiceClient } = require('@azure/storage-blob');
+      const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      this.props.updateConnectionBlobClient(containerClient.getBlobClient(blobName));
+    }
   }
 
   componentWillUnmount() {
@@ -113,21 +131,10 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <SpectrogramPanel
-                fetchMoreData={this.props.fetchMoreData}
-                connection={this.state.connection}
-                fft={fft}
-                blob={blob}
-                meta={meta}
-                window={this.state.window}
-                updateMagnitudeMax={this.handleMagnitudeMax}
-                updateMagnitudeMin={this.handleMagnitudeMin}
-                updateAutoScale={this.handleAutoScale}
-                autoscale={autoscale}
-              />
+              <Spectrogram fft={fft} blob={blob} meta={meta} />
             </Col>
             <Col className="col-1">
-              <ScrollBar handleTileNumber={this.handleTileNumber}/>
+              <ScrollBar handleTileNumber={this.handleTileNumber} />
             </Col>
           </Row>
         </Container>

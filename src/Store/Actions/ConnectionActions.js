@@ -6,6 +6,7 @@ import {
   UPDATE_CONNECTION_META_FILE_HANDLE,
   UPDATE_CONNECTION_RECORDING,
   UPDATE_CONNECTION_SAS_TOKEN,
+  UPDATE_CONNECTION_BLOB_CLIENT,
 } from '../../Constants/ConnectionTypes';
 
 export const updateConnectionAccountName = (payload) => ({
@@ -38,6 +39,11 @@ export const updateConnectionDataFileHandle = (payload) => ({
   payload,
 });
 
+export const updateConnectionBlobClient = (payload) => ({
+  type: UPDATE_CONNECTION_BLOB_CLIENT,
+  payload,
+});
+
 export const resetConnection = () => ({
   type: RESET_CONNECTION_OBJ,
-})
+});
