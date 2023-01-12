@@ -1,12 +1,11 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import Spectrogram from './Spectrogram';
-import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 import { Layer, Image, Stage } from 'react-konva';
-import { select_fft2 } from '../../Utils/selector2';
+import { select_fft2, clear_fft_data } from '../../Utils/selector2';
 
 class SpectrogramPage extends Component {
   constructor(props) {

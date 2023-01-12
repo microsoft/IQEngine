@@ -138,7 +138,9 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     console.log(window.iq_data);
     if (tile.toString() in window.iq_data) {
       let samples = window.iq_data[tile.toString()];
+      console.log(window.fft_data);
       window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
+      console.log(window.fft_data);
       console.log('Finished processing tile', tile);
     } else {
       console.log('Dont have iq_data of tile', tile, 'yet');
@@ -146,35 +148,24 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   }
 
   // Concatenate and trim the fft_data and render image
-  let image_data;
-  let temp_fft_data;
-  if (tiles[0].toString() in window.fft_data) {
-    temp_fft_data = window.fft_data[tiles[0].toString()]; // remember fft_data is 1D (its flattened 2D)
-  } else {
-    // If the first slice isnt availabel fill with zeros
-    const clearBuf = new ArrayBuffer(fft_size * num_ffts * 4); // fills with 0s ie. rgba 0,0,0,0 = transparent
-    const fake_fft_data = new Uint8ClampedArray(clearBuf);
-    temp_fft_data = fake_fft_data;
-  }
-  console.log(temp_fft_data);
-  // Now go through the rest of the tiles in the list
-  for (let tile of tiles.slice(1)) {
-    let nextPortion;
+  let total_fft_data = new Uint8ClampedArray(tiles.length * fft_size * num_ffts * 4);
+  let counter = 0; // can prob make this cleaner with an iterator in the for loop below
+  for (let tile of tiles) {
     if (tile.toString() in window.fft_data) {
-      nextPortion = window.fft_data[tile.toString()];
+      console.log('A');
+      total_fft_data.set(window.fft_data[tile.toString()], counter);
+      counter = counter + window.fft_data[tile.toString()].length;
     } else {
-      // If tile not available, fill with zeros
-      const clearBuf = new ArrayBuffer(fft_size * num_ffts * 4); // fills with 0s ie. rgba 0,0,0,0 = transparent
-      nextPortion = new Uint8ClampedArray(clearBuf);
+      console.log('B');
+      // If the first slice isnt availabel fill with zeros
+      const fake_fft_data = new Uint8ClampedArray(fft_size * num_ffts * 4);
+      total_fft_data.set(fake_fft_data, counter);
+      counter = counter + fake_fft_data.length;
     }
-    // You cant use array.concat with typed arrays, so we have to do the ugliness below
-    var mergedArray = new Uint8ClampedArray(temp_fft_data.length + nextPortion.length);
-    mergedArray.set(temp_fft_data);
-    mergedArray.set(nextPortion, temp_fft_data.length);
-    temp_fft_data = mergedArray;
   }
-  console.log('temp_fft_data len:', temp_fft_data.length);
-  image_data = new ImageData(temp_fft_data, fft_size, num_ffts * tiles.length);
+  console.log('total_fft_data:', total_fft_data);
+  console.log('total_fft_data length:', total_fft_data.length);
+  const image_data = new ImageData(total_fft_data, fft_size, num_ffts * tiles.length);
   console.log('image_data:', image_data);
 
   // Annotation portion
