@@ -144,7 +144,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     }
   }
 
-  // Concatenate and trim the fft_data and render image
+  // Concatenate the full tiles
   let total_fft_data = new Uint8ClampedArray(tiles.length * fft_size * num_ffts * 4);
   let counter = 0; // can prob make this cleaner with an iterator in the for loop below
   for (let tile of tiles) {
@@ -152,14 +152,27 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
       total_fft_data.set(window.fft_data[tile.toString()], counter);
       counter = counter + window.fft_data[tile.toString()].length;
     } else {
-      // If the first slice isnt availabel fill with zeros
+      // If the first slice isnt availabel fill with ones
       let fake_fft_data = new Uint8ClampedArray(fft_size * num_ffts * 4);
       fake_fft_data.fill(255); // for debugging its better to have the alpha set to opaque so the missing part isnt invisible
       total_fft_data.set(fake_fft_data, counter);
       counter = counter + fake_fft_data.length;
     }
   }
-  const image_data = new ImageData(total_fft_data, fft_size, num_ffts * tiles.length);
+
+  // Trim off the top and bottom
+  let lowerTrim = (lowerTile - Math.floor(lowerTile)) * fft_size * num_ffts; // amount we want to get rid of
+  lowerTrim = lowerTrim - (lowerTrim % fft_size);
+  lowerTrim = lowerTrim * 4;
+  let upperTrim = (1 - (upperTile - Math.floor(upperTile))) * fft_size * num_ffts; // amount we want to get rid of
+  upperTrim = upperTrim - (upperTrim % fft_size);
+  upperTrim = upperTrim * 4;
+  const trimmed_fft_data = total_fft_data.slice(lowerTrim, total_fft_data.length - upperTrim);
+  const num_final_ffts = trimmed_fft_data.length / fft_size / 4;
+  console.log('num_final_ffts:', num_final_ffts);
+
+  // Render Image
+  const image_data = new ImageData(trimmed_fft_data, fft_size, num_final_ffts);
 
   // Annotation portion
   /*
