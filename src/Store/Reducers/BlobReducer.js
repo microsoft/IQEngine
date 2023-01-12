@@ -44,6 +44,7 @@ export default function blobReducer(state = initialState, action) {
       };
     case FETCH_MORE_DATA_SUCCESS: // FetchMoreData/fulfilled, where FetchMoreData is the async thunk function
       window.iq_data[action.payload.tile.toString()] = action.payload.samples; // use tile as key to store samples
+      console.log('Saved tile', action.payload.tile);
       return {
         ...state,
         status: 'idle',

@@ -60,8 +60,21 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   let buffer;
   if (connection.datafilehandle === undefined) {
     // using Azure blob storage
+
+    // THE FOLLOWING IS TEMPORARY UNTIL WE GET THE REDUX STATE FOR BLOBCLIENT WORKING
+    let { accountName, containerName, sasToken, recording } = connection;
+    while (recording === '') {
+      console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
+    }
+    let blobName = recording + '.sigmf-data';
+    const { BlobServiceClient } = require('@azure/storage-blob');
+    const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const tempBlobClient = containerClient.getBlobClient(blobName);
+
     console.log('offset:', offset, 'count:', count);
-    const downloadBlockBlobResponse = await connection.blobClient.download(offset, count);
+    //const downloadBlockBlobResponse = await connection.blobClient.download(offset, count);
+    const downloadBlockBlobResponse = await tempBlobClient.download(offset, count);
     const blob = await downloadBlockBlobResponse.blobBody;
     buffer = await blob.arrayBuffer();
   } else {

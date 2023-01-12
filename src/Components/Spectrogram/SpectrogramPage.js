@@ -48,7 +48,7 @@ class SpectrogramPage extends Component {
       const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
       const containerClient = blobServiceClient.getContainerClient(containerName);
       const tempBlobClient = containerClient.getBlobClient(blobName);
-      this.props.updateConnectionBlobClient(tempBlobClient);
+      this.props.updateConnectionBlobClient(tempBlobClient); // FIXME THIS ISNT WORKING YET SO IM JUST GETTING THE CLIENT AGAIN IN FETCHMOREDATA
       this.getProperties(tempBlobClient);
     }
   }
@@ -151,7 +151,12 @@ class SpectrogramPage extends Component {
 
     // Fetch the tiles
     if (this.state.blob.status !== 'loading') {
-      this.props.fetchMoreData({ tile: tiles[0], connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
+      for (let tile of tiles) {
+        if (!(tile.toString() in window.iq_data)) {
+          console.log('fetchMoreData with tile', tile);
+          this.props.fetchMoreData({ tile: tile, connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
+        }
+      }
     } else {
       console.log('BLOB STATUS IS LOADING');
     }
