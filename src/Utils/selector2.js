@@ -175,6 +175,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   }
   console.log('temp_fft_data len:', temp_fft_data.length);
   image_data = new ImageData(temp_fft_data, fft_size, num_ffts * tiles.length);
+  console.log('image_data:', image_data);
 
   // Annotation portion
   /*

@@ -1,5 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
+import Spectrogram from './Spectrogram';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
@@ -177,6 +178,7 @@ class SpectrogramPage extends Component {
       // Draw the spectrogram
       createImageBitmap(ret.image_data).then((ret) => {
         this.setState({ image: ret });
+        console.log('Image Updated');
       });
       if (this.state.autoscale && ret.autoMax) {
         this.updateAutoScale(); // toggles it off so this only will happen once
@@ -187,7 +189,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -211,11 +213,7 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <Stage width={600} height={600}>
-                <Layer>
-                  <Image image={this.state.image} x={0} y={0} width={600} height={600} />
-                </Layer>
-              </Stage>
+              <Spectrogram image={image} />
             </Col>
             <Col className="col-1">
               <ScrollBar setTileNumbers={this.setTileNumbers} />
