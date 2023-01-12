@@ -256,7 +256,7 @@ class SpectrogramPage extends Component {
                 />
               </Stage>
             </Col>
-            <Col className="col-1">
+            <Col style={{ justifyContent: 'left' }}>
               <ScrollBar setTileNumbers={this.setTileNumbers} />
             </Col>
           </Row>
