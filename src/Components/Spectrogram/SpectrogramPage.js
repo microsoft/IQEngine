@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
+import TimePlot from './TimePlot';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -100,6 +101,7 @@ class SpectrogramPage extends Component {
         <Container fluid>
           <Row className="flex-nowrap">
             <Col className="col-3">
+              <TimePlot />
               <Sidebar
                 updateBlobTaps={this.props.updateBlobTaps}
                 updateMagnitudeMax={this.handleMagnitudeMax}
