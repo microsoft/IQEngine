@@ -21,9 +21,15 @@ const StyledFolderIcon = styled(FolderIcon)`
   margin-right: 4px;
 `;
 
-const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording, setCurrentFolder }) => {
+const Directory = ({
+  item,
+  updateConnectionMetaFileHandle,
+  updateConnectionDataFileHandle,
+  updateConnectionRecording,
+  setCurrentFolder,
+  currentFolder,
+}) => {
   //const [isExpanded, toggleExpanded] = useState(item.name === 'root'); // expand by default if its the root dir
-  const [isExpanded, toggleExpanded] = useState(true);
   if (item.type === 'folder') {
     return (
       <>
@@ -32,12 +38,15 @@ const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataF
           <td className="align-middle">
             <p
               onClick={() => {
-                toggleExpanded(!isExpanded);
-                setCurrentFolder(item.name);
-                console.log('setting current folder to', item.name);
+                if (currentFolder === item.name) {
+                  setCurrentFolder(item.parentName);
+                } else {
+                  setCurrentFolder(item.name);
+                  console.log('setting current folder to', item.name);
+                }
               }}
             >
-              {isExpanded ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
+              {item.name === currentFolder ? <StyledOpenFolderIcon /> : <StyledFolderIcon />}
               {item.name}
             </p>
           </td>
@@ -48,17 +57,17 @@ const Directory = ({ item, updateConnectionMetaFileHandle, updateConnectionDataF
           <td></td>
           <td></td>
         </tr>
-        {isExpanded &&
-          item.children.map((item) => (
-            <Directory
-              key={Math.random()}
-              item={item}
-              updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-              updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-              updateConnectionRecording={updateConnectionRecording}
-              setCurrentFolder={setCurrentFolder}
-            />
-          ))}
+        {item.children.map((item) => (
+          <Directory
+            key={Math.random()}
+            item={item}
+            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+            updateConnectionRecording={updateConnectionRecording}
+            setCurrentFolder={setCurrentFolder}
+            currentFolder={currentFolder}
+          />
+        ))}
       </>
     );
   }

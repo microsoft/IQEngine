@@ -11,7 +11,7 @@ function isFolder(file) {
 function GroupByFolder(files, root) {
   const fileTree = {
     contents: [],
-    children: {},
+    children: [],
   };
 
   files.map((file) => {
@@ -39,7 +39,7 @@ function GroupByFolder(files, root) {
         if (folder in currentFolder.children === false) {
           currentFolder.children[folder] = {
             contents: [],
-            children: {},
+            children: [],
             type: 'folder',
           };
         }
@@ -84,24 +84,36 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
   if (gfiles.length > 0) {
     dataTree = GroupByFolder(data, '');
     dataTree = { children: dataTree, name: 'root', type: 'folder' };
-    console.log(dataTree);
-    // find the portion corresponding to current folder TODO: make recursive
+    // find the portion corresponding to current folder
     function findCurrentFolder(x) {
+      // 1 layer deep (TODO: Make recursive)
       if (x.name === currentFolder) {
-        console.log('RETURNING');
+        x.parentName = 'root';
         return x;
       }
+      // 2 layers deep
       for (const child of x.children) {
         if (child.type === 'folder') {
           if (child.name === currentFolder) {
-            console.log('GOT HERE');
+            child.parentName = x.name;
             return child;
           }
         }
       }
-      // TODO make recursive
+      // 3 layers deep
+      for (const child of x.children) {
+        if (child.type === 'folder') {
+          for (const c of child.children) {
+            if (c.name === currentFolder) {
+              c.parentName = child.name;
+              return c;
+            }
+          }
+        }
+      }
     }
     currentDataTree = findCurrentFolder(dataTree);
+
     // remove all children from folders in currentDataTree so they dont show up
     for (let i = 0; i < currentDataTree.children.length; i++) {
       if (currentDataTree.children[i].type === 'folder') {
@@ -111,7 +123,7 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
   }
 
   // Hide menu if the data hasnt loaded yet
-  if (dataTree.length === 0) {
+  if (currentDataTree.length === 0) {
     return <></>;
   }
 
@@ -138,6 +150,7 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
             updateConnectionDataFileHandle={updateConnectionDataFileHandle}
             updateConnectionRecording={updateConnectionRecording}
             setCurrentFolder={setCurrentFolder}
+            currentFolder={currentFolder}
           />
         </tbody>
       </table>
