@@ -138,9 +138,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     console.log(window.iq_data);
     if (tile.toString() in window.iq_data) {
       let samples = window.iq_data[tile.toString()];
-      console.log(window.fft_data);
       window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
-      console.log(window.fft_data);
       console.log('Finished processing tile', tile);
     } else {
       console.log('Dont have iq_data of tile', tile, 'yet');
@@ -158,7 +156,8 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     } else {
       console.log('B');
       // If the first slice isnt availabel fill with zeros
-      const fake_fft_data = new Uint8ClampedArray(fft_size * num_ffts * 4);
+      let fake_fft_data = new Uint8ClampedArray(fft_size * num_ffts * 4);
+      fake_fft_data.fill(255); // for debugging its better to have the alpha set to opaque so the missing part isnt invisible
       total_fft_data.set(fake_fft_data, counter);
       counter = counter + fake_fft_data.length;
     }
