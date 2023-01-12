@@ -214,3 +214,22 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
   };
   return select_fft_return;
 };
+
+export function calculateTileNumbers(handleTop, bytesPerSample, blob, fftSize) {
+  const { totalBytes } = blob;
+  const totalNumFFTs = totalBytes / bytesPerSample / 2 / fftSize; // divide by 2 because IQ
+  const scrollBarHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
+  const handleFraction = scrollBarHeight / totalNumFFTs;
+  console.log('handleFraction:', handleFraction);
+  const handleHeightPixels = handleFraction * scrollBarHeight;
+
+  // Find which tiles are within view
+  const tileSizeInRows = TILE_SIZE_IN_BYTES / bytesPerSample / 2 / fftSize;
+  console.log('tileSizeInRows:', tileSizeInRows);
+  const numTilesInFile = Math.ceil(totalNumFFTs / tileSizeInRows);
+  console.log('numTilesInFile:', numTilesInFile);
+  const lowerTile = (totalNumFFTs / tileSizeInRows) * (handleTop / scrollBarHeight);
+  const upperTile = (totalNumFFTs / tileSizeInRows) * ((handleTop + handleHeightPixels) / scrollBarHeight);
+  console.log(lowerTile, upperTile); // its not going to go all the way to numTilesInFile because the handle isnt resizing itself yet
+  return { lowerTile: lowerTile, upperTile: upperTile };
+}
