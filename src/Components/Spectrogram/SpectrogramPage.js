@@ -1,11 +1,11 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
-import Spectrogram from './Spectrogram';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 import { Layer, Image, Stage } from 'react-konva';
 import { select_fft2, clear_fft_data } from '../../Utils/selector2';
+import { AnnotationViewer } from './AnnotationViewer';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -25,6 +25,7 @@ class SpectrogramPage extends Component {
       annotations: [],
       sampleRate: 1,
       handleHeightPixels: 50,
+      stageRef: null,
     };
   }
 
@@ -195,7 +196,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, handleHeightPixels } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, handleHeightPixels, stageRef } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -219,7 +220,26 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <Spectrogram image={image} fft={fft} blob={blob} meta={meta} annotations={annotations} fftSize={fftSize} sampleRate={sampleRate} />
+              <Stage width={600} height={600} stageRef={stageRef}>
+                <Layer>
+                  <Image image={image} x={0} y={0} width={600} height={600} />
+                </Layer>
+                <AnnotationViewer
+                  timescale_width={20}
+                  text_width={10}
+                  upper_tick_height={0}
+                  spectrogram_width={600}
+                  fft={fft}
+                  meta={meta}
+                  blob={blob}
+                  stageRef={stageRef}
+                  annotations={annotations}
+                  spectrogramWidthScale={600 / fftSize}
+                  spectrogramHeightScale={1}
+                  fftSize={fftSize}
+                  sampleRate={sampleRate}
+                />
+              </Stage>
             </Col>
             <Col className="col-1">
               <ScrollBar setTileNumbers={this.setTileNumbers} />
