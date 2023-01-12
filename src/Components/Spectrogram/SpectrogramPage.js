@@ -67,6 +67,9 @@ class SpectrogramPage extends Component {
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
     }
+    if (props.blob.totalBytes !== state.blob.totalBytes) {
+      newState.blob.totalBytes = props.blob.totalBytes;
+    }
     if (props.blob.status !== state.blob.status) {
       newState.blob.status = props.blob.status;
     }
@@ -106,7 +109,22 @@ class SpectrogramPage extends Component {
 
   // num is the y pixel coords of the top of the scrollbar handle, so range of 0 to the height of the scrollbar minus height of handle
   handleTileNumber = (num) => {
-    console.log('====', num);
+    const totalBytes = this.state.blob.totalBytes;
+    const data_type = this.state.meta.global['core:datatype'];
+
+    let bytes_per_sample = 2;
+    if (data_type === 'ci16_le') {
+      bytes_per_sample = 2;
+    } else if (data_type === 'cf32_le') {
+      bytes_per_sample = 4;
+    } else {
+      bytes_per_sample = 2;
+    }
+
+    const totalNumFFTs = totalBytes / bytes_per_sample / 2 / this.state.fftSize; // divide by 2 because IQ
+    const scrollBarHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
+    const handleFraction = scrollBarHeight / totalNumFFTs;
+    console.log('handleFraction:', handleFraction);
     this.setState({
       tileNumber: num,
     });

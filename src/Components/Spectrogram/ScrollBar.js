@@ -3,7 +3,7 @@ import { Stage, Layer, Rect } from 'react-konva';
 
 const ScrollBar = (props) => {
   let stageWidth = 25;
-  let stageHeight = 600;
+  let stageHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
   let handlerHeight = 50;
 
   const [y, setY] = useState(0);
