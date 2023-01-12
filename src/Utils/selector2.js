@@ -135,7 +135,6 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   // Go through each of the tiles and compute the FFT and save in window.fft_data
   const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
   for (let tile of tiles) {
-    console.log(window.iq_data);
     if (tile.toString() in window.iq_data) {
       let samples = window.iq_data[tile.toString()];
       window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
@@ -150,11 +149,9 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   let counter = 0; // can prob make this cleaner with an iterator in the for loop below
   for (let tile of tiles) {
     if (tile.toString() in window.fft_data) {
-      console.log('A');
       total_fft_data.set(window.fft_data[tile.toString()], counter);
       counter = counter + window.fft_data[tile.toString()].length;
     } else {
-      console.log('B');
       // If the first slice isnt availabel fill with zeros
       let fake_fft_data = new Uint8ClampedArray(fft_size * num_ffts * 4);
       fake_fft_data.fill(255); // for debugging its better to have the alpha set to opaque so the missing part isnt invisible
@@ -162,10 +159,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
       counter = counter + fake_fft_data.length;
     }
   }
-  console.log('total_fft_data:', total_fft_data);
-  console.log('total_fft_data length:', total_fft_data.length);
   const image_data = new ImageData(total_fft_data, fft_size, num_ffts * tiles.length);
-  console.log('image_data:', image_data);
 
   // Annotation portion
   /*
