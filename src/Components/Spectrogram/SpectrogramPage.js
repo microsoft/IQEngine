@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import { clear_fft_data } from '../../Utils/selector';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
+import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class SpectrogramPage extends Component {
 
   componentDidMount() {
     let { fetchMetaDataBlob, connection } = this.props;
-    window.iq_data = [];
+    window.iq_data = {};
     clear_fft_data();
     fetchMetaDataBlob(connection); // fetch the metadata
 
@@ -53,7 +54,7 @@ class SpectrogramPage extends Component {
   componentWillUnmount() {
     // make sure not to resetConnection() here or else it screws up ability to switch between recordings without clicking the browse button again
     this.props.resetMeta();
-    window.iq_data = [];
+    window.iq_data = {};
     this.props.resetBlob();
   }
 
@@ -61,7 +62,7 @@ class SpectrogramPage extends Component {
     let newState = state;
     if (JSON.stringify(props.meta) !== JSON.stringify(state.meta)) {
       newState.meta = props.meta;
-      props.blob.status !== 'loading' && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
+      //NOT SURE WHY THIS WAS ADDED!  props.blob.status !== 'loading' && props.fetchMoreData({ blob: props.blob, meta: props.meta, connection: props.connection });
     }
     if (props.blob.size !== state.blob.size) {
       newState.blob.size = props.blob.size;
@@ -127,7 +128,8 @@ class SpectrogramPage extends Component {
     const handleHeightPixels = handleFraction * scrollBarHeight;
 
     // Find which tiles are within view
-    const tileSizeInRows = 400; // ARBITRARY.  TODO: should probably store tile size in bytes in the constants file, then calc tileSizeInRows
+    const tileSizeInRows = TILE_SIZE_IN_BYTES / bytes_per_sample / 2 / this.state.fftSize;
+    console.log('tileSizeInRows:', tileSizeInRows);
     const numTilesInFile = Math.ceil(totalNumFFTs / tileSizeInRows);
     console.log('numTilesInFile:', numTilesInFile);
     const lowerTile = (totalNumFFTs / tileSizeInRows) * (handleTop / scrollBarHeight);
@@ -147,7 +149,7 @@ class SpectrogramPage extends Component {
 
     // Fetch the tiles
     if (this.state.blob.status !== 'loading') {
-      this.props.fetchMoreData({ connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
+      this.props.fetchMoreData({ tile: tiles[0], connection: this.state.connection, blob: this.state.blob, meta: this.state.meta });
     } else {
       console.log('BLOB STATUS IS LOADING');
     }

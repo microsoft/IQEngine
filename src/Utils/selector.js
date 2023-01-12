@@ -26,7 +26,7 @@ export const clear_fft_data = () => {
   window.fft_data = new Uint8ClampedArray(); // this is where our FFT outputs are stored
   window.annotations = []; // gets filled in before return
   window.sample_rate = 1; // will get filled in
-  window.iq_data = []; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
+  window.iq_data = {}; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
 function getStandardDeviation(array) {
