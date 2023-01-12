@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { select_fft } from '../../Utils/selector';
 import React, { useState, useEffect } from 'react';
 import { Layer, Rect, Text, Circle } from 'react-konva';
 
@@ -20,11 +19,9 @@ function getPreview(data) {
 }
 
 const AnnotationViewer = (props) => {
-  let { blob, fft, meta, windowFunction, spectrogram_width, upper_tick_height, stageRef } = props;
+  let { blob, fft, meta, windowFunction, spectrogram_width, upper_tick_height, stageRef, spectrogramWidthScale, fftSize, annotations, sampleRate } =
+    props;
 
-  const [fftSize, setFftSize] = useState();
-  const [spectrogramWidthScale, setSpectrogramWidthScale] = useState();
-  const [annotations, setAnnotations] = useState([]);
   const [ticks, setTicks] = useState([]);
   const [labels, setLabels] = useState([]);
   const [dragDropData, setDragDropData] = useState(null);
@@ -36,18 +33,10 @@ const AnnotationViewer = (props) => {
   const previewItem = getPreview(dragDropData);
 
   useEffect(() => {
-    let ret = select_fft(blob, fft, meta);
-    if (!ret) {
-      return;
-    }
-    setAnnotations(ret.annotations);
-    setFftSize(ret.fft_size);
-    setSpectrogramWidthScale(ret.image_data ? spectrogram_width / ret.image_data.width : 1);
-
     // Draw the vertical scales
-    let num_ticks = ret.image_data.height / 10;
+    let num_ticks = 30;
     const timescale_width = 5;
-    let time_per_row = ret.fft_size / ret.sample_rate;
+    let time_per_row = fftSize / sampleRate;
     const temp_ticks = [];
     const temp_labels = [];
     for (let i = 0; i < num_ticks; i++) {

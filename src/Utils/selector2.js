@@ -163,11 +163,9 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   // Trim off the top and bottom
   let lowerTrim = (lowerTile - Math.floor(lowerTile)) * fft_size * num_ffts; // amount we want to get rid of
   lowerTrim = lowerTrim - (lowerTrim % fft_size);
-  lowerTrim = lowerTrim * 4;
   let upperTrim = (1 - (upperTile - Math.floor(upperTile))) * fft_size * num_ffts; // amount we want to get rid of
   upperTrim = upperTrim - (upperTrim % fft_size);
-  upperTrim = upperTrim * 4;
-  const trimmed_fft_data = total_fft_data.slice(lowerTrim, total_fft_data.length - upperTrim);
+  const trimmed_fft_data = total_fft_data.slice(lowerTrim * 4, total_fft_data.length - upperTrim * 4);
   const num_final_ffts = trimmed_fft_data.length / fft_size / 4;
   console.log('num_final_ffts:', num_final_ffts);
 
@@ -175,7 +173,6 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
   const image_data = new ImageData(trimmed_fft_data, fft_size, num_final_ffts);
 
   // Annotation portion
-  /*
   let annotations_list = window.annotations;
   for (let i = 0; i < meta.annotations.length; i++) {
     let freq_lower_edge = meta.annotations[i]['core:freq_lower_edge'];
@@ -185,8 +182,8 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     let description = meta.annotations[i]['core:description'];
 
     // Calc the sample index of the first FFT being displayed
-    let start_sample_index = previous_blob_size / 2; // blob size is in units of ints/floats that have been downloaded, and its two per sample
-    let samples_in_window = (blob_size - previous_blob_size) / 2;
+    let start_sample_index = (lowerTile * TILE_SIZE_IN_BYTES) / 2 / bytes_per_sample;
+    let samples_in_window = ((upperTile - lowerTile) * TILE_SIZE_IN_BYTES) / 2 / bytes_per_sample;
     let stop_sample_index = start_sample_index + samples_in_window;
     let center_frequency = meta.captures[0]['core:frequency'];
     let sample_rate = meta.global['core:sample_rate'];
@@ -195,7 +192,7 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
 
     if (sample_start >= start_sample_index && sample_start < stop_sample_index) {
       annotations_list.push({
-        x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side
+        x1: ((freq_lower_edge - lower_freq) / sample_rate) * fft_size, // left side. units are in fractions of an FFT size, e.g. 0-1024
         x2: ((freq_upper_edge - lower_freq) / sample_rate) * fft_size, // right side
         y1: sample_start / fft_size, // top
         y2: (sample_start + sample_count) / fft_size, // bottom
@@ -204,12 +201,11 @@ export const select_fft2 = (lowerTile, upperTile, bytes_per_sample, fftSize, mag
     }
   }
   window.annotations = annotations_list;
-  */
 
   let select_fft_return = {
     image_data: image_data,
-    //annotations: window.annotations,
-    sample_rate: 1000000, //window.sample_rate, FIXME
+    annotations: window.annotations,
+    sample_rate: window.sample_rate,
     autoMax: 254, // TODO FIGURE OUT HOW TO REWORK PLUMBING
     autoMin: 1,
   };

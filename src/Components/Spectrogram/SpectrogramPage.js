@@ -22,6 +22,8 @@ class SpectrogramPage extends Component {
       autoscale: false,
       tileNumbers: [],
       image: null,
+      annotations: [],
+      sampleRate: 1,
     };
   }
 
@@ -184,11 +186,14 @@ class SpectrogramPage extends Component {
         this.updateMagnitudeMax(ret.autoMax);
         this.updateMagnitudeMin(ret.autoMin);
       }
+
+      this.setState({ annotations: ret.annotations });
+      this.setState({ sampleRate: ret.sample_rate });
     }
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -212,7 +217,7 @@ class SpectrogramPage extends Component {
               />
             </Col>
             <Col>
-              <Spectrogram image={image} />
+              <Spectrogram image={image} fft={fft} blob={blob} meta={meta} annotations={annotations} fftSize={fftSize} sampleRate={sampleRate} />
             </Col>
             <Col className="col-1">
               <ScrollBar setTileNumbers={this.setTileNumbers} />

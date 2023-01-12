@@ -1,18 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Layer, Image, Stage } from 'react-konva';
+import { AnnotationViewer } from './AnnotationViewer';
 
 const Spectrogram = (props) => {
-  // purely for debugging, make sure we're getting the update...
-  useEffect(() => {
-    console.log(props.image);
-  }, [props.image]);
+  const stageRef = useRef(null);
 
   if (props.image) {
     return (
-      <Stage width={600} height={600}>
+      <Stage width={600} height={600} stageRef={stageRef}>
         <Layer>
           <Image image={props.image} x={0} y={0} width={600} height={600} />
         </Layer>
+        <AnnotationViewer
+          timescale_width={20}
+          text_width={10}
+          upper_tick_height={10}
+          spectrogram_width={600}
+          fft={props.fft}
+          meta={props.meta}
+          blob={props.blob}
+          stageRef={stageRef}
+          annotations={props.annotations}
+          spectrogramWidthScale={600 / props.fftSize}
+          fftSize={props.fftSize}
+          sampleRate={props.sampleRate}
+        />
       </Stage>
     );
   } else {
