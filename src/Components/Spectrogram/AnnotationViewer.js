@@ -20,10 +20,6 @@ function getPreview(data) {
 
 const AnnotationViewer = (props) => {
   let {
-    blob,
-    fft,
-    meta,
-    windowFunction,
     spectrogram_width,
     upper_tick_height,
     stageRef,
@@ -65,7 +61,7 @@ const AnnotationViewer = (props) => {
     }
     setTicks(temp_ticks);
     setLabels(temp_labels);
-  }, [blob, fft, meta, spectrogram_width, windowFunction, upper_tick_height]);
+  }, [fftSize, sampleRate, spectrogram_width, upper_tick_height]);
 
   if (annotations.length <= 1) {
     return <></>;
