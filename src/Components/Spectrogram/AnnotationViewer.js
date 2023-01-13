@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Layer, Rect, Text, Circle } from 'react-konva';
 
 const AnnotationViewer = (props) => {
-  let { spectrogram_width, upper_tick_height, stageRef, spectrogramWidthScale, spectrogramHeightScale, fftSize, annotations, sampleRate } = props;
+  let { spectrogram_width, stageRef, spectrogramWidthScale, spectrogramHeightScale, fftSize, annotations, sampleRate } = props;
 
   const [ticks, setTicks] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -24,19 +24,19 @@ const AnnotationViewer = (props) => {
     const temp_labels = [];
     for (let i = 0; i < num_ticks; i++) {
       if (i % 10 === 0) {
-        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 15, height: 0 });
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: i * 10, width: 15, height: 0 });
         temp_labels.push({
           text: (i * time_per_row * 10 * 1e3).toString(),
           x: spectrogram_width + 24,
-          y: upper_tick_height + i * 10 - 7,
+          y: i * 10 - 7,
         }); // in ms
       } else {
-        temp_ticks.push({ x: spectrogram_width + timescale_width, y: upper_tick_height + i * 10, width: 5, height: 0 });
+        temp_ticks.push({ x: spectrogram_width + timescale_width, y: i * 10, width: 5, height: 0 });
       }
     }
     setTicks(temp_ticks);
     setLabels(temp_labels);
-  }, [fftSize, sampleRate, spectrogram_width, upper_tick_height]);
+  }, [fftSize, sampleRate, spectrogram_width]);
 
   if (annotations.length <= 1) {
     return <></>;
@@ -63,7 +63,7 @@ const AnnotationViewer = (props) => {
     const annot_pos_x = e.target.id().split('-')[1];
     const annot_pos_y = e.target.id().split('-')[2];
     annotations[annot_indx][annot_pos_x] = x / spectrogramWidthScale; // reverse the calcs done to generate the coords
-    annotations[annot_indx][annot_pos_y] = y - upper_tick_height;
+    annotations[annot_indx][annot_pos_y] = y;
     forceUpdate(); // TODO remove the forceupdate and do it the proper way (possibly using spread?)
   }
 
@@ -90,7 +90,7 @@ const AnnotationViewer = (props) => {
           {/* Main rectangle */}
           <Rect
             x={annotation.x1 * spectrogramWidthScale}
-            y={(annotation.y1 + upper_tick_height) * spectrogramHeightScale}
+            y={annotation.y1 * spectrogramHeightScale}
             width={(annotation.x2 - annotation.x1) * spectrogramWidthScale}
             height={(annotation.y2 - annotation.y1) * spectrogramHeightScale}
             fillEnabled="false"
@@ -101,7 +101,7 @@ const AnnotationViewer = (props) => {
           {/* Top Left Corner */}
           <Rect
             x={annotation.x1 * spectrogramWidthScale - 4}
-            y={annotation.y1 + upper_tick_height - 4}
+            y={annotation.y1 - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -119,7 +119,7 @@ const AnnotationViewer = (props) => {
           {/* Top Right Corner */}
           <Rect
             x={annotation.x2 * spectrogramWidthScale - 4}
-            y={annotation.y1 + upper_tick_height - 4}
+            y={annotation.y1 - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -137,7 +137,7 @@ const AnnotationViewer = (props) => {
           {/* Bottom Left Corner */}
           <Rect
             x={annotation.x1 * spectrogramWidthScale - 4}
-            y={annotation.y2 + upper_tick_height - 4}
+            y={annotation.y2 - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -155,7 +155,7 @@ const AnnotationViewer = (props) => {
           {/* Bottom Right Corner */}
           <Rect
             x={annotation.x2 * spectrogramWidthScale - 4}
-            y={annotation.y2 + upper_tick_height - 4}
+            y={annotation.y2 - 4}
             width={8}
             height={8}
             fillEnabled="true"
@@ -176,7 +176,7 @@ const AnnotationViewer = (props) => {
             fontFamily="serif"
             fontSize="24"
             x={annotation.x1 * spectrogramWidthScale}
-            y={annotation.y1 + upper_tick_height - 23}
+            y={annotation.y1 - 23}
             fill="black"
             fontStyle="bold"
             key={index + 1000000}

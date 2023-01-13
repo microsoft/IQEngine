@@ -217,7 +217,6 @@ class SpectrogramPage extends Component {
                   sampleRate={sampleRate}
                   timescale_width={20}
                   text_width={10}
-                  upper_tick_height={0}
                   spectrogram_width={600}
                   fft={fft}
                   meta={meta}
@@ -232,7 +231,6 @@ class SpectrogramPage extends Component {
                 <AnnotationViewer
                   timescale_width={20}
                   text_width={10}
-                  upper_tick_height={0}
                   spectrogram_width={600}
                   fft={fft}
                   meta={meta}
