@@ -3,7 +3,6 @@ import { updateConnectionBlobClient } from '../Store/Actions/ConnectionActions';
 import { returnMetaDataBlob } from '../Store/Actions/FetchMetaActions';
 const { BlobServiceClient } = require('@azure/storage-blob');
 
-
 // Thunk function
 
 export const FetchMeta = (connection) => async (dispatch) => {
@@ -29,9 +28,11 @@ export const FetchMeta = (connection) => async (dispatch) => {
     const blob = await downloadBlockBlobResponse.blobBody;
     meta_string = await blob.text();
   } else {
-    let fileHandle = connection.metafilehandle;
-    const file = await fileHandle.getFile();
-    meta_string = await file.text();
+    const metaFile = await connection.metafilehandle.getFile();
+    const dataFile = await connection.datafilehandle.getFile();
+    meta_string = await metaFile.text();
+    const numBytes = dataFile.size;
+    dispatch(updateBlobTotalBytes(numBytes));
   }
 
   const meta_json = JSON.parse(meta_string);
