@@ -23,7 +23,7 @@ const Sidebar = (props) => {
                 updateFftsize={props.updateFftsize}
                 updateWindowChange={props.updateWindowChange}
                 meta={props.meta}
-                updateAutoScale={props.updateAutoScale}
+                handleAutoScale={props.handleAutoScale}
                 autoscale={props.autoscale}
                 magnitudeMax={props.fft.magnitudeMax}
                 magnitudeMin={props.fft.magnitudeMin}

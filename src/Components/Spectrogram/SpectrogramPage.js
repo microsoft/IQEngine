@@ -182,9 +182,9 @@ class SpectrogramPage extends Component {
         console.log('Image Updated');
       });
       if (autoscale && ret.autoMax) {
-        this.updateAutoScale(); // toggles it off so this only will happen once
-        this.updateMagnitudeMax(ret.autoMax);
-        this.updateMagnitudeMin(ret.autoMin);
+        this.handleAutoScale(); // toggles it off so this only will happen once
+        this.handleMagnitudeMax(ret.autoMax);
+        this.handleMagnitudeMin(ret.autoMin);
       }
 
       this.setState({ annotations: ret.annotations });
@@ -241,7 +241,7 @@ class SpectrogramPage extends Component {
                 fft={fft}
                 blob={blob}
                 meta={meta}
-                updateAutoScale={this.handleAutoScale}
+                handleAutoScale={this.handleAutoScale}
               />
             </Col>
             <Col style={{ paddingLeft: 0, paddingRight: 0 }}>

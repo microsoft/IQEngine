@@ -25,6 +25,8 @@ function getStandardDeviation(array) {
   return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
+const average = (array) => array.reduce((a, b) => a + b) / array.length;
+
 function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale) {
   let startTime = performance.now();
   const clearBuf = new ArrayBuffer(fft_size * num_ffts * 4); // fills with 0s ie. rgba 0,0,0,0 = transparent
@@ -117,7 +119,7 @@ function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_mi
   }
   let endTime = performance.now();
   console.log('Rendering spectrogram took', endTime - startTime, 'milliseconds'); // first cut of our code processed+rendered 0.5M samples in 760ms on marcs computer
-  return new_fft_data;
+  return { new_fft_data: new_fft_data, autoMax: autoMax, autoMin: autoMin };
 }
 
 // lowerTile and upperTile are in fractions of a tile
@@ -129,11 +131,24 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
 
   // Go through each of the tiles and compute the FFT and save in window.fft_data
   const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+  let autoMaxs = [];
+  let autoMins = [];
   for (let tile of tiles) {
     if (!(tile.toString() in window.fft_data)) {
       if (tile.toString() in window.iq_data) {
         let samples = window.iq_data[tile.toString()];
-        window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
+        const { new_fft_data, autoMax, autoMin } = calcFftOfTile(
+          samples,
+          fft_size,
+          num_ffts,
+          windowFunction,
+          magnitude_min,
+          magnitude_max,
+          autoscale
+        );
+        window.fft_data[tile.toString()] = new_fft_data;
+        autoMaxs.push(autoMax);
+        autoMins.push(autoMin);
         console.log('Finished processing tile', tile);
       } else {
         console.log('Dont have iq_data of tile', tile, 'yet');
@@ -201,13 +216,12 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
     }
   }
   window.annotations = annotations_list;
-
   let select_fft_return = {
     image_data: image_data,
     annotations: window.annotations,
     sample_rate: window.sample_rate,
-    autoMax: 254, // TODO FIGURE OUT HOW TO REWORK PLUMBING
-    autoMin: 1,
+    autoMax: autoMaxs.length ? average(autoMaxs) : 255,
+    autoMin: autoMins.length ? average(autoMins) : 0,
   };
   return select_fft_return;
 };

@@ -140,7 +140,7 @@ const SettingsPane = (props) => {
   return (
     <Form>
       {/* When you press this button it will make autoscale run during the next call to select_fft, then it will turn itself off */}
-      <Button className="mb-3" variant="secondary" onClick={props.updateAutoScale} style={{ width: '100%', marginTop: '5px' }}>
+      <Button className="mb-3" variant="secondary" onClick={props.handleAutoScale} style={{ width: '100%', marginTop: '5px' }}>
         Autoscale
       </Button>
 
