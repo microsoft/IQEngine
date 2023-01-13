@@ -6,6 +6,7 @@ import { Layer, Image, Stage } from 'react-konva';
 import { select_fft, clear_fft_data, calculateTileNumbers, range } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
+import { RulerSide } from './RulerSide';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -210,7 +211,7 @@ class SpectrogramPage extends Component {
                 updateAutoScale={this.handleAutoScale}
               />
             </Col>
-            <Col>
+            <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
               <Stage width={600} height={20}>
                 <RulerTop
                   fftSize={fftSize}
@@ -228,23 +229,15 @@ class SpectrogramPage extends Component {
                 <Layer>
                   <Image image={image} x={0} y={0} width={600} height={600} />
                 </Layer>
-                <AnnotationViewer
-                  timescale_width={20}
-                  text_width={10}
-                  spectrogram_width={600}
-                  fft={fft}
-                  meta={meta}
-                  blob={blob}
-                  stageRef={stageRef}
-                  annotations={annotations}
-                  spectrogramWidthScale={600 / fftSize}
-                  spectrogramHeightScale={1}
-                  fftSize={fftSize}
-                  sampleRate={sampleRate}
-                />
+                <AnnotationViewer annotations={annotations} spectrogramWidthScale={600 / fftSize} spectrogramHeightScale={1} />
               </Stage>
             </Col>
-            <Col style={{ justifyContent: 'left' }}>
+            <Col style={{ paddingTop: 20, paddingLeft: 0, paddingRight: 0 }}>
+              <Stage width={50} height={600}>
+                <RulerSide spectrogram_width={600} fftSize={fftSize} sampleRate={sampleRate} />
+              </Stage>
+            </Col>
+            <Col style={{ justifyContent: 'left', paddingLeft: 0, paddingRight: 0 }}>
               <ScrollBar setTileNumbers={this.setTileNumbers} />
             </Col>
           </Row>
