@@ -237,7 +237,7 @@ class SpectrogramPage extends Component {
                 <RulerSide spectrogram_width={600} fftSize={fftSize} sampleRate={sampleRate} />
               </Stage>
             </Col>
-            <Col style={{ justifyContent: 'left', paddingLeft: 0, paddingRight: 0 }}>
+            <Col className="col-3" style={{ paddingTop: 20, paddingLeft: 0, paddingRight: 0 }}>
               <ScrollBar setTileNumbers={this.setTileNumbers} />
             </Col>
           </Row>
