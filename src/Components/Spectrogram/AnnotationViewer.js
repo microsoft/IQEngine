@@ -4,31 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { Layer, Rect, Text, Circle } from 'react-konva';
 
-function getItem(item) {
-  if (item.type === 'circle') {
-    return <Circle x={item.x} y={item.y} fill="red" radius={20} />;
-  }
-  return <Rect x={item.x} y={item.y} fill="green" width={20} height={20} />;
-}
-
-function getPreview(data) {
-  if (data === null) {
-    return null;
-  }
-  return getItem(data);
-}
-
 const AnnotationViewer = (props) => {
-  let {
-    spectrogram_width,
-    upper_tick_height,
-    stageRef,
-    spectrogramWidthScale,
-    spectrogramHeightScale,
-    fftSize,
-    annotations,
-    sampleRate,
-  } = props;
+  let { spectrogram_width, upper_tick_height, stageRef, spectrogramWidthScale, spectrogramHeightScale, fftSize, annotations, sampleRate } = props;
 
   const [ticks, setTicks] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -37,8 +14,6 @@ const AnnotationViewer = (props) => {
   // These two lines are a hack used to force a re-render when an annotation is updated, which for some reason wasnt updating
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
-
-  const previewItem = getPreview(dragDropData);
 
   useEffect(() => {
     // Draw the vertical scales
