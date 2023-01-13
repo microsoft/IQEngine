@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes, Route, Link } from 'react-router-dom';
 import FileBrowserContainer from './Containers/FileBrowserContainer';
 import SpectrogramContainer from './Containers/SpectrogramContainer';
+import RecordingsListContainer from './Containers/RecordingsListContainer';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
 
       <Routes>
         <Route exact path="/" element={<FileBrowserContainer />} />
+        <Route path="/recordings" element={<RecordingsListContainer />}/>
         <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
       </Routes>
     </div>

@@ -5,12 +5,13 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const AzureBlobBrowser = (props) => {
   const [accountName, setAccountName] = useState(props.accountName || process.env.REACT_APP_AZURE_BLOB_ACCOUNT_NAME);
   const [containerName, setContainerName] = useState(props.containerName || process.env.REACT_APP_AZURE_BLOB_CONTAINER_NAME);
   const [sasToken, setSasToken] = useState(process.env.REACT_APP_AZURE_BLOB_SAS_TOKEN);
-
+  const navigate = useNavigate();
   const onAccountNameChange = (event) => {
     setAccountName(event.target.value);
   };
@@ -29,6 +30,7 @@ const AzureBlobBrowser = (props) => {
     props.updateConnectionContainerName(containerName);
     props.updateConnectionSasToken(sasToken);
     props.setRecordingList({ accountName: accountName, containerName: containerName, sasToken: sasToken }); // updates the parent (App.js) state with the RecordingList
+    navigate('/recordings'); // data file
     // Parse SAS Token to find if its read/write and other info
   };
 
