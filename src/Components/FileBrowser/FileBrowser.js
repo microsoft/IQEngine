@@ -6,7 +6,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import LocalFileBrowser from './LocalFileBrowser';
-import RecordingsBrowser from './RecordingsBrowser';
 import AzureBlobBrowser from './AzureBlobBrowser';
 import RepositoryTile from './RepositoryTile';
 
@@ -48,12 +47,6 @@ const FileBrowser = (props) => {
         </Row>
       </Container>
 
-      <RecordingsBrowser
-        updateConnectionRecording={props.updateConnectionRecording}
-        updateConnectionMetaFileHandle={props.updateConnectionMetaFileHandle}
-        updateConnectionDataFileHandle={props.updateConnectionDataFileHandle}
-        data={props.recording.recordingsList}
-      />
     </div>
   );
 };

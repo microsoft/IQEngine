@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React, { useState } from 'react';
-import Directory from './Directory';
+import React, { useEffect, useState } from 'react';
+import Directory from './FileBrowser/Directory';
+import Spinner from 'react-bootstrap/Spinner';
 
 function isFolder(file) {
   return file.name.endsWith('/');
@@ -74,8 +75,15 @@ function GroupByFolder(files, root) {
   return files;
 }
 
-export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording }) {
+export default function RecordingsBrowser(props) {
+  const { recording, updateConnectionMetaFileHandle, updateConnectionDataFileHandle, updateConnectionRecording } = props;
+  const data = recording.recordingsList;
+
   const [currentFolder, setCurrentFolder] = useState('root');
+  const [load, toggleLoader] = useState(recording.loading || false);
+  useEffect(() => {
+    toggleLoader(recording.loading);
+  }, [recording.loading]);
 
   const gfiles = data.map((data) => data.name);
   let dataTree = [];
@@ -128,32 +136,36 @@ export default function RecordingsBrowser({ data, updateConnectionMetaFileHandle
   }
 
   return (
-    <div className="container-fluid">
-      <table className="table">
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'center' }}>Spectrogram</th>
-            <th style={{ width: '25%' }}>Recording Name</th>
-            <th style={{ textAlign: 'center' }}>Data Type</th>
-            <th style={{ textAlign: 'center' }}>Freq [MHz]</th>
-            <th style={{ textAlign: 'center' }}>Sample Rate [MHz]</th>
-            <th style={{ textAlign: 'center' }}># of Annotations</th>
-            <th style={{ width: '10%' }}>Author</th>
-            <th style={{ width: '10%' }}>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          <Directory
-            key={Math.random()}
-            item={currentDataTree}
-            updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
-            updateConnectionDataFileHandle={updateConnectionDataFileHandle}
-            updateConnectionRecording={updateConnectionRecording}
-            setCurrentFolder={setCurrentFolder}
-            currentFolder={currentFolder}
-          />
-        </tbody>
-      </table>
+    <div className="container-fluid" style={{ width: '90%' }}>
+      {load ? (
+        <Spinner animation="border" variant="light" style={{ width: '25em', height: '25em', margin: '10em 0 0 32em' }} />
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'center' }}>Spectrogram</th>
+              <th style={{ width: '25%' }}>Recording Name</th>
+              <th style={{ textAlign: 'center' }}>Data Type</th>
+              <th style={{ textAlign: 'center' }}>Freq [MHz]</th>
+              <th style={{ textAlign: 'center' }}>Sample Rate [MHz]</th>
+              <th style={{ textAlign: 'center' }}># of Annotations</th>
+              <th style={{ width: '10%' }}>Author</th>
+              <th style={{ width: '10%' }}>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <Directory
+              key={Math.random()}
+              item={currentDataTree}
+              updateConnectionMetaFileHandle={updateConnectionMetaFileHandle}
+              updateConnectionDataFileHandle={updateConnectionDataFileHandle}
+              updateConnectionRecording={updateConnectionRecording}
+              setCurrentFolder={setCurrentFolder}
+              currentFolder={currentFolder}
+            />
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
