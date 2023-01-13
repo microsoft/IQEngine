@@ -49,12 +49,14 @@ const AnnotationViewer = (props) => {
   }
 
   function onDragEnd(e) {
+    /*
     const stage = stageRef.current;
     stage.setPointersPositions(e);
     const scale = stage.scaleX();
-    //const position = stage.getPointerPosition(); // this was returning NaNs but the example code had it working
-    //let x = (position.x - stage.x()) / scale;
-    //let y = (position.y - stage.y()) / scale;
+    const position = stage.getPointerPosition(); // this was returning NaNs but the example code had it working
+    let x = (position.x - stage.x()) / scale;
+    let y = (position.y - stage.y()) / scale;
+    */
     const x = e.target.x(); // look at box coords instead of cursor coords because above code didnt work
     const y = e.target.y();
     const annot_indx = e.target.id().split('-')[0];
