@@ -12,7 +12,7 @@ window.annotations = []; // gets filled in before return
 window.sample_rate = 1; // will get filled in
 
 // This will get called when we go to a new spectrogram page
-export const clear_fft_data = () => {
+export const clear_all_data = () => {
   window.fft_data = {}; // this is where our FFT outputs are stored
   window.annotations = []; // gets filled in before return
   window.sample_rate = 1; // will get filled in
@@ -25,10 +25,7 @@ function getStandardDeviation(array) {
   return Math.sqrt(array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
-// mimicing python's range() function which gives array of integers between two values non-inclusive of end
-function range(start, end) {
-  return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
-}
+const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
 function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale) {
   let startTime = performance.now();
@@ -122,7 +119,7 @@ function calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_mi
   }
   let endTime = performance.now();
   console.log('Rendering spectrogram took', endTime - startTime, 'milliseconds'); // first cut of our code processed+rendered 0.5M samples in 760ms on marcs computer
-  return new_fft_data;
+  return { new_fft_data: new_fft_data, autoMax: autoMax, autoMin: autoMin };
 }
 
 // lowerTile and upperTile are in fractions of a tile
@@ -134,13 +131,28 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
 
   // Go through each of the tiles and compute the FFT and save in window.fft_data
   const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
+  let autoMaxs = [];
+  let autoMins = [];
   for (let tile of tiles) {
-    if (tile.toString() in window.iq_data) {
-      let samples = window.iq_data[tile.toString()];
-      window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
-      console.log('Finished processing tile', tile);
-    } else {
-      console.log('Dont have iq_data of tile', tile, 'yet');
+    if (!(tile.toString() in window.fft_data)) {
+      if (tile.toString() in window.iq_data) {
+        let samples = window.iq_data[tile.toString()];
+        const { new_fft_data, autoMax, autoMin } = calcFftOfTile(
+          samples,
+          fft_size,
+          num_ffts,
+          windowFunction,
+          magnitude_min,
+          magnitude_max,
+          autoscale
+        );
+        window.fft_data[tile.toString()] = new_fft_data;
+        autoMaxs.push(autoMax);
+        autoMins.push(autoMin);
+        console.log('Finished processing tile', tile);
+      } else {
+        console.log('Dont have iq_data of tile', tile, 'yet');
+      }
     }
   }
 
@@ -204,13 +216,37 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
     }
   }
   window.annotations = annotations_list;
-
   let select_fft_return = {
     image_data: image_data,
     annotations: window.annotations,
     sample_rate: window.sample_rate,
-    autoMax: 254, // TODO FIGURE OUT HOW TO REWORK PLUMBING
-    autoMin: 1,
+    autoMax: autoMaxs.length ? average(autoMaxs) : 255,
+    autoMin: autoMins.length ? average(autoMins) : 0,
   };
   return select_fft_return;
 };
+
+export function calculateTileNumbers(handleTop, bytesPerSample, blob, fftSize) {
+  const { totalBytes } = blob;
+  const totalNumFFTs = totalBytes / bytesPerSample / 2 / fftSize; // divide by 2 because IQ
+  const scrollBarHeight = 600; // TODO REPLACE ME WITH ACTUAL WINDOW HEIGHT
+  const handleFraction = scrollBarHeight / totalNumFFTs;
+  console.log('handleFraction:', handleFraction);
+  const handleHeightPixels = handleFraction * scrollBarHeight;
+
+  // Find which tiles are within view
+  const tileSizeInRows = TILE_SIZE_IN_BYTES / bytesPerSample / 2 / fftSize;
+  console.log('tileSizeInRows:', tileSizeInRows);
+  const numTilesInFile = Math.ceil(totalNumFFTs / tileSizeInRows);
+  console.log('numTilesInFile:', numTilesInFile);
+  const lowerTile = (totalNumFFTs / tileSizeInRows) * (handleTop / scrollBarHeight);
+  const upperTile = (totalNumFFTs / tileSizeInRows) * ((handleTop + handleHeightPixels) / scrollBarHeight);
+  console.log(lowerTile, upperTile); // its not going to go all the way to numTilesInFile because the handle isnt resizing itself yet
+  return { lowerTile: lowerTile, upperTile: upperTile };
+}
+
+// mimicing python's range() function which gives array of integers between two values non-inclusive of end
+
+export function range(start, end) {
+  return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
+}

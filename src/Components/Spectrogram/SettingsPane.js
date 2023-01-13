@@ -127,6 +127,9 @@ const SettingsPane = (props) => {
       taps = taps.map((x) => parseFloat(x));
       taps = Float32Array.from(taps);
       props.updateBlobTaps(taps);
+      // We apply the taps when we download the IQ data, so we have to clear both
+      window.iq_data = {};
+      window.fft_data = {};
       console.log('valid taps, found', taps.length, 'taps');
     } else {
       console.error('invalid taps');
@@ -137,7 +140,7 @@ const SettingsPane = (props) => {
   return (
     <Form>
       {/* When you press this button it will make autoscale run during the next call to select_fft, then it will turn itself off */}
-      <Button className="mb-3" variant="secondary" onClick={props.updateAutoScale} style={{ width: '100%', marginTop: '5px' }}>
+      <Button className="mb-3" variant="secondary" onClick={props.handleAutoScale} style={{ width: '100%', marginTop: '5px' }}>
         Autoscale
       </Button>
 

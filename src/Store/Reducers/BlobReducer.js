@@ -48,6 +48,7 @@ export default function blobReducer(state = initialState, action) {
       return {
         ...state,
         status: 'idle',
+        size: state.size + 1,
       };
     case FETCH_MORE_DATA_FAILURE: // FetchMoreData/rejected, where FetchMoreData is the async thunk function
       return {
