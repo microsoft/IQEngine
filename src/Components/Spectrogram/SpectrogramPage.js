@@ -2,6 +2,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
+import TimePlot from './TimePlot';
 import { Layer, Image, Stage } from 'react-konva';
 import { select_fft, clear_all_data, calculateTileNumbers, range } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
@@ -231,6 +232,7 @@ class SpectrogramPage extends Component {
         <Container fluid>
           <Row className="flex-nowrap">
             <Col className="col-3">
+              <TimePlot />
               <Sidebar
                 updateBlobTaps={this.props.updateBlobTaps}
                 updateMagnitudeMax={this.handleMagnitudeMax}
