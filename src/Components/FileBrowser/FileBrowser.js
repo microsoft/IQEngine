@@ -6,11 +6,13 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import LocalFileBrowser from './LocalFileBrowser';
-import RecordingsBrowser from './RecordingsBrowser';
 import AzureBlobBrowser from './AzureBlobBrowser';
 import RepositoryTile from './RepositoryTile';
 
 const FileBrowser = (props) => {
+  const tileObj = JSON.parse(process.env.REACT_APP_CONNECTION_INFO);
+  const tileObjInfo = tileObj.settings;
+
   return (
     <div>
       <Container>
@@ -37,24 +39,14 @@ const FileBrowser = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
-          <Col>
-            <RepositoryTile></RepositoryTile>
-          </Col>
+          {tileObjInfo.map((item, i) => (
+            <Col>
+              <RepositoryTile key={i} item={item}></RepositoryTile>
+            </Col>
+          ))}
         </Row>
       </Container>
 
-      <RecordingsBrowser
-        updateConnectionRecording={props.updateConnectionRecording}
-        updateConnectionMetaFileHandle={props.updateConnectionMetaFileHandle}
-        updateConnectionDataFileHandle={props.updateConnectionDataFileHandle}
-        data={props.recording.recordingsList}
-      />
     </div>
   );
 };

@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { COUNT_PER_FETCH } from '../Utils/constants';
+import { TILE_SIZE_IN_BYTES } from '../Utils/constants';
+
 function convolve(array, taps) {
   //console.log(taps);
 
@@ -42,44 +43,20 @@ function readFileAsync(file) {
   });
 }
 
-const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
+const FetchMoreData = createAsyncThunk('FetchMoreData', async (args, thunkAPI) => {
   console.log('running FetchMoreData');
-  const { connection, blob, meta } = args;
+  const { tile, connection, blob, data_type } = args;
 
-  // FIXME the first time this function is called, the data_type hasnt been set yet
-  if (!meta.global['core:datatype']) {
-    console.log("WARNING: data_type hasn't been set yet");
-    return { samples: new Int16Array(0), data_type: 'ci16_le' }; // return no samples
-  }
-  const data_type = meta.global['core:datatype'];
-
-  let bytes_per_sample = 2;
-  if (data_type === 'ci16_le') {
-    bytes_per_sample = 2;
-  } else if (data_type === 'cf32_le') {
-    bytes_per_sample = 4;
-  } else {
-    bytes_per_sample = 2;
-  }
-  let offset = blob.size * bytes_per_sample; // offset is in bytes
-  let count = COUNT_PER_FETCH * bytes_per_sample; // must be a power of 2, FFT currently doesnt support anything else
+  let offset = tile * TILE_SIZE_IN_BYTES; // in bytes
+  let count = TILE_SIZE_IN_BYTES; // in bytes
 
   let startTime = performance.now();
   let buffer;
   if (connection.datafilehandle === undefined) {
-    // using Azure blob storage
-    let { accountName, containerName, sasToken, recording } = connection;
-
+    let { recording, blobClient } = connection;
     while (recording === '') {
       console.log('waiting'); // hopefully this doesn't happen, and if it does it should be pretty quick because its the time it takes for the state to set
     }
-    let blobName = recording + '.sigmf-data';
-
-    // Get the blob client TODO: REFACTOR SO WE DONT HAVE TO REMAKE THE CLIENT EVERY TIME!
-    const { BlobServiceClient } = require('@azure/storage-blob');
-    const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net?${sasToken}`);
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    const blobClient = containerClient.getBlobClient(blobName);
     console.log('offset:', offset, 'count:', count);
     const downloadBlockBlobResponse = await blobClient.download(offset, count);
     const blob = await downloadBlockBlobResponse.blobBody;
@@ -96,7 +73,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
   let samples;
   if (data_type === 'ci16_le') {
     samples = new Int16Array(buffer);
-    samples = convolve(samples, blob.taps);
+    samples = convolve(samples, blob.taps); // we apply the taps here and not in the FFT calcs so transients dont hurt us as much
     samples = Int16Array.from(samples); // convert back to int TODO: clean this up
   } else if (data_type === 'cf32_le') {
     samples = new Float32Array(buffer);
@@ -105,7 +82,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args) => {
     console.error('unsupported data_type');
     samples = new Int16Array(buffer);
   }
-  return { samples: samples, data_type: data_type }; // these represent the new samples
+  return { tile: tile, samples: samples, data_type: data_type }; // these represent the new samples
 });
 
 export default FetchMoreData;

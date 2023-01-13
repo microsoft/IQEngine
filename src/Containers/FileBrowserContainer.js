@@ -11,10 +11,9 @@ import {
 import { fetchRecordingsList } from '../Store/Actions/RecordingsListActions';
 
 function mapStateToProps(state) {
-  const { connectionReducer, recordingsListReducer } = state;
+  const { connectionReducer } = state;
   return {
     connection: { ...connectionReducer },
-    recording: { ...recordingsListReducer },
   };
 }
 

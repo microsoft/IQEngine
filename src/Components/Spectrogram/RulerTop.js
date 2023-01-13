@@ -1,35 +1,30 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { select_fft } from '../../Utils/selector';
 import React, { useState, useEffect } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
 
 const RulerTop = (props) => {
-  let { blob, fft, meta, windowFunction, spectrogram_width } = props;
+  let { blob, fft, meta, windowFunction, spectrogram_width, fftSize, sampleRate, spectrogramWidthScale } = props;
 
   const [ticks, setTicks] = useState([]);
   const [labels, setLabels] = useState([]);
 
   useEffect(() => {
-    let select_fft_return = select_fft(blob, fft, meta);
-    if (select_fft_return) {
-      const spectrogram_width_scale = spectrogram_width / select_fft_return.image_data.width;
-      const num_ticks = 16;
-      const temp_ticks = [];
-      const temp_labels = [];
-      for (let i = 0; i <= num_ticks; i++) {
-        if (i % (num_ticks / 4) === 0) {
-          const text = (((i / num_ticks) * select_fft_return.sample_rate - select_fft_return.sample_rate / 2) / 1e6).toString();
-          temp_labels.push({ text: text, x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale - 7 / 2, y: 0 }); // in ms
-          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 20, width: 0, height: 5 });
-        } else {
-          temp_ticks.push({ x: (select_fft_return.fft_size / num_ticks) * i * spectrogram_width_scale, y: 10, width: 0, height: 15 });
-        }
+    const num_ticks = 16;
+    const temp_ticks = [];
+    const temp_labels = [];
+    for (let i = 0; i <= num_ticks; i++) {
+      if (i % (num_ticks / 4) === 0) {
+        const text = (((i / num_ticks) * sampleRate - sampleRate / 2) / 1e6).toString();
+        temp_labels.push({ text: text, x: (fftSize / num_ticks) * i * spectrogramWidthScale - 7 / 2, y: 0 }); // in ms
+        temp_ticks.push({ x: (fftSize / num_ticks) * i * spectrogramWidthScale, y: 20, width: 0, height: 5 });
+      } else {
+        temp_ticks.push({ x: (fftSize / num_ticks) * i * spectrogramWidthScale, y: 10, width: 0, height: 15 });
       }
-      setTicks(temp_ticks);
-      setLabels(temp_labels);
     }
+    setTicks(temp_ticks);
+    setLabels(temp_labels);
   }, [blob, fft, meta, spectrogram_width, windowFunction]);
 
   if (ticks.length > 1) {

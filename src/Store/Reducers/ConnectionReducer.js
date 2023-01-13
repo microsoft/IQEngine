@@ -9,6 +9,7 @@ import {
   UPDATE_CONNECTION_META_FILE_HANDLE,
   UPDATE_CONNECTION_RECORDING,
   UPDATE_CONNECTION_SAS_TOKEN,
+  UPDATE_CONNECTION_BLOB_CLIENT,
 } from '../../Constants/ConnectionTypes';
 const initialState = {
   accountName: '',
@@ -17,6 +18,7 @@ const initialState = {
   recording: '',
   metafilehandle: '',
   datafilehandle: '',
+  blobClient: null,
 };
 
 export default function connectionReducer(state = initialState, action) {
@@ -50,6 +52,11 @@ export default function connectionReducer(state = initialState, action) {
       return {
         ...state,
         datafilehandle: action.payload,
+      };
+    case UPDATE_CONNECTION_BLOB_CLIENT:
+      return {
+        ...state,
+        blobClient: action.payload,
       };
     case RESET_CONNECTION_OBJ:
       return initialState;
