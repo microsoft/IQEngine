@@ -7,6 +7,7 @@ import { select_fft, clear_all_data, calculateTileNumbers, range } from '../../U
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import { RulerSide } from './RulerSide';
+import { TILE_SIZE_IN_BYTES } from '../../Utils/constants';
 
 class SpectrogramPage extends Component {
   constructor(props) {
@@ -31,7 +32,6 @@ class SpectrogramPage extends Component {
       data_type: '',
       upperTile: -1,
       lowerTile: -1,
-      renderIterator: 0,
     };
   }
 
@@ -189,7 +189,6 @@ class SpectrogramPage extends Component {
 
       this.setState({ annotations: ret.annotations });
       this.setState({ sampleRate: ret.sample_rate });
-      this.setState({ renderIterator: this.state.renderIterator + 1 });
     }
   };
 
@@ -221,7 +220,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, stageRef, renderIterator } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, stageRef, lowerTile, bytesPerSample } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -267,7 +266,12 @@ class SpectrogramPage extends Component {
             </Col>
             <Col style={{ paddingTop: 20, paddingLeft: 0, paddingRight: 0 }}>
               <Stage width={50} height={600}>
-                <RulerSide spectrogram_width={600} fftSize={fftSize} sampleRate={sampleRate} />
+                <RulerSide
+                  spectrogram_width={600}
+                  fftSize={fftSize}
+                  sampleRate={sampleRate}
+                  currentRowAtTop={(lowerTile * TILE_SIZE_IN_BYTES) / 2 / bytesPerSample / fftSize}
+                />
               </Stage>
             </Col>
             <Col className="col-3" style={{ paddingTop: 20, paddingLeft: 0, paddingRight: 0 }}>
