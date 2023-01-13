@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Layer, Rect, Text } from 'react-konva';
 
 const AnnotationViewer = (props) => {
