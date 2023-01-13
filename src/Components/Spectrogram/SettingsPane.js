@@ -127,6 +127,9 @@ const SettingsPane = (props) => {
       taps = taps.map((x) => parseFloat(x));
       taps = Float32Array.from(taps);
       props.updateBlobTaps(taps);
+      // We apply the taps when we download the IQ data, so we have to clear both
+      window.iq_data = {};
+      window.fft_data = {};
       console.log('valid taps, found', taps.length, 'taps');
     } else {
       console.error('invalid taps');

@@ -19,11 +19,6 @@ export const clear_all_data = () => {
   window.iq_data = {}; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
 };
 
-// This gets called when any settings change
-export const clear_fft_data = () => {
-  window.fft_data = {}; // this is where our FFT outputs are stored
-};
-
 function getStandardDeviation(array) {
   const n = array.length;
   const mean = array.reduce((a, b) => a + b) / n;

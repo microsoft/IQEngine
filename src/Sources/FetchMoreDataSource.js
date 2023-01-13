@@ -73,7 +73,7 @@ const FetchMoreData = createAsyncThunk('FetchMoreData', async (args, thunkAPI) =
   let samples;
   if (data_type === 'ci16_le') {
     samples = new Int16Array(buffer);
-    samples = convolve(samples, blob.taps);
+    samples = convolve(samples, blob.taps); // we apply the taps here and not in the FFT calcs so transients dont hurt us as much
     samples = Int16Array.from(samples); // convert back to int TODO: clean this up
   } else if (data_type === 'cf32_le') {
     samples = new Float32Array(buffer);

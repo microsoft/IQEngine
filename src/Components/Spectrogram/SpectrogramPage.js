@@ -3,7 +3,7 @@ import Sidebar from './Sidebar';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { Layer, Image, Stage } from 'react-konva';
-import { select_fft, clear_fft_data, clear_all_data, calculateTileNumbers, range } from '../../Utils/selector';
+import { select_fft, clear_all_data, calculateTileNumbers, range } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import { RulerSide } from './RulerSide';
@@ -98,6 +98,10 @@ class SpectrogramPage extends Component {
     if (props.blob.status !== prevProps.blob.status) {
       newState.blob.status = props.blob.status;
     }
+    if (props.blob.taps !== prevProps.blob.taps) {
+      newState.blob.taps = props.blob.taps;
+      this.renderImage(this.state.lowerTile, this.state.upperTile); // need to trigger a rerender here, because the handler is in settingspane
+    }
     if (update && newState.connection.blobClient != null) {
       // Grab the first N tiles so that its full when it first loads
       for (let index = 0; index < 20; index++) {
@@ -169,7 +173,6 @@ class SpectrogramPage extends Component {
 
   renderImage = (lowerTile, upperTile) => {
     const { bytesPerSample, fftSize, magnitudeMax, magnitudeMin, meta, window, autoscale } = this.state;
-    console.log('============', magnitudeMax);
     // Update the image (eventually this should get moved somewhere else)
     let ret = select_fft(lowerTile, upperTile, bytesPerSample, fftSize, magnitudeMax, magnitudeMin, meta, window, autoscale);
     if (ret) {
