@@ -130,12 +130,14 @@ export const select_fft = (lowerTile, upperTile, bytes_per_sample, fftSize, magn
   // Go through each of the tiles and compute the FFT and save in window.fft_data
   const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
   for (let tile of tiles) {
-    if (tile.toString() in window.iq_data) {
-      let samples = window.iq_data[tile.toString()];
-      window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
-      console.log('Finished processing tile', tile);
-    } else {
-      console.log('Dont have iq_data of tile', tile, 'yet');
+    if (!(tile.toString() in window.fft_data)) {
+      if (tile.toString() in window.iq_data) {
+        let samples = window.iq_data[tile.toString()];
+        window.fft_data[tile.toString()] = calcFftOfTile(samples, fft_size, num_ffts, windowFunction, magnitude_min, magnitude_max, autoscale);
+        console.log('Finished processing tile', tile);
+      } else {
+        console.log('Dont have iq_data of tile', tile, 'yet');
+      }
     }
   }
 
