@@ -12,11 +12,16 @@ window.annotations = []; // gets filled in before return
 window.sample_rate = 1; // will get filled in
 
 // This will get called when we go to a new spectrogram page
-export const clear_fft_data = () => {
+export const clear_all_data = () => {
   window.fft_data = {}; // this is where our FFT outputs are stored
   window.annotations = []; // gets filled in before return
   window.sample_rate = 1; // will get filled in
   window.iq_data = {}; // initialized in blobSlice.js but we have to clear it each time we go to another spectrogram page
+};
+
+// This gets called when any settings change
+export const clear_fft_data = () => {
+  window.fft_data = {}; // this is where our FFT outputs are stored
 };
 
 function getStandardDeviation(array) {

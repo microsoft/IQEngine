@@ -18,7 +18,7 @@ const ScrollBar = (props) => {
       newY = stageHeight - handlerHeight;
     }
     setY(newY);
-    props.setTileNumbers(newY);
+    props.fetchAndRender(newY);
   };
 
   const handleDragMove = (e) => {
@@ -33,7 +33,7 @@ const ScrollBar = (props) => {
     }
     e.target.x(0);
     setY(newY);
-    props.setTileNumbers(newY);
+    props.fetchAndRender(newY);
   };
 
   return (

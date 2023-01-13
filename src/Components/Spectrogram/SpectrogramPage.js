@@ -3,7 +3,7 @@ import Sidebar from './Sidebar';
 import { Component } from 'react';
 import ScrollBar from './ScrollBar';
 import { Layer, Image, Stage } from 'react-konva';
-import { select_fft, clear_fft_data, calculateTileNumbers, range } from '../../Utils/selector';
+import { select_fft, clear_fft_data, clear_all_data, calculateTileNumbers, range } from '../../Utils/selector';
 import { AnnotationViewer } from './AnnotationViewer';
 import { RulerTop } from './RulerTop';
 import { RulerSide } from './RulerSide';
@@ -31,13 +31,14 @@ class SpectrogramPage extends Component {
       data_type: '',
       upperTile: -1,
       lowerTile: -1,
+      renderIterator: 0,
     };
   }
 
   componentDidMount() {
     let { fetchMetaDataBlob, connection } = this.props;
     window.iq_data = {};
-    clear_fft_data();
+    clear_all_data();
     fetchMetaDataBlob(connection); // fetch the metadata
   }
 
@@ -98,36 +99,65 @@ class SpectrogramPage extends Component {
       newState.blob.status = props.blob.status;
     }
     if (update && newState.connection.blobClient != null) {
-      newState.fetchSize = 5;
-      for (let index = 0; index < 5; index++) {
+      // Grab the first N tiles so that its full when it first loads
+      for (let index = 0; index < 20; index++) {
         props.fetchMoreData({ blob: newState.blob, data_type: newState.data_type, connection: newState.connection, tile: index });
       }
+      this.fetchAndRender(0); // this is only so that the lowertile/uppertile state gets updated properly
     }
     return { ...newState };
   }
 
   handleFftSize = (size) => {
-    this.setState({
-      fftSize: size,
-    });
-  };
-
-  handleMagnitudeMin = (min) => {
-    this.setState({
-      magnitudeMin: min,
-    });
+    window.fft_data = {};
+    // need to do it this way because setState is async
+    this.setState(
+      {
+        fftSize: size,
+      },
+      () => {
+        this.renderImage(this.state.lowerTile, this.state.upperTile);
+      }
+    );
   };
 
   handleWindowChange = (x) => {
-    this.setState({
-      window: x,
-    });
+    window.fft_data = {};
+    // need to do it this way because setState is async
+    this.setState(
+      {
+        window: x,
+      },
+      () => {
+        this.renderImage(this.state.lowerTile, this.state.upperTile);
+      }
+    );
+  };
+
+  handleMagnitudeMin = (min) => {
+    window.fft_data = {};
+    // need to do it this way because setState is async
+    this.setState(
+      {
+        magnitudeMin: min,
+      },
+      () => {
+        this.renderImage(this.state.lowerTile, this.state.upperTile);
+      }
+    );
   };
 
   handleMagnitudeMax = (max) => {
-    this.setState({
-      magnitudeMax: max,
-    });
+    window.fft_data = {};
+    // need to do it this way because setState is async
+    this.setState(
+      {
+        magnitudeMax: max,
+      },
+      () => {
+        this.renderImage(this.state.lowerTile, this.state.upperTile);
+      }
+    );
   };
 
   handleAutoScale = () => {
@@ -139,6 +169,7 @@ class SpectrogramPage extends Component {
 
   renderImage = (lowerTile, upperTile) => {
     const { bytesPerSample, fftSize, magnitudeMax, magnitudeMin, meta, window, autoscale } = this.state;
+    console.log('============', magnitudeMax);
     // Update the image (eventually this should get moved somewhere else)
     let ret = select_fft(lowerTile, upperTile, bytesPerSample, fftSize, magnitudeMax, magnitudeMin, meta, window, autoscale);
     if (ret) {
@@ -155,11 +186,12 @@ class SpectrogramPage extends Component {
 
       this.setState({ annotations: ret.annotations });
       this.setState({ sampleRate: ret.sample_rate });
+      this.setState({ renderIterator: this.state.renderIterator + 1 });
     }
   };
 
   // num is the y pixel coords of the top of the scrollbar handle, so range of 0 to the height of the scrollbar minus height of handle
-  setTileNumbers = (handleTop) => {
+  fetchAndRender = (handleTop) => {
     const { blob, connection, data_type, bytesPerSample, fftSize } = this.state;
     const { upperTile, lowerTile } = calculateTileNumbers(handleTop, bytesPerSample, blob, fftSize);
     this.setState({ lowerTile: lowerTile, upperTile: upperTile });
@@ -179,8 +211,6 @@ class SpectrogramPage extends Component {
           this.props.fetchMoreData({ tile: tile, connection: connection, blob: blob, data_type: data_type });
         }
       }
-    } else {
-      console.log('BLOB STATUS IS LOADING');
     }
     if (allFetched) {
       this.renderImage(lowerTile, upperTile);
@@ -188,7 +218,7 @@ class SpectrogramPage extends Component {
   };
 
   render() {
-    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, stageRef } = this.state;
+    const { blob, meta, fftSize, magnitudeMax, magnitudeMin, image, annotations, sampleRate, stageRef, renderIterator } = this.state;
     const fft = {
       size: fftSize,
       magnitudeMax: magnitudeMax,
@@ -238,7 +268,7 @@ class SpectrogramPage extends Component {
               </Stage>
             </Col>
             <Col className="col-3" style={{ paddingTop: 20, paddingLeft: 0, paddingRight: 0 }}>
-              <ScrollBar setTileNumbers={this.setTileNumbers} />
+              <ScrollBar fetchAndRender={this.fetchAndRender} />
             </Col>
           </Row>
         </Container>
