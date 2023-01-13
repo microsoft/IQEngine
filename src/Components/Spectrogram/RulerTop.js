@@ -25,7 +25,7 @@ const RulerTop = (props) => {
     }
     setTicks(temp_ticks);
     setLabels(temp_labels);
-  }, [blob, fft, meta, spectrogram_width, windowFunction]);
+  }, [blob, fft, meta, spectrogram_width, windowFunction, fftSize, sampleRate, spectrogramWidthScale]);
 
   if (ticks.length > 1) {
     return (

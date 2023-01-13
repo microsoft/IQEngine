@@ -232,7 +232,6 @@ class SpectrogramPage extends Component {
         <Container fluid>
           <Row className="flex-nowrap">
             <Col className="col-3">
-              <TimePlot />
               <Sidebar
                 updateBlobTaps={this.props.updateBlobTaps}
                 updateMagnitudeMax={this.handleMagnitudeMax}
@@ -244,6 +243,7 @@ class SpectrogramPage extends Component {
                 meta={meta}
                 handleAutoScale={this.handleAutoScale}
               />
+              <TimePlot />
             </Col>
             <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
               <Stage width={600} height={20}>

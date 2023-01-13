@@ -20,8 +20,8 @@ const App = () => {
 
       <Routes>
         <Route exact path="/" element={<FileBrowserContainer />} />
-        <Route path="/recordings" element={<RecordingsListContainer />}/>
-        <Route path="/spectrogram/:recording" element={<SpectrogramContainer />} />
+        <Route path="/recordings" element={<RecordingsListContainer />} />
+        <Route path="/recordings/spectrogram/:recording" element={<SpectrogramContainer />} />
       </Routes>
     </div>
   );
